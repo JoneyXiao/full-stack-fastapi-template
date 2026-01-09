@@ -33,9 +33,14 @@
 
 Minimum gates for this repository:
 - Security/secret hygiene preserved (no secrets committed; env-based config)
-- OpenAPI remains accurate; regenerate frontend client if contract changed
+- OpenAPI remains accurate; regenerate + commit frontend client if contract changed
+- Frontend uses generated client for backend calls (no ad-hoc direct endpoint calls)
+- DB schema changes include Alembic migration(s) committed and upgradeable
 - Tooling discipline preserved (backend ruff+mypy; frontend biome+tsc)
-- Tests updated for behavior changes as required by constitution
+- Backend dependency changes use `uv` and update `backend/uv.lock`
+- Pre-commit hooks (`prek`) expected to pass (or documented exception)
+- Tests updated for behavior changes or explicit omission justification recorded
+- CI checks expected to pass (do not merge with failing checks)
 
 ## Project Structure
 

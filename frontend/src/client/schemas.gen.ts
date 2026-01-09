@@ -55,6 +55,98 @@ export const Body_login_login_access_tokenSchema = {
     title: 'Body_login-login_access_token'
 } as const;
 
+export const CommentCreateSchema = {
+    properties: {
+        body: {
+            type: 'string',
+            maxLength: 2048,
+            minLength: 1,
+            title: 'Body'
+        }
+    },
+    type: 'object',
+    required: ['body'],
+    title: 'CommentCreate'
+} as const;
+
+export const CommentPublicSchema = {
+    properties: {
+        body: {
+            type: 'string',
+            maxLength: 2048,
+            minLength: 1,
+            title: 'Body'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        author_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Author Id'
+        },
+        resource_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Resource Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['body', 'id', 'author_id', 'resource_id', 'created_at', 'updated_at'],
+    title: 'CommentPublic'
+} as const;
+
+export const CommentUpdateSchema = {
+    properties: {
+        body: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 2048,
+                    minLength: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Body'
+        }
+    },
+    type: 'object',
+    title: 'CommentUpdate'
+} as const;
+
+export const CommentsPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/CommentPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'CommentsPublic'
+} as const;
+
 export const HTTPValidationErrorSchema = {
     properties: {
         detail: {
@@ -235,6 +327,426 @@ export const PrivateUserCreateSchema = {
     type: 'object',
     required: ['email', 'password', 'full_name'],
     title: 'PrivateUserCreate'
+} as const;
+
+export const ReactionStateSchema = {
+    properties: {
+        active: {
+            type: 'boolean',
+            title: 'Active'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['active', 'count'],
+    title: 'ReactionState'
+} as const;
+
+export const ResourceCreateSchema = {
+    properties: {
+        title: {
+            type: 'string',
+            maxLength: 255,
+            minLength: 1,
+            title: 'Title'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 1024
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        destination_url: {
+            type: 'string',
+            maxLength: 2048,
+            title: 'Destination Url'
+        },
+        type: {
+            type: 'string',
+            maxLength: 50,
+            title: 'Type'
+        }
+    },
+    type: 'object',
+    required: ['title', 'destination_url', 'type'],
+    title: 'ResourceCreate'
+} as const;
+
+export const ResourcePublicSchema = {
+    properties: {
+        title: {
+            type: 'string',
+            maxLength: 255,
+            minLength: 1,
+            title: 'Title'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 1024
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        destination_url: {
+            type: 'string',
+            maxLength: 2048,
+            title: 'Destination Url'
+        },
+        type: {
+            type: 'string',
+            maxLength: 50,
+            title: 'Type'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        is_published: {
+            type: 'boolean',
+            title: 'Is Published'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['title', 'destination_url', 'type', 'id', 'is_published', 'created_at', 'updated_at'],
+    title: 'ResourcePublic'
+} as const;
+
+export const ResourceSubmissionCreateSchema = {
+    properties: {
+        title: {
+            type: 'string',
+            maxLength: 255,
+            minLength: 1,
+            title: 'Title'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 1024
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        destination_url: {
+            type: 'string',
+            maxLength: 2048,
+            title: 'Destination Url'
+        },
+        type: {
+            type: 'string',
+            maxLength: 50,
+            title: 'Type'
+        }
+    },
+    type: 'object',
+    required: ['title', 'destination_url', 'type'],
+    title: 'ResourceSubmissionCreate'
+} as const;
+
+export const ResourceSubmissionPublicSchema = {
+    properties: {
+        title: {
+            type: 'string',
+            maxLength: 255,
+            minLength: 1,
+            title: 'Title'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 1024
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        destination_url: {
+            type: 'string',
+            maxLength: 2048,
+            title: 'Destination Url'
+        },
+        type: {
+            type: 'string',
+            maxLength: 50,
+            title: 'Type'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        status: {
+            type: 'string',
+            title: 'Status'
+        },
+        submitter_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Submitter Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['title', 'destination_url', 'type', 'id', 'status', 'submitter_id', 'created_at', 'updated_at'],
+    title: 'ResourceSubmissionPublic'
+} as const;
+
+export const ResourceSubmissionUpdateSchema = {
+    properties: {
+        title: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255,
+                    minLength: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Title'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 1024
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        destination_url: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 2048
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Destination Url'
+        },
+        type: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 50
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Type'
+        }
+    },
+    type: 'object',
+    title: 'ResourceSubmissionUpdate'
+} as const;
+
+export const ResourceSubmissionsPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/ResourceSubmissionPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'ResourceSubmissionsPublic'
+} as const;
+
+export const ResourceUpdateSchema = {
+    properties: {
+        title: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255,
+                    minLength: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Title'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 1024
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        destination_url: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 2048
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Destination Url'
+        },
+        type: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 50
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Type'
+        },
+        is_published: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Published'
+        }
+    },
+    type: 'object',
+    title: 'ResourceUpdate'
+} as const;
+
+export const ResourcesPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/ResourcePublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'ResourcesPublic'
+} as const;
+
+export const SubmissionCommentPublicSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        body: {
+            type: 'string',
+            title: 'Body'
+        },
+        author_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Author Id'
+        },
+        submission_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Submission Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['id', 'body', 'author_id', 'submission_id', 'created_at', 'updated_at'],
+    title: 'SubmissionCommentPublic'
+} as const;
+
+export const SubmissionCommentsPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/SubmissionCommentPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'SubmissionCommentsPublic'
 } as const;
 
 export const TokenSchema = {

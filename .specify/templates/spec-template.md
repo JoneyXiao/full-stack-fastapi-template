@@ -4,6 +4,7 @@
 **Created**: [DATE]  
 **Status**: Draft  
 **Input**: User description: "$ARGUMENTS"
+**Constitution**: `.specify/memory/constitution.md`
 
 ## User Scenarios & Testing *(mandatory)*
 

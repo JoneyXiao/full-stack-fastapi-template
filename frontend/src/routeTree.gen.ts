@@ -17,7 +17,13 @@ import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
+import { Route as LayoutFavoritesRouteImport } from './routes/_layout/favorites'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
+import { Route as LayoutSubmissionsIndexRouteImport } from './routes/_layout/submissions/index'
+import { Route as LayoutResourcesIndexRouteImport } from './routes/_layout/resources/index'
+import { Route as LayoutSubmissionsNewRouteImport } from './routes/_layout/submissions/new'
+import { Route as LayoutSubmissionsSubmissionIdRouteImport } from './routes/_layout/submissions/$submissionId'
+import { Route as LayoutResourcesResourceIdRouteImport } from './routes/_layout/resources/$resourceId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -58,11 +64,43 @@ const LayoutItemsRoute = LayoutItemsRouteImport.update({
   path: '/items',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutFavoritesRoute = LayoutFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutAdminRoute = LayoutAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutSubmissionsIndexRoute = LayoutSubmissionsIndexRouteImport.update({
+  id: '/submissions/',
+  path: '/submissions/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutResourcesIndexRoute = LayoutResourcesIndexRouteImport.update({
+  id: '/resources/',
+  path: '/resources/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutSubmissionsNewRoute = LayoutSubmissionsNewRouteImport.update({
+  id: '/submissions/new',
+  path: '/submissions/new',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutSubmissionsSubmissionIdRoute =
+  LayoutSubmissionsSubmissionIdRouteImport.update({
+    id: '/submissions/$submissionId',
+    path: '/submissions/$submissionId',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+const LayoutResourcesResourceIdRoute =
+  LayoutResourcesResourceIdRouteImport.update({
+    id: '/resources/$resourceId',
+    path: '/resources/$resourceId',
+    getParentRoute: () => LayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
@@ -70,9 +108,15 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
+  '/favorites': typeof LayoutFavoritesRoute
   '/items': typeof LayoutItemsRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
+  '/resources/$resourceId': typeof LayoutResourcesResourceIdRoute
+  '/submissions/$submissionId': typeof LayoutSubmissionsSubmissionIdRoute
+  '/submissions/new': typeof LayoutSubmissionsNewRoute
+  '/resources': typeof LayoutResourcesIndexRoute
+  '/submissions': typeof LayoutSubmissionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -80,9 +124,15 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
+  '/favorites': typeof LayoutFavoritesRoute
   '/items': typeof LayoutItemsRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
+  '/resources/$resourceId': typeof LayoutResourcesResourceIdRoute
+  '/submissions/$submissionId': typeof LayoutSubmissionsSubmissionIdRoute
+  '/submissions/new': typeof LayoutSubmissionsNewRoute
+  '/resources': typeof LayoutResourcesIndexRoute
+  '/submissions': typeof LayoutSubmissionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -92,9 +142,15 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
+  '/_layout/favorites': typeof LayoutFavoritesRoute
   '/_layout/items': typeof LayoutItemsRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/resources/$resourceId': typeof LayoutResourcesResourceIdRoute
+  '/_layout/submissions/$submissionId': typeof LayoutSubmissionsSubmissionIdRoute
+  '/_layout/submissions/new': typeof LayoutSubmissionsNewRoute
+  '/_layout/resources/': typeof LayoutResourcesIndexRoute
+  '/_layout/submissions/': typeof LayoutSubmissionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -104,9 +160,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/admin'
+    | '/favorites'
     | '/items'
     | '/settings'
     | '/'
+    | '/resources/$resourceId'
+    | '/submissions/$submissionId'
+    | '/submissions/new'
+    | '/resources'
+    | '/submissions'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -114,9 +176,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/admin'
+    | '/favorites'
     | '/items'
     | '/settings'
     | '/'
+    | '/resources/$resourceId'
+    | '/submissions/$submissionId'
+    | '/submissions/new'
+    | '/resources'
+    | '/submissions'
   id:
     | '__root__'
     | '/_layout'
@@ -125,9 +193,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/_layout/admin'
+    | '/_layout/favorites'
     | '/_layout/items'
     | '/_layout/settings'
     | '/_layout/'
+    | '/_layout/resources/$resourceId'
+    | '/_layout/submissions/$submissionId'
+    | '/_layout/submissions/new'
+    | '/_layout/resources/'
+    | '/_layout/submissions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -196,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutItemsRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/favorites': {
+      id: '/_layout/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof LayoutFavoritesRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/admin': {
       id: '/_layout/admin'
       path: '/admin'
@@ -203,21 +284,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/submissions/': {
+      id: '/_layout/submissions/'
+      path: '/submissions'
+      fullPath: '/submissions'
+      preLoaderRoute: typeof LayoutSubmissionsIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/resources/': {
+      id: '/_layout/resources/'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof LayoutResourcesIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/submissions/new': {
+      id: '/_layout/submissions/new'
+      path: '/submissions/new'
+      fullPath: '/submissions/new'
+      preLoaderRoute: typeof LayoutSubmissionsNewRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/submissions/$submissionId': {
+      id: '/_layout/submissions/$submissionId'
+      path: '/submissions/$submissionId'
+      fullPath: '/submissions/$submissionId'
+      preLoaderRoute: typeof LayoutSubmissionsSubmissionIdRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/resources/$resourceId': {
+      id: '/_layout/resources/$resourceId'
+      path: '/resources/$resourceId'
+      fullPath: '/resources/$resourceId'
+      preLoaderRoute: typeof LayoutResourcesResourceIdRouteImport
+      parentRoute: typeof LayoutRoute
+    }
   }
 }
 
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
+  LayoutFavoritesRoute: typeof LayoutFavoritesRoute
   LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutResourcesResourceIdRoute: typeof LayoutResourcesResourceIdRoute
+  LayoutSubmissionsSubmissionIdRoute: typeof LayoutSubmissionsSubmissionIdRoute
+  LayoutSubmissionsNewRoute: typeof LayoutSubmissionsNewRoute
+  LayoutResourcesIndexRoute: typeof LayoutResourcesIndexRoute
+  LayoutSubmissionsIndexRoute: typeof LayoutSubmissionsIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
+  LayoutFavoritesRoute: LayoutFavoritesRoute,
   LayoutItemsRoute: LayoutItemsRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
+  LayoutResourcesResourceIdRoute: LayoutResourcesResourceIdRoute,
+  LayoutSubmissionsSubmissionIdRoute: LayoutSubmissionsSubmissionIdRoute,
+  LayoutSubmissionsNewRoute: LayoutSubmissionsNewRoute,
+  LayoutResourcesIndexRoute: LayoutResourcesIndexRoute,
+  LayoutSubmissionsIndexRoute: LayoutSubmissionsIndexRoute,
 }
 
 const LayoutRouteWithChildren =
