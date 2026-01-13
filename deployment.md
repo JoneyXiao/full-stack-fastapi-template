@@ -143,6 +143,9 @@ You can set several variables, like:
 * `POSTGRES_USER`: The Postgres user, you can leave the default.
 * `POSTGRES_DB`: The database name to use for this application. You can leave the default of `app`.
 * `SENTRY_DSN`: The DSN for Sentry, if you are using it.
+* `OPENAI_API_KEY`: (Optional) API key for OpenAI-compatible chat provider. If not set, the landing page chat feature will show "unavailable" and users will be directed to use keyword search.
+* `OPENAI_BASE_URL`: (Optional) Custom API endpoint for OpenAI-compatible providers. Defaults to `https://api.openai.com/v1`.
+* `OPENAI_MODEL`: (Optional) Model to use for chat recommendations. Defaults to `gpt-4o-mini`.
 
 ## GitHub Actions Environment Variables
 

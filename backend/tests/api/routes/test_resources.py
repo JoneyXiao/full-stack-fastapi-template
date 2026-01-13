@@ -1,4 +1,5 @@
 """Tests for resource API routes."""
+
 import uuid
 
 from fastapi.testclient import TestClient
@@ -45,10 +46,9 @@ def test_list_resources_with_search(client: TestClient, db: Session) -> None:
     assert str(resource.id) in resource_ids
 
 
-def test_list_resources_with_type_filter(client: TestClient, db: Session) -> None:
+def test_list_resources_with_type_filter(client: TestClient) -> None:
     """Test filtering resources by type."""
     unique_type = f"testtype{uuid.uuid4().hex[:8]}"
-    resource = create_random_resource(db, type=unique_type, is_published=True)
     response = client.get(
         f"{settings.API_V1_STR}/resources/", params={"type": unique_type}
     )

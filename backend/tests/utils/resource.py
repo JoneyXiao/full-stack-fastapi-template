@@ -1,4 +1,5 @@
 """Test factories for Resource model."""
+
 import uuid
 
 from sqlmodel import Session

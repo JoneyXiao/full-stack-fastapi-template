@@ -1,21 +1,23 @@
-import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import {
   ArrowLeft,
-  ExternalLink,
-  Clock,
   CheckCircle,
-  XCircle,
+  Clock,
+  ExternalLink,
   MessageSquare,
   Send,
+  XCircle,
 } from "lucide-react"
 import { Suspense, useState } from "react"
 
 import { SubmissionsService } from "@/client"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -23,8 +25,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import useCustomToast from "@/hooks/useCustomToast"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Textarea } from "@/components/ui/textarea"
 import useAuth from "@/hooks/useAuth"
+import useCustomToast from "@/hooks/useCustomToast"
 
 function getSubmissionQueryOptions(submissionId: string) {
   return {
@@ -35,7 +39,8 @@ function getSubmissionQueryOptions(submissionId: string) {
 
 function getSubmissionCommentsQueryOptions(submissionId: string) {
   return {
-    queryFn: () => SubmissionsService.listSubmissionComments({ id: submissionId }),
+    queryFn: () =>
+      SubmissionsService.listSubmissionComments({ id: submissionId }),
     queryKey: ["submission-comments", submissionId],
   }
 }
@@ -81,10 +86,10 @@ function StatusBadge({ status }: { status: string }) {
 
 function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
   const { data: submission } = useSuspenseQuery(
-    getSubmissionQueryOptions(submissionId)
+    getSubmissionQueryOptions(submissionId),
   )
   const { data: comments } = useSuspenseQuery(
-    getSubmissionCommentsQueryOptions(submissionId)
+    getSubmissionCommentsQueryOptions(submissionId),
   )
   const { user } = useAuth()
   const { showSuccessToast, showErrorToast } = useCustomToast()
@@ -92,7 +97,8 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
   const [newComment, setNewComment] = useState("")
 
   const approveMutation = useMutation({
-    mutationFn: () => SubmissionsService.approveSubmission({ id: submissionId }),
+    mutationFn: () =>
+      SubmissionsService.approveSubmission({ id: submissionId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["submission", submissionId] })
       queryClient.invalidateQueries({ queryKey: ["submissions"] })
@@ -115,9 +121,14 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
 
   const commentMutation = useMutation({
     mutationFn: (body: string) =>
-      SubmissionsService.createSubmissionComment({ id: submissionId, requestBody: { body } }),
+      SubmissionsService.createSubmissionComment({
+        id: submissionId,
+        requestBody: { body },
+      }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["submission-comments", submissionId] })
+      queryClient.invalidateQueries({
+        queryKey: ["submission-comments", submissionId],
+      })
       setNewComment("")
       showSuccessToast("Your comment has been posted")
     },
@@ -167,7 +178,9 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
             </a>
           </div>
           {submission.description && (
-            <p className="text-muted-foreground mt-4">{submission.description}</p>
+            <p className="text-muted-foreground mt-4">
+              {submission.description}
+            </p>
           )}
           <p className="text-sm text-muted-foreground mt-2">
             Submitted {new Date(submission.created_at).toLocaleDateString()}
@@ -220,7 +233,9 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
               <Textarea
                 placeholder="Share your thoughts about this submission..."
                 value={newComment}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewComment(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setNewComment(e.target.value)
+                }
                 rows={3}
               />
               <Button
@@ -239,9 +254,7 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
                 {comments.data.map((comment) => (
                   <div key={comment.id} className="space-y-1">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span className="font-medium text-foreground">
-                        User
-                      </span>
+                      <span className="font-medium text-foreground">User</span>
                       <span>•</span>
                       <span>
                         {new Date(comment.created_at).toLocaleDateString()}

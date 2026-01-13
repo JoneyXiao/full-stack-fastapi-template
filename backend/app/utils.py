@@ -5,12 +5,15 @@ from pathlib import Path
 from typing import Any
 
 import emails  # type: ignore
+import httpx
 import jwt
 from jinja2 import Template
 from jwt.exceptions import InvalidTokenError
+from sqlmodel import Session, col, or_, select
 
 from app.core import security
 from app.core.config import settings
+from app.models import LandingChatResponse, Resource, ResourcePreview
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -121,3 +124,108 @@ def verify_password_reset_token(token: str) -> str | None:
         return str(decoded_token["sub"])
     except InvalidTokenError:
         return None
+
+
+# ---------------------------------------------------------------------------
+# Landing Chat Recommendation Utilities
+# ---------------------------------------------------------------------------
+
+
+def _search_resources(session: Session, query: str, limit: int = 5) -> list[Resource]:
+    """Search resources by partial match on title and description."""
+    pattern = f"%{query}%"
+    statement = (
+        select(Resource)
+        .where(
+            Resource.is_published == True,  # noqa: E712
+            or_(
+                col(Resource.title).ilike(pattern),
+                col(Resource.description).ilike(pattern),
+            ),
+        )
+        .limit(limit)
+    )
+    return list(session.exec(statement).all())
+
+
+def _call_llm(user_message: str, resources: list[Resource]) -> str:
+    """
+    Call the OpenAI-compatible LLM API to generate a recommendation message.
+    Returns a friendly assistant message grounded in the provided resources.
+    """
+    # Build a grounding context with real resource titles
+    if resources:
+        resource_list = "\n".join(
+            f"- {r.title}: {r.description or 'No description'}" for r in resources
+        )
+        system_prompt = (
+            "You are a helpful assistant for an AI resource hub. "
+            "Recommend resources from the following catalog only. "
+            "If nothing matches, suggest the user try a different search. "
+            "Be friendly and concise.\n\n"
+            f"Available resources:\n{resource_list}"
+        )
+    else:
+        system_prompt = (
+            "You are a helpful assistant for an AI resource hub. "
+            "No resources match the user's request. "
+            "Politely suggest they try different keywords or browse categories. "
+            "Be friendly and concise."
+        )
+
+    payload = {
+        "model": settings.OPENAI_MODEL,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_message},
+        ],
+        "max_tokens": 300,
+        "temperature": 0.7,
+    }
+
+    headers = {
+        "Authorization": f"Bearer {settings.OPENAI_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    with httpx.Client(timeout=30.0) as client:
+        response = client.post(
+            f"{settings.OPENAI_BASE_URL}/chat/completions",
+            json=payload,
+            headers=headers,
+        )
+        response.raise_for_status()
+        data = response.json()
+        return data["choices"][0]["message"]["content"]
+
+
+def get_chat_recommendations(
+    *, session: Session, user_message: str
+) -> LandingChatResponse:
+    """
+    Generate AI-powered resource recommendations based on user message.
+    Grounds recommendations in actual catalog resources.
+    """
+    # Extract keywords from user message (simple: use first few significant words)
+    # For MVP, use the whole message as the search query
+    query = user_message.strip()[:100]
+    resources = _search_resources(session, query, limit=5)
+
+    # Generate assistant message via LLM
+    assistant_message = _call_llm(user_message, resources)
+
+    # Build response with resource previews
+    recommendations = [
+        ResourcePreview(
+            id=r.id,
+            title=r.title,
+            description=r.description,
+            type=r.type,
+        )
+        for r in resources
+    ]
+
+    return LandingChatResponse(
+        assistant_message=assistant_message,
+        recommendations=recommendations,
+    )

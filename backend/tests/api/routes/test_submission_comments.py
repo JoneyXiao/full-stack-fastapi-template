@@ -1,4 +1,5 @@
 """Tests for submission comment endpoints."""
+
 import uuid
 
 from fastapi.testclient import TestClient

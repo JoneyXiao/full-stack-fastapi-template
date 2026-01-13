@@ -68,4 +68,3 @@ Operational policy (MVP):
 
 - Decision: Share is implemented as “Copy link” from the resource detail page.
 - Rationale: Minimal UX that satisfies stable-link sharing without adding platform-dependent share dialogs.
-

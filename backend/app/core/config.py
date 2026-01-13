@@ -94,6 +94,16 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER: EmailStr
     FIRST_SUPERUSER_PASSWORD: str
 
+    # OpenAI-compatible chat provider settings (landing page AI chat)
+    OPENAI_API_KEY: str | None = None
+    OPENAI_BASE_URL: str | None = None
+    OPENAI_MODEL: str | None = None
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def chat_enabled(self) -> bool:
+        return bool(self.OPENAI_API_KEY)
+
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "changethis":
             message = (

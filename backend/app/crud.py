@@ -1,10 +1,29 @@
 import uuid
 from typing import Any
 
-from sqlmodel import Session, select
+from sqlmodel import Session, func, select
 
 from app.core.security import get_password_hash, verify_password
-from app.models import Item, ItemCreate, User, UserCreate, UserUpdate
+from app.models import (
+    ChatTranscriptCreate,
+    Comment,
+    CommentCreate,
+    CommentUpdate,
+    Favorite,
+    Item,
+    ItemCreate,
+    Like,
+    Resource,
+    ResourceCreate,
+    ResourceSubmission,
+    ResourceSubmissionCreate,
+    ResourceSubmissionUpdate,
+    ResourceUpdate,
+    SavedChatTranscript,
+    User,
+    UserCreate,
+    UserUpdate,
+)
 
 
 def create_user(*, session: Session, user_create: UserCreate) -> User:
@@ -58,20 +77,6 @@ def create_item(*, session: Session, item_in: ItemCreate, owner_id: uuid.UUID) -
 # AI Resource Hub CRUD Operations
 # ---------------------------------------------------------------------------
 
-from app.models import (
-    Comment,
-    CommentCreate,
-    CommentUpdate,
-    Favorite,
-    Like,
-    Resource,
-    ResourceCreate,
-    ResourceSubmission,
-    ResourceSubmissionCreate,
-    ResourceSubmissionUpdate,
-    ResourceUpdate,
-)
-
 
 # Resource CRUD
 def create_resource(*, session: Session, resource_in: ResourceCreate) -> Resource:
@@ -114,7 +119,10 @@ def delete_resource(*, session: Session, db_resource: Resource) -> None:
 
 # Submission CRUD
 def create_submission(
-    *, session: Session, submission_in: ResourceSubmissionCreate, submitter_id: uuid.UUID
+    *,
+    session: Session,
+    submission_in: ResourceSubmissionCreate,
+    submitter_id: uuid.UUID,
 ) -> ResourceSubmission:
     """Create a new resource submission."""
     db_submission = ResourceSubmission(
@@ -324,3 +332,73 @@ def is_favorited_by_user(
         )
     ).first()
     return existing is not None
+
+
+# ---------------------------------------------------------------------------
+# Saved Chat Transcript CRUD Operations
+# ---------------------------------------------------------------------------
+
+
+def create_chat_transcript(
+    *, session: Session, transcript_in: ChatTranscriptCreate, user_id: uuid.UUID
+) -> SavedChatTranscript:
+    """Create a new saved chat transcript for a user."""
+    messages_data = [msg.model_dump() for msg in transcript_in.messages]
+    db_transcript = SavedChatTranscript(
+        user_id=user_id,
+        title=transcript_in.title,
+        messages=messages_data,
+    )
+    session.add(db_transcript)
+    session.commit()
+    session.refresh(db_transcript)
+    return db_transcript
+
+
+def get_chat_transcript(
+    *, session: Session, transcript_id: uuid.UUID
+) -> SavedChatTranscript | None:
+    """Get a chat transcript by ID."""
+    return session.get(SavedChatTranscript, transcript_id)
+
+
+def get_chat_transcript_by_user(
+    *, session: Session, transcript_id: uuid.UUID, user_id: uuid.UUID
+) -> SavedChatTranscript | None:
+    """Get a chat transcript by ID, only if owned by the given user."""
+    statement = select(SavedChatTranscript).where(
+        SavedChatTranscript.id == transcript_id,
+        SavedChatTranscript.user_id == user_id,
+    )
+    return session.exec(statement).first()
+
+
+def list_chat_transcripts(
+    *, session: Session, user_id: uuid.UUID, skip: int = 0, limit: int = 50
+) -> tuple[list[SavedChatTranscript], int]:
+    """List chat transcripts owned by a user with pagination."""
+    # Count total
+    count = session.exec(
+        select(func.count())
+        .select_from(SavedChatTranscript)
+        .where(SavedChatTranscript.user_id == user_id)
+    ).one()
+
+    # Fetch paginated
+    statement = (
+        select(SavedChatTranscript)
+        .where(SavedChatTranscript.user_id == user_id)
+        .order_by(SavedChatTranscript.updated_at.desc())
+        .offset(skip)
+        .limit(limit)
+    )
+    transcripts = list(session.exec(statement).all())
+    return transcripts, count
+
+
+def delete_chat_transcript(
+    *, session: Session, db_transcript: SavedChatTranscript
+) -> None:
+    """Delete a chat transcript (hard delete)."""
+    session.delete(db_transcript)
+    session.commit()

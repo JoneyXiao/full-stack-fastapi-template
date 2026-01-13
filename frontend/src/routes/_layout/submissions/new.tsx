@@ -1,13 +1,18 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useMutation } from "@tanstack/react-query"
-import { useState } from "react"
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import { ArrowLeft } from "lucide-react"
-import { Link } from "@tanstack/react-router"
+import { useState } from "react"
 
 import { SubmissionsService } from "@/client"
 import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import {
   Select,
@@ -16,13 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Textarea } from "@/components/ui/textarea"
 import useCustomToast from "@/hooks/useCustomToast"
 
 export const Route = createFileRoute("/_layout/submissions/new")({
@@ -88,9 +87,7 @@ function NewSubmissionPage() {
   }
 
   const isValid =
-    formData.title.trim() &&
-    formData.destination_url.trim() &&
-    formData.type
+    formData.title.trim() && formData.destination_url.trim() && formData.type
 
   return (
     <div className="flex flex-col gap-6 max-w-2xl mx-auto">

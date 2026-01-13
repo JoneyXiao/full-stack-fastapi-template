@@ -14,10 +14,11 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutRouteImport } from './routes/_layout'
-import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
 import { Route as LayoutFavoritesRouteImport } from './routes/_layout/favorites'
+import { Route as LayoutDashboardRouteImport } from './routes/_layout/dashboard'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
 import { Route as LayoutSubmissionsIndexRouteImport } from './routes/_layout/submissions/index'
 import { Route as LayoutResourcesIndexRouteImport } from './routes/_layout/resources/index'
@@ -49,10 +50,10 @@ const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LayoutIndexRoute = LayoutIndexRouteImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   id: '/settings',
@@ -67,6 +68,11 @@ const LayoutItemsRoute = LayoutItemsRouteImport.update({
 const LayoutFavoritesRoute = LayoutFavoritesRouteImport.update({
   id: '/favorites',
   path: '/favorites',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutDashboardRoute = LayoutDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutAdminRoute = LayoutAdminRouteImport.update({
@@ -103,15 +109,16 @@ const LayoutResourcesResourceIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
+  '/dashboard': typeof LayoutDashboardRoute
   '/favorites': typeof LayoutFavoritesRoute
   '/items': typeof LayoutItemsRoute
   '/settings': typeof LayoutSettingsRoute
-  '/': typeof LayoutIndexRoute
   '/resources/$resourceId': typeof LayoutResourcesResourceIdRoute
   '/submissions/$submissionId': typeof LayoutSubmissionsSubmissionIdRoute
   '/submissions/new': typeof LayoutSubmissionsNewRoute
@@ -119,15 +126,16 @@ export interface FileRoutesByFullPath {
   '/submissions': typeof LayoutSubmissionsIndexRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
+  '/dashboard': typeof LayoutDashboardRoute
   '/favorites': typeof LayoutFavoritesRoute
   '/items': typeof LayoutItemsRoute
   '/settings': typeof LayoutSettingsRoute
-  '/': typeof LayoutIndexRoute
   '/resources/$resourceId': typeof LayoutResourcesResourceIdRoute
   '/submissions/$submissionId': typeof LayoutSubmissionsSubmissionIdRoute
   '/submissions/new': typeof LayoutSubmissionsNewRoute
@@ -136,16 +144,17 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/_layout': typeof LayoutRouteWithChildren
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
+  '/_layout/dashboard': typeof LayoutDashboardRoute
   '/_layout/favorites': typeof LayoutFavoritesRoute
   '/_layout/items': typeof LayoutItemsRoute
   '/_layout/settings': typeof LayoutSettingsRoute
-  '/_layout/': typeof LayoutIndexRoute
   '/_layout/resources/$resourceId': typeof LayoutResourcesResourceIdRoute
   '/_layout/submissions/$submissionId': typeof LayoutSubmissionsSubmissionIdRoute
   '/_layout/submissions/new': typeof LayoutSubmissionsNewRoute
@@ -155,15 +164,16 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/login'
     | '/recover-password'
     | '/reset-password'
     | '/signup'
     | '/admin'
+    | '/dashboard'
     | '/favorites'
     | '/items'
     | '/settings'
-    | '/'
     | '/resources/$resourceId'
     | '/submissions/$submissionId'
     | '/submissions/new'
@@ -171,15 +181,16 @@ export interface FileRouteTypes {
     | '/submissions'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/login'
     | '/recover-password'
     | '/reset-password'
     | '/signup'
     | '/admin'
+    | '/dashboard'
     | '/favorites'
     | '/items'
     | '/settings'
-    | '/'
     | '/resources/$resourceId'
     | '/submissions/$submissionId'
     | '/submissions/new'
@@ -187,16 +198,17 @@ export interface FileRouteTypes {
     | '/submissions'
   id:
     | '__root__'
+    | '/'
     | '/_layout'
     | '/login'
     | '/recover-password'
     | '/reset-password'
     | '/signup'
     | '/_layout/admin'
+    | '/_layout/dashboard'
     | '/_layout/favorites'
     | '/_layout/items'
     | '/_layout/settings'
-    | '/_layout/'
     | '/_layout/resources/$resourceId'
     | '/_layout/submissions/$submissionId'
     | '/_layout/submissions/new'
@@ -205,6 +217,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   LayoutRoute: typeof LayoutRouteWithChildren
   LoginRoute: typeof LoginRoute
   RecoverPasswordRoute: typeof RecoverPasswordRoute
@@ -249,12 +262,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_layout/': {
-      id: '/_layout/'
+    '/': {
+      id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof LayoutIndexRouteImport
-      parentRoute: typeof LayoutRoute
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_layout/settings': {
       id: '/_layout/settings'
@@ -275,6 +288,13 @@ declare module '@tanstack/react-router' {
       path: '/favorites'
       fullPath: '/favorites'
       preLoaderRoute: typeof LayoutFavoritesRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/dashboard': {
+      id: '/_layout/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof LayoutDashboardRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/admin': {
@@ -324,10 +344,10 @@ declare module '@tanstack/react-router' {
 
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
+  LayoutDashboardRoute: typeof LayoutDashboardRoute
   LayoutFavoritesRoute: typeof LayoutFavoritesRoute
   LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
-  LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutResourcesResourceIdRoute: typeof LayoutResourcesResourceIdRoute
   LayoutSubmissionsSubmissionIdRoute: typeof LayoutSubmissionsSubmissionIdRoute
   LayoutSubmissionsNewRoute: typeof LayoutSubmissionsNewRoute
@@ -337,10 +357,10 @@ interface LayoutRouteChildren {
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
+  LayoutDashboardRoute: LayoutDashboardRoute,
   LayoutFavoritesRoute: LayoutFavoritesRoute,
   LayoutItemsRoute: LayoutItemsRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
-  LayoutIndexRoute: LayoutIndexRoute,
   LayoutResourcesResourceIdRoute: LayoutResourcesResourceIdRoute,
   LayoutSubmissionsSubmissionIdRoute: LayoutSubmissionsSubmissionIdRoute,
   LayoutSubmissionsNewRoute: LayoutSubmissionsNewRoute,
@@ -352,6 +372,7 @@ const LayoutRouteWithChildren =
   LayoutRoute._addFileChildren(LayoutRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   LayoutRoute: LayoutRouteWithChildren,
   LoginRoute: LoginRoute,
   RecoverPasswordRoute: RecoverPasswordRoute,

@@ -4,9 +4,8 @@ import { Bookmark, ExternalLink } from "lucide-react"
 import { Suspense } from "react"
 
 import { ResourcesService } from "@/client"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -15,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 
 function getFavoritesQueryOptions() {
   return {

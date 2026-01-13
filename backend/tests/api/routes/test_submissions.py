@@ -1,4 +1,5 @@
 """Tests for submission API routes."""
+
 import uuid
 
 from fastapi.testclient import TestClient
@@ -63,11 +64,9 @@ def test_create_submission_duplicate_resource_url(
 
 
 def test_list_pending_submissions(
-    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
+    client: TestClient, normal_user_token_headers: dict[str, str]
 ) -> None:
     """Test listing pending submissions (auth required)."""
-    user = create_random_user(db)
-    submission = create_random_submission(db, submitter=user, status="pending")
 
     response = client.get(
         f"{settings.API_V1_STR}/submissions/",
@@ -88,7 +87,7 @@ def test_list_submissions_requires_auth(client: TestClient) -> None:
 
 
 def test_get_submission_by_owner(
-    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
+    client: TestClient, normal_user_token_headers: dict[str, str]
 ) -> None:
     """Test getting own submission."""
     # Create submission as the logged-in user
@@ -156,7 +155,7 @@ def test_update_pending_submission(
 
 
 def test_cannot_update_approved_submission(
-    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
+    client: TestClient, normal_user_token_headers: dict[str, str]
 ) -> None:
     """Test that approved submissions cannot be updated."""
     # Create and manually approve a submission
@@ -173,9 +172,11 @@ def test_cannot_update_approved_submission(
     submission_id = response.json()["id"]
 
     # Manually update status in DB to approved
-    from app.models import ResourceSubmission
-    from app.core.db import engine
     from sqlmodel import Session as SQLSession
+
+    from app.core.db import engine
+    from app.models import ResourceSubmission
+
     with SQLSession(engine) as session:
         submission = session.get(ResourceSubmission, uuid.UUID(submission_id))
         if submission:

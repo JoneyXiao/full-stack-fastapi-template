@@ -17,9 +17,10 @@ export const Route = createFileRoute("/_layout")({
   beforeLoad: async ({ location }) => {
     // Check if current route or its parent is a public route
     const isPublicRoute = publicRoutes.some(
-      route => location.pathname === route || location.pathname.startsWith(route)
+      (route) =>
+        location.pathname === route || location.pathname.startsWith(route),
     )
-    
+
     if (!isPublicRoute && !isLoggedIn()) {
       throw redirect({
         to: "/login",

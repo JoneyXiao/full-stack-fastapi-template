@@ -9,6 +9,42 @@ export type Body_login_login_access_token = {
     client_secret?: (string | null);
 };
 
+/**
+ * Schema for a single chat message in a transcript.
+ */
+export type ChatMessageSchema = {
+    role: string;
+    content: string;
+    created_at?: (string | null);
+};
+
+/**
+ * Request body for saving a chat transcript.
+ */
+export type ChatTranscriptCreate = {
+    title?: (string | null);
+    messages: Array<ChatMessageSchema>;
+};
+
+/**
+ * Response schema for a saved chat transcript.
+ */
+export type ChatTranscriptPublic = {
+    id: string;
+    title: (string | null);
+    messages: Array<ChatMessageSchema>;
+    created_at: string;
+    updated_at: string;
+};
+
+/**
+ * Paginated list of saved chat transcripts.
+ */
+export type ChatTranscriptsPublic = {
+    data: Array<ChatTranscriptPublic>;
+    count: number;
+};
+
 export type CommentCreate = {
     body: string;
 };
@@ -57,6 +93,21 @@ export type ItemUpdate = {
     description?: (string | null);
 };
 
+/**
+ * Request body for landing chat recommendations.
+ */
+export type LandingChatRequest = {
+    message: string;
+};
+
+/**
+ * Response from landing chat recommendations endpoint.
+ */
+export type LandingChatResponse = {
+    assistant_message: string;
+    recommendations: Array<ResourcePreview>;
+};
+
 export type Message = {
     message: string;
 };
@@ -82,6 +133,16 @@ export type ResourceCreate = {
     title: string;
     description?: (string | null);
     destination_url: string;
+    type: string;
+};
+
+/**
+ * Compact resource summary for chat recommendations.
+ */
+export type ResourcePreview = {
+    id: string;
+    title: string;
+    description: (string | null);
     type: string;
 };
 
@@ -210,6 +271,31 @@ export type ValidationError = {
     type: string;
 };
 
+export type ChatTranscriptsListMyTranscriptsData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type ChatTranscriptsListMyTranscriptsResponse = (ChatTranscriptsPublic);
+
+export type ChatTranscriptsSaveTranscriptData = {
+    requestBody: ChatTranscriptCreate;
+};
+
+export type ChatTranscriptsSaveTranscriptResponse = (ChatTranscriptPublic);
+
+export type ChatTranscriptsGetMyTranscriptData = {
+    id: string;
+};
+
+export type ChatTranscriptsGetMyTranscriptResponse = (ChatTranscriptPublic);
+
+export type ChatTranscriptsDeleteMyTranscriptData = {
+    id: string;
+};
+
+export type ChatTranscriptsDeleteMyTranscriptResponse = (Message);
+
 export type CommentsUpdateCommentData = {
     id: string;
     requestBody: CommentUpdate;
@@ -267,6 +353,12 @@ export type ItemsDeleteItemData = {
 };
 
 export type ItemsDeleteItemResponse = (Message);
+
+export type LandingChatRecommendResourcesData = {
+    requestBody: LandingChatRequest;
+};
+
+export type LandingChatRecommendResourcesResponse = (LandingChatResponse);
 
 export type LoginLoginAccessTokenData = {
     formData: Body_login_login_access_token;

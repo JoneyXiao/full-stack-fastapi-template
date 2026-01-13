@@ -1,8 +1,8 @@
 # Feature Specification: AI Resource Hub
 
-**Feature Branch**: `001-ai-resource-hub`  
-**Created**: 2026-01-03  
-**Status**: Draft  
+**Feature Branch**: `001-ai-resource-hub`
+**Created**: 2026-01-03
+**Status**: Draft
 **Input**: User description: "Modern AI navigation site for AI resources: admins manage resources; users browse/like/favorite/share/comment; users submit resources for admin review; everyone can comment on submissions before approval."
 
 ## Clarifications
@@ -20,7 +20,7 @@
   IMPORTANT: User stories should be PRIORITIZED as user journeys ordered by importance.
   Each user story/journey must be INDEPENDENTLY TESTABLE - meaning if you implement just ONE of them,
   you should still have a viable MVP (Minimum Viable Product) that delivers value.
-  
+
   Assign priorities (P1, P2, P3, etc.) to each story, where P1 is the most critical.
   Think of each story as a standalone slice of functionality that can be:
   - Developed independently
@@ -136,6 +136,11 @@ Registered users can submit AI-related resources for administrator review. Submi
 - **FR-034**: For any action that requires authentication (like/favorite/comment, favorites, submissions), the UI MUST clearly prompt the user to sign in when they are not authenticated.
 - **FR-035**: For any authorization-restricted page, unauthenticated users MUST be redirected to sign in.
 - **FR-036**: When an operation fails (e.g., create/update/delete, approve/reject, comment actions), the system MUST show an actionable, user-readable error message.
+- **FR-037**: The landing page MUST use a professional, high-fidelity visual design system including standardized iconography (e.g., Lucide) and modern UI effects (glassmorphism, gradient text) to ensure a premium user experience.
+- **FR-038**: Key content sections (e.g., features, resource categories) MUST be structured to be data-driven, allowing for content updates via data configuration rather than JSX modification.
+- **FR-039**: The system MUST separate public-facing landing routes from internal application routes (`/dashboard`) at the architectural level to ensure clear security and layout boundaries.
+- **FR-040**: The system MUST implement a robust redirect management layer that ensures all authentication flows (Login, Signup, Recover Password) land the user on the intended dashboard route.
+- **FR-041**: The UI MUST provide dynamic CTA (Call to Action) behaviors: anonymous users see prompts to register/search, while authenticated users are directed straight to their dashboard or saved resources.
 
 #### Query Expectations (Administrator)
 
@@ -171,21 +176,22 @@ This section captures implementation learnings and experience takeaways from del
 
 ### What Worked Well
 
-- Clarifications early prevented rework: resolving visibility and permissions questions up front made the user stories easier to validate end-to-end.
-- Independent acceptance scenarios reduced ambiguity: each story had a clear “demo path” that kept progress reviewable.
-- A single validation script helped alignment: keeping quickstart-style checks current reduced drift between expected behavior and actual behavior.
+- **Clarifications early prevented rework**: Resolving visibility and permissions questions up-front made the user stories easier to validate end-to-end.
+- **Independent acceptance scenarios reduced ambiguity**: Each story had a clear “demo path” that kept progress reviewable.
+- **Design Elevation**: Moving from informal placeholders (emojis) to professional iconography (Lucide) and high-fidelity UI patterns like glassmorphism significantly improved the felt quality of the hub.
+- **Data-Driven UI Components**: Refactoring repetitive sections (Hero features, Featured Topics) into data-mapped structures made the code more maintainable and easier to iterate on without touching JSX logic.
 
 ### Pain Points Observed
 
-- Cross-cutting steps are easy to miss: when changes span multiple layers, “regeneration/refresh” steps can be forgotten and surface later as confusing build-time failures.
-- Navigation/layout is part of the UX contract: adding a new top-level area without consistent global navigation creates a fragmented feel even when the feature works.
-- Environment readiness affects momentum: migrations and integration validation can be blocked by local environment state, which feels like “random” failure if not made explicit.
+- **Route Collision Sensitivity**: Sharing the root path (`/`) between a landing page and an authenticated dashboard requires careful layout naming (e.g., separating `index.tsx` from `dashboard.tsx`) to avoid route suppression.
+- **Component Stubbing Dangers**: During major refactors or routing shifts, it's easy for functional code to be accidentally replaced by "Hello World" stubs if regression checks aren't performed immediately.
+- **Cross-cutting Auth Redirects**: Changing the dashboard route requires updating not just the router, but every authentication callback (Login, Signup, `useAuth`) to ensure a cohesive user journey.
 
 ### Improvements To Carry Forward
 
-- Add a recurring checkpoint at the end of each story: re-run the minimal validation flow while context is fresh.
-- Treat global navigation as a feature requirement: every new area should be reachable via consistent navigation appropriate to its visibility (public vs authenticated).
-- Prefer small, reviewable increments: pushing changes in independently testable slices makes debugging and review dramatically cheaper.
+- **Treat Navigation as the UX Spine**: Always ensure global navigation and landing page CTAs are synced with the latest routing structure to prevent user "dead-ends."
+- **Small, Reviewable Iterations**: Breaking down large UI overhauls into "logic fixes" followed by "aesthetic polishing" (Pro Max style) and finally "code simplification" keeps the process manageable.
+- **Verify Public-to-Private Transitions**: Always test the "first-time landing" to "logged-in dashboard" flow thoroughly after routing changes.
 
 ## Success Criteria *(mandatory)*
 
@@ -196,3 +202,5 @@ This section captures implementation learnings and experience takeaways from del
 - **SC-003**: At least 95% of valid submission attempts result in a created pending submission without manual intervention.
 - **SC-004**: 90% of registered users can successfully like and favorite a resource on their first attempt (measured in usability testing).
 - **SC-005**: For 95% of catalog views, results are displayed within 2 seconds under expected usage.
+- **SC-006**: The landing page maintains 100% visual consistency with the professional design system (glassmorphism, Lucide icons) across all responsive breakpoints.
+- **SC-007**: 100% of authentication transitions (Landing -> Login/Signup -> Dashboard) correctly resolve to the intended internal route without redirection failures.

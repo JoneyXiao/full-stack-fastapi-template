@@ -1,4 +1,5 @@
 """Test factories for Comment model."""
+
 import uuid
 
 from sqlmodel import Session
