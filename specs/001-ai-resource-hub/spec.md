@@ -131,6 +131,11 @@ Registered users can submit AI-related resources for administrator review. Submi
 - **FR-029**: System MUST enforce permissions so non-admin users cannot create/update/delete published resources directly.
 - **FR-030**: System MUST prevent accidental publication of unreviewed submissions (pending/rejected submissions must not appear as published resources).
 - **FR-031**: System MUST prevent multiple resources from having the exact same destination link.
+- **FR-032**: The Resources area MUST be reachable via consistent global navigation so users can discover it from anywhere in the app.
+- **FR-033**: The Resources area MUST present consistent global navigation for both unauthenticated visitors and signed-in users.
+- **FR-034**: For any action that requires authentication (like/favorite/comment, favorites, submissions), the UI MUST clearly prompt the user to sign in when they are not authenticated.
+- **FR-035**: For any authorization-restricted page, unauthenticated users MUST be redirected to sign in.
+- **FR-036**: When an operation fails (e.g., create/update/delete, approve/reject, comment actions), the system MUST show an actionable, user-readable error message.
 
 #### Query Expectations (Administrator)
 
@@ -159,6 +164,28 @@ Administrators MUST be able to query resources at minimum by:
 - **Like**: A single-user reaction expressing approval of a Resource.
 - **Favorite**: A per-user saved marker for a Resource.
 - **User**: An account with role (Administrator or Registered User).
+
+## Learnings & Experience
+
+This section captures implementation learnings and experience takeaways from delivering this feature. It focuses on process, coordination points, and UX consistency rather than low-level technical details.
+
+### What Worked Well
+
+- Clarifications early prevented rework: resolving visibility and permissions questions up front made the user stories easier to validate end-to-end.
+- Independent acceptance scenarios reduced ambiguity: each story had a clear “demo path” that kept progress reviewable.
+- A single validation script helped alignment: keeping quickstart-style checks current reduced drift between expected behavior and actual behavior.
+
+### Pain Points Observed
+
+- Cross-cutting steps are easy to miss: when changes span multiple layers, “regeneration/refresh” steps can be forgotten and surface later as confusing build-time failures.
+- Navigation/layout is part of the UX contract: adding a new top-level area without consistent global navigation creates a fragmented feel even when the feature works.
+- Environment readiness affects momentum: migrations and integration validation can be blocked by local environment state, which feels like “random” failure if not made explicit.
+
+### Improvements To Carry Forward
+
+- Add a recurring checkpoint at the end of each story: re-run the minimal validation flow while context is fresh.
+- Treat global navigation as a feature requirement: every new area should be reachable via consistent navigation appropriate to its visibility (public vs authenticated).
+- Prefer small, reviewable increments: pushing changes in independently testable slices makes debugging and review dramatically cheaper.
 
 ## Success Criteria *(mandatory)*
 
