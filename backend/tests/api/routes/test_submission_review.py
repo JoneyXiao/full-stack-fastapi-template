@@ -1,4 +1,5 @@
 """Tests for submission review endpoints (admin approve/reject)."""
+
 import uuid
 
 from fastapi.testclient import TestClient

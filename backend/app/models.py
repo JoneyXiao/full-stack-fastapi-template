@@ -202,7 +202,9 @@ class ResourceSubmission(ResourceSubmissionBase, table=True):
     __tablename__ = "resourcesubmission"
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    status: str = Field(default="pending", max_length=20, index=True)  # pending, approved, rejected
+    status: str = Field(
+        default="pending", max_length=20, index=True
+    )  # pending, approved, rejected
     submitter_id: uuid.UUID = Field(
         foreign_key="user.id", nullable=False, ondelete="CASCADE"
     )
@@ -336,3 +338,88 @@ class SubmissionCommentPublic(SQLModel):
 class SubmissionCommentsPublic(SQLModel):
     data: list[SubmissionCommentPublic]
     count: int
+
+
+# ---------------------------------------------------------------------------
+# Saved Chat Transcript Models (Landing Page AI Chat)
+# ---------------------------------------------------------------------------
+
+
+from sqlalchemy import JSON, Column  # noqa: E402
+
+
+class ChatMessageSchema(SQLModel):
+    """Schema for a single chat message in a transcript."""
+
+    role: str = Field(max_length=20)  # "user" or "assistant"
+    content: str = Field(min_length=1, max_length=4000)
+    created_at: datetime | None = None
+
+
+class ChatTranscriptCreate(SQLModel):
+    """Request body for saving a chat transcript."""
+
+    title: str | None = Field(default=None, max_length=120)
+    messages: list[ChatMessageSchema] = Field(min_length=1)
+
+
+class SavedChatTranscript(SQLModel, table=True):
+    """User-owned saved copy of a chat session."""
+
+    __tablename__ = "savedchattranscript"
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(
+        foreign_key="user.id", nullable=False, ondelete="CASCADE", index=True
+    )
+    title: str | None = Field(default=None, max_length=120)
+    # Store messages as JSON array in PostgreSQL
+    messages: list = Field(default_factory=list, sa_column=Column(JSON, nullable=False))
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    user: User | None = Relationship()
+
+
+class ChatTranscriptPublic(SQLModel):
+    """Response schema for a saved chat transcript."""
+
+    id: uuid.UUID
+    title: str | None
+    messages: list[ChatMessageSchema]
+    created_at: datetime
+    updated_at: datetime
+
+
+class ChatTranscriptsPublic(SQLModel):
+    """Paginated list of saved chat transcripts."""
+
+    data: list[ChatTranscriptPublic]
+    count: int
+
+
+# ---------------------------------------------------------------------------
+# Landing Chat Request/Response Schemas
+# ---------------------------------------------------------------------------
+
+
+class LandingChatRequest(SQLModel):
+    """Request body for landing chat recommendations."""
+
+    message: str = Field(min_length=1, max_length=4000)
+
+
+class ResourcePreview(SQLModel):
+    """Compact resource summary for chat recommendations."""
+
+    id: uuid.UUID
+    title: str
+    description: str | None
+    type: str
+
+
+class LandingChatResponse(SQLModel):
+    """Response from landing chat recommendations endpoint."""
+
+    assistant_message: str
+    recommendations: list[ResourcePreview]

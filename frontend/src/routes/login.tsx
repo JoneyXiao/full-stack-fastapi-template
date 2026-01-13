@@ -37,7 +37,7 @@ export const Route = createFileRoute("/login")({
   beforeLoad: async () => {
     if (isLoggedIn()) {
       throw redirect({
-        to: "/",
+        to: "/dashboard",
       })
     }
   },
@@ -66,7 +66,6 @@ function Login() {
     if (loginMutation.isPending) return
     loginMutation.mutate(data)
   }
-
 
   return (
     <AuthLayout>

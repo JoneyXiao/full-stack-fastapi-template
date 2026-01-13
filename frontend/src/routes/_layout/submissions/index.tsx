@@ -1,12 +1,11 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { Search, Plus, Clock, CheckCircle, XCircle } from "lucide-react"
+import { CheckCircle, Clock, Plus, Search, XCircle } from "lucide-react"
 import { Suspense } from "react"
 
 import { SubmissionsService } from "@/client"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -15,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 
 function getPendingSubmissionsQueryOptions() {
   return {
@@ -65,7 +65,7 @@ function StatusBadge({ status }: { status: string }) {
 
 function SubmissionsListContent() {
   const { data: submissions } = useSuspenseQuery(
-    getPendingSubmissionsQueryOptions()
+    getPendingSubmissionsQueryOptions(),
   )
 
   if (submissions.data.length === 0) {

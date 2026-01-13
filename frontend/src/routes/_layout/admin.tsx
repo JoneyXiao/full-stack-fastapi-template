@@ -1,18 +1,24 @@
-import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { CheckCircle, Clock, ExternalLink, XCircle } from "lucide-react"
 import { Suspense, useState } from "react"
-import { CheckCircle, XCircle, ExternalLink, Clock } from "lucide-react"
 
-import { type UserPublic, UsersService, ResourcesService, SubmissionsService } from "@/client"
+import {
+  ResourcesService,
+  SubmissionsService,
+  type UserPublic,
+  UsersService,
+} from "@/client"
 import AddUser from "@/components/Admin/AddUser"
 import { columns, type UserTableData } from "@/components/Admin/columns"
 import { DataTable } from "@/components/Common/DataTable"
 import PendingUsers from "@/components/Pending/PendingUsers"
-import useAuth from "@/hooks/useAuth"
-import useCustomToast from "@/hooks/useCustomToast"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -21,12 +27,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import useAuth from "@/hooks/useAuth"
+import useCustomToast from "@/hooks/useCustomToast"
 
 function getUsersQueryOptions() {
   return {
@@ -44,7 +48,12 @@ function getResourcesQueryOptions() {
 
 function getPendingSubmissionsQueryOptions() {
   return {
-    queryFn: () => SubmissionsService.listPendingSubmissions({ skip: 0, limit: 100, status: "pending" }),
+    queryFn: () =>
+      SubmissionsService.listPendingSubmissions({
+        skip: 0,
+        limit: 100,
+        status: "pending",
+      }),
     queryKey: ["admin-submissions", "pending"],
   }
 }
@@ -155,7 +164,9 @@ function ResourcesList() {
 }
 
 function SubmissionsListContent() {
-  const { data: submissions } = useSuspenseQuery(getPendingSubmissionsQueryOptions())
+  const { data: submissions } = useSuspenseQuery(
+    getPendingSubmissionsQueryOptions(),
+  )
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
 

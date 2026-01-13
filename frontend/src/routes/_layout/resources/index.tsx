@@ -1,11 +1,10 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
-import { Search, ExternalLink } from "lucide-react"
+import { createFileRoute, Link } from "@tanstack/react-router"
+import { ExternalLink, Search } from "lucide-react"
 import { Suspense, useState } from "react"
-import { Link } from "@tanstack/react-router"
 
 import { ResourcesService } from "@/client"
-import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -15,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function getResourcesQueryOptions(q?: string, type?: string) {
@@ -38,7 +37,9 @@ export const Route = createFileRoute("/_layout/resources/")({
 })
 
 function ResourcesListContent({ q, type }: { q?: string; type?: string }) {
-  const { data: resources } = useSuspenseQuery(getResourcesQueryOptions(q, type))
+  const { data: resources } = useSuspenseQuery(
+    getResourcesQueryOptions(q, type),
+  )
 
   if (resources.data.length === 0) {
     return (
@@ -48,7 +49,9 @@ function ResourcesListContent({ q, type }: { q?: string; type?: string }) {
         </div>
         <h3 className="text-lg font-semibold">No resources found</h3>
         <p className="text-muted-foreground">
-          {q ? `No results for "${q}"` : "Check back later for new AI resources"}
+          {q
+            ? `No results for "${q}"`
+            : "Check back later for new AI resources"}
         </p>
       </div>
     )

@@ -1,21 +1,23 @@
-import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import {
   ArrowLeft,
+  Bookmark,
   ExternalLink,
   Heart,
-  Bookmark,
-  Share2,
   MessageSquare,
   Send,
+  Share2,
 } from "lucide-react"
 import { Suspense, useState } from "react"
 
 import { ResourcesService } from "@/client"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -23,9 +25,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Textarea } from "@/components/ui/textarea"
+import useAuth from "@/hooks/useAuth"
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard"
 import useCustomToast from "@/hooks/useCustomToast"
-import useAuth from "@/hooks/useAuth"
 
 function getResourceQueryOptions(resourceId: string) {
   return {
@@ -53,8 +57,12 @@ export const Route = createFileRoute("/_layout/resources/$resourceId")({
 })
 
 function ResourceDetailContent({ resourceId }: { resourceId: string }) {
-  const { data: resource } = useSuspenseQuery(getResourceQueryOptions(resourceId))
-  const { data: comments } = useSuspenseQuery(getCommentsQueryOptions(resourceId))
+  const { data: resource } = useSuspenseQuery(
+    getResourceQueryOptions(resourceId),
+  )
+  const { data: comments } = useSuspenseQuery(
+    getCommentsQueryOptions(resourceId),
+  )
   const { user } = useAuth()
   const [, copyToClipboard] = useCopyToClipboard()
   const { showSuccessToast } = useCustomToast()
@@ -79,9 +87,14 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
 
   const commentMutation = useMutation({
     mutationFn: (body: string) =>
-      ResourcesService.createResourceComment({ id: resourceId, requestBody: { body } }),
+      ResourcesService.createResourceComment({
+        id: resourceId,
+        requestBody: { body },
+      }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resource-comments", resourceId] })
+      queryClient.invalidateQueries({
+        queryKey: ["resource-comments", resourceId],
+      })
       setNewComment("")
       showSuccessToast("Your comment has been posted")
     },
@@ -101,7 +114,10 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
-      <Link to="/resources" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-6">
+      <Link
+        to="/resources"
+        className="inline-flex items-center text-muted-foreground hover:text-foreground mb-6"
+      >
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back to Resources
       </Link>
@@ -111,8 +127,12 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
         <div>
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">{resource.title}</h1>
-              <Badge variant="secondary" className="mt-2">{resource.type}</Badge>
+              <h1 className="text-3xl font-bold tracking-tight">
+                {resource.title}
+              </h1>
+              <Badge variant="secondary" className="mt-2">
+                {resource.type}
+              </Badge>
             </div>
             <a
               href={resource.destination_url}
@@ -167,7 +187,9 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
               <MessageSquare className="h-5 w-5" />
               Comments ({comments.count})
             </CardTitle>
-            <CardDescription>Join the discussion about this resource</CardDescription>
+            <CardDescription>
+              Join the discussion about this resource
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Add Comment Form */}
@@ -176,7 +198,9 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                 <Textarea
                   placeholder="Write a comment..."
                   value={newComment}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewComment(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setNewComment(e.target.value)
+                  }
                   rows={3}
                 />
                 <Button
@@ -203,9 +227,7 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                 {comments.data.map((comment) => (
                   <div key={comment.id} className="space-y-1">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span className="font-medium text-foreground">
-                        User
-                      </span>
+                      <span className="font-medium text-foreground">User</span>
                       <span>•</span>
                       <span>
                         {new Date(comment.created_at).toLocaleDateString()}

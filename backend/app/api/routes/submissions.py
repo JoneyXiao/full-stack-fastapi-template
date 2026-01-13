@@ -57,7 +57,9 @@ def list_my_submissions(
 
 @router.post("/", response_model=ResourceSubmissionPublic)
 def create_submission(
-    session: SessionDep, current_user: CurrentUser, submission_in: ResourceSubmissionCreate
+    session: SessionDep,
+    current_user: CurrentUser,
+    submission_in: ResourceSubmissionCreate,
 ) -> Any:
     """
     Create a new resource submission.
@@ -65,7 +67,9 @@ def create_submission(
     """
     # Check for existing Resource with same URL
     existing_resource = session.exec(
-        select(Resource).where(Resource.destination_url == submission_in.destination_url)
+        select(Resource).where(
+            Resource.destination_url == submission_in.destination_url
+        )
     ).first()
     if existing_resource:
         raise HTTPException(
@@ -222,8 +226,8 @@ def list_pending_submissions(
     count_query = select(func.count()).select_from(query.subquery())
     count = session.exec(count_query).one()
 
-    query = query.offset(skip).limit(limit).order_by(
-        ResourceSubmission.created_at.desc()
+    query = (
+        query.offset(skip).limit(limit).order_by(ResourceSubmission.created_at.desc())
     )
     submissions = session.exec(query).all()
 
@@ -314,7 +318,6 @@ def reject_submission(
 @router.get("/{id}/comments", response_model=SubmissionCommentsPublic)
 def list_submission_comments(
     session: SessionDep,
-    current_user: CurrentUser,
     id: uuid.UUID,
     skip: int = 0,
     limit: int = 50,

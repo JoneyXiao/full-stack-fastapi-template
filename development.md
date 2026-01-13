@@ -132,6 +132,40 @@ Depending on your workflow, you could want to exclude it from Git, for example i
 
 One way to do it could be to add each environment variable to your CI/CD system, and updating the `docker-compose.yml` file to read that specific env var instead of reading the `.env` file.
 
+## AI Chat Provider Configuration
+
+The landing page includes an AI-powered chat assistant that provides resource recommendations. This feature requires an OpenAI-compatible API provider.
+
+### Environment Variables
+
+Add these to your `.env` file to enable chat recommendations:
+
+```dotenv
+# Required for chat feature (leave empty to disable)
+OPENAI_API_KEY=your-api-key-here
+
+# Optional: Custom API endpoint (defaults to OpenAI)
+OPENAI_BASE_URL=https://api.openai.com/v1
+
+# Optional: Model to use (defaults to gpt-4o-mini)
+OPENAI_MODEL=gpt-4o-mini
+```
+
+### Chat Feature Behavior
+
+- **With API key configured**: Users can ask for personalized resource recommendations via the chat interface on the landing page
+- **Without API key**: Chat shows a 503 "unavailable" message, users can still use keyword search
+- **Authentication**: Chat is only available to signed-in users; anonymous users see a "Sign in to chat" prompt
+
+### Compatible Providers
+
+Any OpenAI-compatible API can be used by setting `OPENAI_BASE_URL`:
+
+- **OpenAI** (default): `https://api.openai.com/v1`
+- **Azure OpenAI**: `https://your-resource.openai.azure.com/openai/deployments/your-deployment`
+- **Ollama** (local): `http://localhost:11434/v1`
+- **LM Studio** (local): `http://localhost:1234/v1`
+
 ## Pre-commits and code linting
 
 we are using a tool called [prek](https://prek.j178.dev/) (modern alternative to [Pre-commit](https://pre-commit.com/)) for code linting and formatting.

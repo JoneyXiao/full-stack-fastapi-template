@@ -194,9 +194,7 @@ def delete_resource(
 
 
 @router.post("/{id}/like", response_model=ReactionState)
-def like_resource(
-    session: SessionDep, current_user: CurrentUser, id: uuid.UUID
-) -> Any:
+def like_resource(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -> Any:
     """
     Like a resource (toggle on).
     """

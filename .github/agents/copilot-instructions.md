@@ -4,6 +4,7 @@ Auto-generated from all feature plans. Last updated: 2026-01-05
 
 ## Active Technologies
 - Python >=3.10,<4.0 (backend), TypeScript (frontend) + FastAPI, SQLModel, Alembic, PostgreSQL; React, TanStack Router/Query, Vite, Tailwind, shadcn/ui (001-ai-resource-hub)
+- Python >=3.10,<4.0 (backend) + TypeScript (frontend) + Node.js v22 (dev toolchain) (002-ai-landing-page)
 
 ## Project Structure
 
@@ -34,6 +35,7 @@ Frontend:
 Python >=3.10,<4.0 (backend), TypeScript (frontend): Follow standard conventions
 
 ## Recent Changes
+- 002-ai-landing-page: Added Python >=3.10,<4.0 (backend) + TypeScript (frontend) + Node.js v22 (dev toolchain)
 - 001-ai-resource-hub: Added Python >=3.10,<4.0 (backend), TypeScript (frontend) + FastAPI, SQLModel, Alembic, PostgreSQL; React, TanStack Router/Query, Vite, Tailwind, shadcn/ui
 
 <!-- MANUAL ADDITIONS START -->

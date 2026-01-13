@@ -55,6 +55,129 @@ export const Body_login_login_access_tokenSchema = {
     title: 'Body_login-login_access_token'
 } as const;
 
+export const ChatMessageSchemaSchema = {
+    properties: {
+        role: {
+            type: 'string',
+            maxLength: 20,
+            title: 'Role'
+        },
+        content: {
+            type: 'string',
+            maxLength: 4000,
+            minLength: 1,
+            title: 'Content'
+        },
+        created_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Created At'
+        }
+    },
+    type: 'object',
+    required: ['role', 'content'],
+    title: 'ChatMessageSchema',
+    description: 'Schema for a single chat message in a transcript.'
+} as const;
+
+export const ChatTranscriptCreateSchema = {
+    properties: {
+        title: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 120
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Title'
+        },
+        messages: {
+            items: {
+                '$ref': '#/components/schemas/ChatMessageSchema'
+            },
+            type: 'array',
+            minItems: 1,
+            title: 'Messages'
+        }
+    },
+    type: 'object',
+    required: ['messages'],
+    title: 'ChatTranscriptCreate',
+    description: 'Request body for saving a chat transcript.'
+} as const;
+
+export const ChatTranscriptPublicSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        title: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Title'
+        },
+        messages: {
+            items: {
+                '$ref': '#/components/schemas/ChatMessageSchema'
+            },
+            type: 'array',
+            title: 'Messages'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['id', 'title', 'messages', 'created_at', 'updated_at'],
+    title: 'ChatTranscriptPublic',
+    description: 'Response schema for a saved chat transcript.'
+} as const;
+
+export const ChatTranscriptsPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/ChatTranscriptPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'ChatTranscriptsPublic',
+    description: 'Paginated list of saved chat transcripts.'
+} as const;
+
 export const CommentCreateSchema = {
     properties: {
         body: {
@@ -274,6 +397,41 @@ export const ItemsPublicSchema = {
     title: 'ItemsPublic'
 } as const;
 
+export const LandingChatRequestSchema = {
+    properties: {
+        message: {
+            type: 'string',
+            maxLength: 4000,
+            minLength: 1,
+            title: 'Message'
+        }
+    },
+    type: 'object',
+    required: ['message'],
+    title: 'LandingChatRequest',
+    description: 'Request body for landing chat recommendations.'
+} as const;
+
+export const LandingChatResponseSchema = {
+    properties: {
+        assistant_message: {
+            type: 'string',
+            title: 'Assistant Message'
+        },
+        recommendations: {
+            items: {
+                '$ref': '#/components/schemas/ResourcePreview'
+            },
+            type: 'array',
+            title: 'Recommendations'
+        }
+    },
+    type: 'object',
+    required: ['assistant_message', 'recommendations'],
+    title: 'LandingChatResponse',
+    description: 'Response from landing chat recommendations endpoint.'
+} as const;
+
 export const MessageSchema = {
     properties: {
         message: {
@@ -379,6 +537,39 @@ export const ResourceCreateSchema = {
     type: 'object',
     required: ['title', 'destination_url', 'type'],
     title: 'ResourceCreate'
+} as const;
+
+export const ResourcePreviewSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        type: {
+            type: 'string',
+            title: 'Type'
+        }
+    },
+    type: 'object',
+    required: ['id', 'title', 'description', 'type'],
+    title: 'ResourcePreview',
+    description: 'Compact resource summary for chat recommendations.'
 } as const;
 
 export const ResourcePublicSchema = {

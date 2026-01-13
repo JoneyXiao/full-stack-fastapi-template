@@ -1,4 +1,4 @@
-import { Briefcase, Home, Users, BookOpen, Bookmark, Send } from "lucide-react"
+import { Bookmark, BookOpen, Briefcase, Home, Send, Users } from "lucide-react"
 
 import { SidebarAppearance } from "@/components/Common/Appearance"
 import { Logo } from "@/components/Common/Logo"
@@ -27,7 +27,11 @@ export function AppSidebar() {
   const { user: currentUser } = useAuth()
 
   const items = currentUser?.is_superuser
-    ? [...baseItems, ...authenticatedItems, { icon: Users, title: "Admin", path: "/admin" }]
+    ? [
+        ...baseItems,
+        ...authenticatedItems,
+        { icon: Users, title: "Admin", path: "/admin" },
+      ]
     : baseItems
 
   return (

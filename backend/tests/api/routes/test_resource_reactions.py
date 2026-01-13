@@ -1,4 +1,5 @@
 """Tests for resource reaction endpoints (like/favorite)."""
+
 import uuid
 
 from fastapi.testclient import TestClient

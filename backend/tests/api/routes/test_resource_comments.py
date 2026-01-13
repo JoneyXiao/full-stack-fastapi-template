@@ -1,12 +1,13 @@
 """Tests for resource comment endpoints."""
+
 import uuid
 
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
 from app.core.config import settings
-from tests.utils.resource import create_random_resource
 from tests.utils.comment import create_random_comment
+from tests.utils.resource import create_random_resource
 from tests.utils.user import create_random_user
 
 
@@ -175,9 +176,7 @@ def test_delete_comment_by_admin(
     assert response.status_code == 200
 
 
-def test_delete_comment_not_author_not_admin(
-    client: TestClient, db: Session
-) -> None:
+def test_delete_comment_not_author_not_admin(db: Session) -> None:
     """Test that users cannot delete others' comments unless admin."""
     resource = create_random_resource(db, is_published=True)
     user1 = create_random_user(db)
@@ -185,9 +184,12 @@ def test_delete_comment_not_author_not_admin(
 
     # Create another user
     from tests.utils.user import authentication_token_from_email
+
     user2 = create_random_user(db)
     from fastapi.testclient import TestClient
+
     from app.main import app
+
     with TestClient(app) as c:
         user2_headers = authentication_token_from_email(
             client=c, email=user2.email, db=db
