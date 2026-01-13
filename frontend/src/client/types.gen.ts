@@ -9,6 +9,28 @@ export type Body_login_login_access_token = {
     client_secret?: (string | null);
 };
 
+export type CommentCreate = {
+    body: string;
+};
+
+export type CommentPublic = {
+    body: string;
+    id: string;
+    author_id: string;
+    resource_id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+export type CommentsPublic = {
+    data: Array<CommentPublic>;
+    count: number;
+};
+
+export type CommentUpdate = {
+    body?: (string | null);
+};
+
 export type HTTPValidationError = {
     detail?: Array<ValidationError>;
 };
@@ -49,6 +71,87 @@ export type PrivateUserCreate = {
     password: string;
     full_name: string;
     is_verified?: boolean;
+};
+
+export type ReactionState = {
+    active: boolean;
+    count: number;
+};
+
+export type ResourceCreate = {
+    title: string;
+    description?: (string | null);
+    destination_url: string;
+    type: string;
+};
+
+export type ResourcePublic = {
+    title: string;
+    description?: (string | null);
+    destination_url: string;
+    type: string;
+    id: string;
+    is_published: boolean;
+    created_at: string;
+    updated_at: string;
+};
+
+export type ResourcesPublic = {
+    data: Array<ResourcePublic>;
+    count: number;
+};
+
+export type ResourceSubmissionCreate = {
+    title: string;
+    description?: (string | null);
+    destination_url: string;
+    type: string;
+};
+
+export type ResourceSubmissionPublic = {
+    title: string;
+    description?: (string | null);
+    destination_url: string;
+    type: string;
+    id: string;
+    status: string;
+    submitter_id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+export type ResourceSubmissionsPublic = {
+    data: Array<ResourceSubmissionPublic>;
+    count: number;
+};
+
+export type ResourceSubmissionUpdate = {
+    title?: (string | null);
+    description?: (string | null);
+    destination_url?: (string | null);
+    type?: (string | null);
+};
+
+export type ResourceUpdate = {
+    title?: (string | null);
+    description?: (string | null);
+    destination_url?: (string | null);
+    type?: (string | null);
+    is_published?: (boolean | null);
+};
+
+export type SubmissionCommentPublic = {
+    id: string;
+    body: string;
+    author_id: string;
+    submission_id: string;
+    created_at: string;
+    updated_at: string;
+};
+
+export type SubmissionCommentsPublic = {
+    data: Array<SubmissionCommentPublic>;
+    count: number;
 };
 
 export type Token = {
@@ -106,6 +209,32 @@ export type ValidationError = {
     msg: string;
     type: string;
 };
+
+export type CommentsUpdateCommentData = {
+    id: string;
+    requestBody: CommentUpdate;
+};
+
+export type CommentsUpdateCommentResponse = (CommentPublic);
+
+export type CommentsDeleteCommentData = {
+    id: string;
+};
+
+export type CommentsDeleteCommentResponse = (Message);
+
+export type CommentsUpdateSubmissionCommentData = {
+    id: string;
+    requestBody: CommentUpdate;
+};
+
+export type CommentsUpdateSubmissionCommentResponse = (SubmissionCommentPublic);
+
+export type CommentsDeleteSubmissionCommentData = {
+    id: string;
+};
+
+export type CommentsDeleteSubmissionCommentResponse = (Message);
 
 export type ItemsReadItemsData = {
     limit?: number;
@@ -170,6 +299,154 @@ export type PrivateCreateUserData = {
 };
 
 export type PrivateCreateUserResponse = (UserPublic);
+
+export type ResourcesListResourcesData = {
+    isPublished?: (boolean | null);
+    limit?: number;
+    q?: (string | null);
+    skip?: number;
+    type?: (string | null);
+};
+
+export type ResourcesListResourcesResponse = (ResourcesPublic);
+
+export type ResourcesCreateResourceData = {
+    requestBody: ResourceCreate;
+};
+
+export type ResourcesCreateResourceResponse = (ResourcePublic);
+
+export type ResourcesGetResourceData = {
+    id: string;
+};
+
+export type ResourcesGetResourceResponse = (ResourcePublic);
+
+export type ResourcesUpdateResourceData = {
+    id: string;
+    requestBody: ResourceUpdate;
+};
+
+export type ResourcesUpdateResourceResponse = (ResourcePublic);
+
+export type ResourcesDeleteResourceData = {
+    id: string;
+};
+
+export type ResourcesDeleteResourceResponse = (Message);
+
+export type ResourcesLikeResourceData = {
+    id: string;
+};
+
+export type ResourcesLikeResourceResponse = (ReactionState);
+
+export type ResourcesUnlikeResourceData = {
+    id: string;
+};
+
+export type ResourcesUnlikeResourceResponse = (ReactionState);
+
+export type ResourcesFavoriteResourceData = {
+    id: string;
+};
+
+export type ResourcesFavoriteResourceResponse = (ReactionState);
+
+export type ResourcesUnfavoriteResourceData = {
+    id: string;
+};
+
+export type ResourcesUnfavoriteResourceResponse = (ReactionState);
+
+export type ResourcesListMyFavoritesData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type ResourcesListMyFavoritesResponse = (ResourcesPublic);
+
+export type ResourcesListResourceCommentsData = {
+    id: string;
+    limit?: number;
+    skip?: number;
+};
+
+export type ResourcesListResourceCommentsResponse = (CommentsPublic);
+
+export type ResourcesCreateResourceCommentData = {
+    id: string;
+    requestBody: CommentCreate;
+};
+
+export type ResourcesCreateResourceCommentResponse = (CommentPublic);
+
+export type SubmissionsListMySubmissionsData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type SubmissionsListMySubmissionsResponse = (ResourceSubmissionsPublic);
+
+export type SubmissionsCreateSubmissionData = {
+    requestBody: ResourceSubmissionCreate;
+};
+
+export type SubmissionsCreateSubmissionResponse = (ResourceSubmissionPublic);
+
+export type SubmissionsListPendingSubmissionsData = {
+    limit?: number;
+    skip?: number;
+    status?: (string | null);
+};
+
+export type SubmissionsListPendingSubmissionsResponse = (ResourceSubmissionsPublic);
+
+export type SubmissionsGetSubmissionData = {
+    id: string;
+};
+
+export type SubmissionsGetSubmissionResponse = (ResourceSubmissionPublic);
+
+export type SubmissionsUpdateSubmissionData = {
+    id: string;
+    requestBody: ResourceSubmissionUpdate;
+};
+
+export type SubmissionsUpdateSubmissionResponse = (ResourceSubmissionPublic);
+
+export type SubmissionsDeleteSubmissionData = {
+    id: string;
+};
+
+export type SubmissionsDeleteSubmissionResponse = (Message);
+
+export type SubmissionsApproveSubmissionData = {
+    id: string;
+};
+
+export type SubmissionsApproveSubmissionResponse = (ResourceSubmissionPublic);
+
+export type SubmissionsRejectSubmissionData = {
+    id: string;
+};
+
+export type SubmissionsRejectSubmissionResponse = (ResourceSubmissionPublic);
+
+export type SubmissionsListSubmissionCommentsData = {
+    id: string;
+    limit?: number;
+    skip?: number;
+};
+
+export type SubmissionsListSubmissionCommentsResponse = (SubmissionCommentsPublic);
+
+export type SubmissionsCreateSubmissionCommentData = {
+    id: string;
+    requestBody: CommentCreate;
+};
+
+export type SubmissionsCreateSubmissionCommentResponse = (SubmissionCommentPublic);
 
 export type UsersReadUsersData = {
     limit?: number;

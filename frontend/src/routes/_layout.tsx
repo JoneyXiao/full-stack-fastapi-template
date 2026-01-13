@@ -9,10 +9,18 @@ import {
 } from "@/components/ui/sidebar"
 import { isLoggedIn } from "@/hooks/useAuth"
 
+// Public routes that don't require authentication
+const publicRoutes = ["/resources", "/resources/"]
+
 export const Route = createFileRoute("/_layout")({
   component: Layout,
-  beforeLoad: async () => {
-    if (!isLoggedIn()) {
+  beforeLoad: async ({ location }) => {
+    // Check if current route or its parent is a public route
+    const isPublicRoute = publicRoutes.some(
+      route => location.pathname === route || location.pathname.startsWith(route)
+    )
+    
+    if (!isPublicRoute && !isLoggedIn()) {
       throw redirect({
         to: "/login",
       })

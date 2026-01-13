@@ -3,7 +3,99 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+import type { CommentsUpdateCommentData, CommentsUpdateCommentResponse, CommentsDeleteCommentData, CommentsDeleteCommentResponse, CommentsUpdateSubmissionCommentData, CommentsUpdateSubmissionCommentResponse, CommentsDeleteSubmissionCommentData, CommentsDeleteSubmissionCommentResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, ResourcesListResourcesData, ResourcesListResourcesResponse, ResourcesCreateResourceData, ResourcesCreateResourceResponse, ResourcesGetResourceData, ResourcesGetResourceResponse, ResourcesUpdateResourceData, ResourcesUpdateResourceResponse, ResourcesDeleteResourceData, ResourcesDeleteResourceResponse, ResourcesLikeResourceData, ResourcesLikeResourceResponse, ResourcesUnlikeResourceData, ResourcesUnlikeResourceResponse, ResourcesFavoriteResourceData, ResourcesFavoriteResourceResponse, ResourcesUnfavoriteResourceData, ResourcesUnfavoriteResourceResponse, ResourcesListMyFavoritesData, ResourcesListMyFavoritesResponse, ResourcesListResourceCommentsData, ResourcesListResourceCommentsResponse, ResourcesCreateResourceCommentData, ResourcesCreateResourceCommentResponse, SubmissionsListMySubmissionsData, SubmissionsListMySubmissionsResponse, SubmissionsCreateSubmissionData, SubmissionsCreateSubmissionResponse, SubmissionsListPendingSubmissionsData, SubmissionsListPendingSubmissionsResponse, SubmissionsGetSubmissionData, SubmissionsGetSubmissionResponse, SubmissionsUpdateSubmissionData, SubmissionsUpdateSubmissionResponse, SubmissionsDeleteSubmissionData, SubmissionsDeleteSubmissionResponse, SubmissionsApproveSubmissionData, SubmissionsApproveSubmissionResponse, SubmissionsRejectSubmissionData, SubmissionsRejectSubmissionResponse, SubmissionsListSubmissionCommentsData, SubmissionsListSubmissionCommentsResponse, SubmissionsCreateSubmissionCommentData, SubmissionsCreateSubmissionCommentResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+
+export class CommentsService {
+    /**
+     * Update Comment
+     * Update a comment. Only the author can update their own comments.
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.requestBody
+     * @returns CommentPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateComment(data: CommentsUpdateCommentData): CancelablePromise<CommentsUpdateCommentResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/comments/{id}',
+            path: {
+                id: data.id
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Comment
+     * Delete a comment. Author can delete their own; admin can delete any.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteComment(data: CommentsDeleteCommentData): CancelablePromise<CommentsDeleteCommentResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/comments/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Submission Comment
+     * Update a submission comment. Only the author can update their own comments.
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.requestBody
+     * @returns SubmissionCommentPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateSubmissionComment(data: CommentsUpdateSubmissionCommentData): CancelablePromise<CommentsUpdateSubmissionCommentResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/comments/submission/{id}',
+            path: {
+                id: data.id
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Submission Comment
+     * Delete a submission comment. Author can delete their own; admin can delete any.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteSubmissionComment(data: CommentsDeleteSubmissionCommentData): CancelablePromise<CommentsDeleteSubmissionCommentResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/comments/submission/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
 
 export class ItemsService {
     /**
@@ -226,6 +318,515 @@ export class PrivateService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/v1/private/users/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class ResourcesService {
+    /**
+     * List Resources
+     * List published resources. Admins can filter by is_published; others always see published.
+     * @param data The data for the request.
+     * @param data.skip
+     * @param data.limit
+     * @param data.q
+     * @param data.type
+     * @param data.isPublished
+     * @returns ResourcesPublic Successful Response
+     * @throws ApiError
+     */
+    public static listResources(data: ResourcesListResourcesData = {}): CancelablePromise<ResourcesListResourcesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/resources/',
+            query: {
+                skip: data.skip,
+                limit: data.limit,
+                q: data.q,
+                type: data.type,
+                is_published: data.isPublished
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Resource
+     * Create a resource (admin only).
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns ResourcePublic Successful Response
+     * @throws ApiError
+     */
+    public static createResource(data: ResourcesCreateResourceData): CancelablePromise<ResourcesCreateResourceResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/resources/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Resource
+     * Get resource by ID.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns ResourcePublic Successful Response
+     * @throws ApiError
+     */
+    public static getResource(data: ResourcesGetResourceData): CancelablePromise<ResourcesGetResourceResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/resources/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Resource
+     * Update a resource (admin only).
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.requestBody
+     * @returns ResourcePublic Successful Response
+     * @throws ApiError
+     */
+    public static updateResource(data: ResourcesUpdateResourceData): CancelablePromise<ResourcesUpdateResourceResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/resources/{id}',
+            path: {
+                id: data.id
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Resource
+     * Delete a resource (admin only).
+     * @param data The data for the request.
+     * @param data.id
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteResource(data: ResourcesDeleteResourceData): CancelablePromise<ResourcesDeleteResourceResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/resources/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Like Resource
+     * Like a resource (toggle on).
+     * @param data The data for the request.
+     * @param data.id
+     * @returns ReactionState Successful Response
+     * @throws ApiError
+     */
+    public static likeResource(data: ResourcesLikeResourceData): CancelablePromise<ResourcesLikeResourceResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/resources/{id}/like',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Unlike Resource
+     * Remove like from a resource (toggle off).
+     * @param data The data for the request.
+     * @param data.id
+     * @returns ReactionState Successful Response
+     * @throws ApiError
+     */
+    public static unlikeResource(data: ResourcesUnlikeResourceData): CancelablePromise<ResourcesUnlikeResourceResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/resources/{id}/like',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Favorite Resource
+     * Favorite a resource (toggle on).
+     * @param data The data for the request.
+     * @param data.id
+     * @returns ReactionState Successful Response
+     * @throws ApiError
+     */
+    public static favoriteResource(data: ResourcesFavoriteResourceData): CancelablePromise<ResourcesFavoriteResourceResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/resources/{id}/favorite',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Unfavorite Resource
+     * Remove favorite from a resource (toggle off).
+     * @param data The data for the request.
+     * @param data.id
+     * @returns ReactionState Successful Response
+     * @throws ApiError
+     */
+    public static unfavoriteResource(data: ResourcesUnfavoriteResourceData): CancelablePromise<ResourcesUnfavoriteResourceResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/resources/{id}/favorite',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * List My Favorites
+     * List resources favorited by the current user.
+     * @param data The data for the request.
+     * @param data.skip
+     * @param data.limit
+     * @returns ResourcesPublic Successful Response
+     * @throws ApiError
+     */
+    public static listMyFavorites(data: ResourcesListMyFavoritesData = {}): CancelablePromise<ResourcesListMyFavoritesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/resources/me/favorites',
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * List Resource Comments
+     * List comments for a resource (public read).
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.skip
+     * @param data.limit
+     * @returns CommentsPublic Successful Response
+     * @throws ApiError
+     */
+    public static listResourceComments(data: ResourcesListResourceCommentsData): CancelablePromise<ResourcesListResourceCommentsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/resources/{id}/comments',
+            path: {
+                id: data.id
+            },
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Resource Comment
+     * Create a comment on a resource (auth required).
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.requestBody
+     * @returns CommentPublic Successful Response
+     * @throws ApiError
+     */
+    public static createResourceComment(data: ResourcesCreateResourceCommentData): CancelablePromise<ResourcesCreateResourceCommentResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/resources/{id}/comments',
+            path: {
+                id: data.id
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class SubmissionsService {
+    /**
+     * List My Submissions
+     * List submissions created by the current user.
+     * @param data The data for the request.
+     * @param data.skip
+     * @param data.limit
+     * @returns ResourceSubmissionsPublic Successful Response
+     * @throws ApiError
+     */
+    public static listMySubmissions(data: SubmissionsListMySubmissionsData = {}): CancelablePromise<SubmissionsListMySubmissionsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/submissions/mine',
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Submission
+     * Create a new resource submission.
+     * Rejects with 409 if a Resource with the same destination_url already exists.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns ResourceSubmissionPublic Successful Response
+     * @throws ApiError
+     */
+    public static createSubmission(data: SubmissionsCreateSubmissionData): CancelablePromise<SubmissionsCreateSubmissionResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/submissions/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * List Pending Submissions
+     * List submissions (auth required, all authenticated users can view pending).
+     * Admins can filter by status.
+     * @param data The data for the request.
+     * @param data.skip
+     * @param data.limit
+     * @param data.status
+     * @returns ResourceSubmissionsPublic Successful Response
+     * @throws ApiError
+     */
+    public static listPendingSubmissions(data: SubmissionsListPendingSubmissionsData = {}): CancelablePromise<SubmissionsListPendingSubmissionsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/submissions/',
+            query: {
+                skip: data.skip,
+                limit: data.limit,
+                status: data.status
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Submission
+     * Get a submission by ID.
+     * Users can view their own submissions; admins can view any.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns ResourceSubmissionPublic Successful Response
+     * @throws ApiError
+     */
+    public static getSubmission(data: SubmissionsGetSubmissionData): CancelablePromise<SubmissionsGetSubmissionResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/submissions/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Submission
+     * Update a pending submission.
+     * Only the owner can update, and only if status is pending.
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.requestBody
+     * @returns ResourceSubmissionPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateSubmission(data: SubmissionsUpdateSubmissionData): CancelablePromise<SubmissionsUpdateSubmissionResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/submissions/{id}',
+            path: {
+                id: data.id
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Submission
+     * Delete a submission.
+     * Only the owner can delete, and only if status is pending.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteSubmission(data: SubmissionsDeleteSubmissionData): CancelablePromise<SubmissionsDeleteSubmissionResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/submissions/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Approve Submission
+     * Approve a submission and create a corresponding published Resource.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns ResourceSubmissionPublic Successful Response
+     * @throws ApiError
+     */
+    public static approveSubmission(data: SubmissionsApproveSubmissionData): CancelablePromise<SubmissionsApproveSubmissionResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/submissions/{id}/approve',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Reject Submission
+     * Reject a submission.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns ResourceSubmissionPublic Successful Response
+     * @throws ApiError
+     */
+    public static rejectSubmission(data: SubmissionsRejectSubmissionData): CancelablePromise<SubmissionsRejectSubmissionResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/submissions/{id}/reject',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * List Submission Comments
+     * List comments for a submission (auth required).
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.skip
+     * @param data.limit
+     * @returns SubmissionCommentsPublic Successful Response
+     * @throws ApiError
+     */
+    public static listSubmissionComments(data: SubmissionsListSubmissionCommentsData): CancelablePromise<SubmissionsListSubmissionCommentsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/submissions/{id}/comments',
+            path: {
+                id: data.id
+            },
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Submission Comment
+     * Create a comment on a submission (auth required).
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.requestBody
+     * @returns SubmissionCommentPublic Successful Response
+     * @throws ApiError
+     */
+    public static createSubmissionComment(data: SubmissionsCreateSubmissionCommentData): CancelablePromise<SubmissionsCreateSubmissionCommentResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/submissions/{id}/comments',
+            path: {
+                id: data.id
+            },
             body: data.requestBody,
             mediaType: 'application/json',
             errors: {
