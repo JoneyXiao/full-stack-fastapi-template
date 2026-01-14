@@ -231,7 +231,7 @@ test.describe("Change password with invalid data", () => {
 
 // Appearance
 
-test("Appearance button is visible in sidebar", async ({ page }) => {
+test("Appearance button is visible in navbar", async ({ page }) => {
   await page.goto("/settings")
   await expect(page.getByTestId("theme-button")).toBeVisible()
 })

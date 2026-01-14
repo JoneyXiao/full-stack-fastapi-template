@@ -10,3 +10,4 @@ docs/
 .env
 
 __pycache__/
+*.pyc

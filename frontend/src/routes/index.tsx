@@ -4,9 +4,9 @@ import {
   Hero,
   HowItWorks,
   LandingChat,
-  LandingHeader,
   LandingSearch,
 } from "@/components/Landing"
+import { AppNavbar } from "@/components/Nav"
 import { isLoggedIn } from "@/hooks/useAuth"
 
 export const Route = createFileRoute("/")({
@@ -25,8 +25,7 @@ function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Floating header with navigation */}
-      <LandingHeader />
+      <AppNavbar />
 
       <main className="container mx-auto px-4 pt-4">
         {/* Hero Section */}

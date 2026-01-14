@@ -1,9 +1,19 @@
 {
-	"inputs": [],
+  "inputs": [],
   "servers": {
     "chakra-ui": {
       "command": "/bin/sh",
-      "args": ["-c", "source $HOME/.nvm/nvm.sh && npx -y @chakra-ui/react-mcp"]
+      "args": [
+        "-c",
+        "source $HOME/.nvm/nvm.sh && npx -y @chakra-ui/react-mcp"
+      ]
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": [
+        "shadcn@latest",
+        "mcp"
+      ]
     }
   }
 }
