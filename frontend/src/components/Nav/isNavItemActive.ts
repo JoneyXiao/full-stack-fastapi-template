@@ -9,12 +9,11 @@ export function isNavItemActive(
   itemPath: string,
   currentPath: string,
 ): boolean {
-  // Exact match for root/dashboard
-  if (itemPath === "/" || itemPath === "/dashboard") {
-    return currentPath === "/" || currentPath === "/dashboard"
+  // Root should be an exact match only; otherwise "/" would match every path.
+  if (itemPath === "/") {
+    return currentPath === "/"
   }
 
-  // For other paths, check if currentPath starts with itemPath
-  // This handles sub-routes like /resources/123
+  // Exact match OR prefix match for sub-routes like /resources/123, /dashboard/settings, etc.
   return currentPath === itemPath || currentPath.startsWith(`${itemPath}/`)
 }
