@@ -39,8 +39,8 @@ export function AccountMenu({ user }: AccountMenuProps) {
         <Button
           variant="ghost"
           size="icon"
-          data-testid="nav-account-menu"
-          aria-label="Account menu"
+          data-testid="user-menu"
+          aria-label="User menu"
           className="relative h-8 w-8 rounded-full"
         >
           <Avatar className="h-8 w-8">

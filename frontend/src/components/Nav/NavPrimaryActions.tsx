@@ -1,5 +1,5 @@
 import { MessageSquare, Search } from "lucide-react"
-import type { Ref } from "react"
+import type { KeyboardEvent, Ref } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -13,20 +13,34 @@ interface NavPrimaryActionsProps {
   onSearchClick: () => void
   onChatClick: () => void
   chatButtonRef?: Ref<HTMLButtonElement>
+  searchTriggerRef?: Ref<HTMLDivElement>
 }
 
 export function NavPrimaryActions({
   onSearchClick,
   onChatClick,
   chatButtonRef,
+  searchTriggerRef,
 }: NavPrimaryActionsProps) {
+  const handleSearchKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault()
+      onSearchClick()
+    }
+  }
+
   return (
     <div className="flex items-center gap-2">
       {/* Search Input - Neon style */}
       <InputGroup
         className="w-48 cursor-pointer sm:w-64 lg:w-80"
         onClick={onSearchClick}
+        onKeyDown={handleSearchKeyDown}
+        role="button"
+        tabIndex={0}
+        aria-label="Open search"
         data-testid="nav-search-trigger"
+        ref={searchTriggerRef}
       >
         <InputGroupAddon>
           <Search className="h-4 w-4" />

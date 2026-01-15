@@ -22,7 +22,9 @@ export function AppNavbar({ className }: AppNavbarProps) {
   const { user } = useAuth()
   const [searchOpen, setSearchOpen] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
+  const searchTriggerRef = useRef<HTMLDivElement>(null)
   const chatButtonRef = useRef<HTMLButtonElement>(null)
+  const wasSearchOpenRef = useRef(false)
   const wasChatOpenRef = useRef(false)
 
   const navItems = getNavItems(!!user, user?.is_superuser ?? false)
@@ -47,6 +49,14 @@ export function AppNavbar({ className }: AppNavbarProps) {
     }
     wasChatOpenRef.current = chatOpen
   }, [chatOpen])
+
+  // Restore focus to the search trigger when the dialog closes (accessibility + tests).
+  useEffect(() => {
+    if (wasSearchOpenRef.current && !searchOpen) {
+      requestAnimationFrame(() => searchTriggerRef.current?.focus())
+    }
+    wasSearchOpenRef.current = searchOpen
+  }, [searchOpen])
 
   return (
     <header
@@ -73,6 +83,7 @@ export function AppNavbar({ className }: AppNavbarProps) {
               onSearchClick={() => setSearchOpen(true)}
               onChatClick={() => setChatOpen(true)}
               chatButtonRef={chatButtonRef}
+              searchTriggerRef={searchTriggerRef}
             />
 
             {/* Right: Locale, Theme, Auth */}
