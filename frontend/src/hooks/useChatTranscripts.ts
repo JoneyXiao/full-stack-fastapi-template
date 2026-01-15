@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { type ChatTranscriptCreate, ChatTranscriptsService } from "@/client"
 import { handleError } from "@/utils"
+import { isLoggedIn } from "./useAuth"
 import useCustomToast from "./useCustomToast"
 
 export function useChatTranscripts() {
@@ -12,6 +13,7 @@ export function useChatTranscripts() {
     queryKey: ["chat-transcripts"],
     queryFn: () => ChatTranscriptsService.listMyTranscripts({ limit: 50 }),
     staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: isLoggedIn(),
   })
 
   // Save transcript mutation
