@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
+import i18n from "i18next"
 
 import {
   type Body_login_login_access_token as AccessToken,
@@ -8,11 +9,24 @@ import {
   type UserRegister,
   UsersService,
 } from "@/client"
+import { type SupportedLocale, setStoredLocale } from "@/lib/locale"
 import { handleError } from "@/utils"
 import useCustomToast from "./useCustomToast"
 
 const isLoggedIn = () => {
   return localStorage.getItem("access_token") !== null
+}
+
+/**
+ * Sync locale from user profile to local storage and i18next
+ */
+const syncLocaleFromUser = (user: UserPublic | null) => {
+  if (user?.locale) {
+    const userLocale = user.locale as SupportedLocale
+    setStoredLocale(userLocale)
+    i18n.changeLanguage(userLocale)
+    document.documentElement.lang = userLocale
+  }
 }
 
 const useAuth = () => {
@@ -47,7 +61,13 @@ const useAuth = () => {
 
   const loginMutation = useMutation({
     mutationFn: login,
-    onSuccess: () => {
+    onSuccess: async () => {
+      // Fetch user and sync locale from their profile
+      const user = await queryClient.fetchQuery({
+        queryKey: ["currentUser"],
+        queryFn: UsersService.readUserMe,
+      })
+      syncLocaleFromUser(user)
       navigate({ to: "/dashboard" })
     },
     onError: handleError.bind(showErrorToast),

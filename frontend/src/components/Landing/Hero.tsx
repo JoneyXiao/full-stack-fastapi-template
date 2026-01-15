@@ -1,18 +1,13 @@
 import { Link } from "@tanstack/react-router"
 import type { LucideIcon } from "lucide-react"
 import { BookOpen, MessageSquare, Search, Sparkles } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 interface HeroProps {
   className?: string
 }
-
-const FEATURES = [
-  { icon: Search, label: "Instant keyword search" },
-  { icon: MessageSquare, label: "AI-powered recommendations" },
-  { icon: BookOpen, label: "Community curated" },
-]
 
 function FeatureItem({
   icon: Icon,
@@ -38,6 +33,14 @@ function focusSearchInput() {
 }
 
 export function Hero({ className }: HeroProps) {
+  const { t } = useTranslation()
+
+  const FEATURES = [
+    { icon: Search, label: t("landing.instantSearch") },
+    { icon: MessageSquare, label: t("landing.aiRecommendations") },
+    { icon: BookOpen, label: t("landing.communityCurated") },
+  ]
+
   return (
     <section className={cn("relative", className)} data-testid="landing-hero">
       {/* Subtle gradient background */}
@@ -49,19 +52,18 @@ export function Hero({ className }: HeroProps) {
         {/* Badge */}
         <div className="mb-6 inline-flex items-center gap-2 rounded-full border bg-background/80 px-4 py-1.5 text-sm font-medium backdrop-blur-sm">
           <Sparkles className="h-4 w-4 text-primary" />
-          <span>Curated AI Resources</span>
+          <span>{t("landing.curatedResources")}</span>
         </div>
 
         <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
-          Find the best{" "}
+          {t("landing.heroTitle")}{" "}
           <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            AI resources
+            {t("landing.heroTitleHighlight")}
           </span>
-          —fast.
+          {t("landing.heroTitleEnd")}
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
-          Discover curated tutorials, tools, datasets, and papers. Search
-          directly or ask our AI assistant for personalized recommendations.
+          {t("landing.heroDescription")}
         </p>
 
         {/* Quick action buttons */}
@@ -69,7 +71,7 @@ export function Hero({ className }: HeroProps) {
           <Link to="/resources">
             <Button size="lg" className="gap-2">
               <BookOpen className="h-5 w-5" />
-              Browse Resources
+              {t("landing.browseResources")}
             </Button>
           </Link>
           <Button
@@ -79,7 +81,7 @@ export function Hero({ className }: HeroProps) {
             onClick={focusSearchInput}
           >
             <Search className="h-5 w-5" />
-            Quick Search
+            {t("landing.quickSearch")}
           </Button>
         </div>
 

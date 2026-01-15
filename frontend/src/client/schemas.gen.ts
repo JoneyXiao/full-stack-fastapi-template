@@ -1053,6 +1053,18 @@ export const UserPublicSchema = {
             type: 'string',
             format: 'uuid',
             title: 'Id'
+        },
+        locale: {
+            anyOf: [
+                {
+                    type: 'string',
+                    enum: ['en', 'zh']
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Locale'
         }
     },
     type: 'object',
@@ -1173,6 +1185,18 @@ export const UserUpdateMeSchema = {
                 }
             ],
             title: 'Email'
+        },
+        locale: {
+            anyOf: [
+                {
+                    type: 'string',
+                    enum: ['en', 'zh']
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Locale'
         }
     },
     type: 'object',

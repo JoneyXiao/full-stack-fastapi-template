@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router"
+import { useTranslation } from "react-i18next"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -14,6 +15,7 @@ interface LowerNavProps {
 }
 
 export function LowerNav({ items }: LowerNavProps) {
+  const { t } = useTranslation()
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
 
@@ -47,7 +49,7 @@ export function LowerNav({ items }: LowerNavProps) {
               >
                 <Link to={item.path} data-testid={`nav-link-${item.path}`}>
                   <Icon className="h-4 w-4" />
-                  <span>{item.title}</span>
+                  <span>{t(item.titleKey, item.title)}</span>
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>

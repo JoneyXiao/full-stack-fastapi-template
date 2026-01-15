@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { Bookmark, ExternalLink } from "lucide-react"
 import { Suspense } from "react"
+import { useTranslation } from "react-i18next"
 
 import { ResourcesService } from "@/client"
 import { Badge } from "@/components/ui/badge"
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/_layout/favorites")({
 })
 
 function FavoritesListContent() {
+  const { t } = useTranslation()
   const { data: favorites } = useSuspenseQuery(getFavoritesQueryOptions())
 
   if (favorites.data.length === 0) {
@@ -43,12 +45,12 @@ function FavoritesListContent() {
         <div className="rounded-full bg-muted p-4 mb-4">
           <Bookmark className="h-8 w-8 text-muted-foreground" />
         </div>
-        <h3 className="text-lg font-semibold">No favorites yet</h3>
+        <h3 className="text-lg font-semibold">{t("favorites.noFavorites")}</h3>
         <p className="text-muted-foreground mb-4">
-          Start exploring AI resources and save your favorites!
+          {t("favorites.noFavoritesHint")}
         </p>
         <Link to="/resources">
-          <Button>Browse Resources</Button>
+          <Button>{t("favorites.browseResources")}</Button>
         </Link>
       </div>
     )
@@ -69,7 +71,11 @@ function FavoritesListContent() {
                   {resource.title}
                 </Link>
               </CardTitle>
-              <Badge variant="secondary">{resource.type}</Badge>
+              <Badge variant="secondary">
+                {t(`resources.types.${resource.type}`, {
+                  defaultValue: resource.type,
+                })}
+              </Badge>
             </div>
             <CardDescription className="line-clamp-3">
               {resource.description}
@@ -82,7 +88,7 @@ function FavoritesListContent() {
               params={{ resourceId: resource.id }}
             >
               <Button variant="outline" size="sm">
-                View Details
+                {t("resources.viewDetails")}
               </Button>
             </Link>
             <a
@@ -92,7 +98,7 @@ function FavoritesListContent() {
             >
               <Button variant="ghost" size="sm">
                 <ExternalLink className="h-4 w-4 mr-1" />
-                Visit
+                {t("resources.visit")}
               </Button>
             </a>
           </CardFooter>
@@ -123,13 +129,15 @@ function FavoritesListSkeleton() {
 }
 
 function FavoritesPage() {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">My Favorites</h1>
-        <p className="text-muted-foreground">
-          Your collection of saved AI resources
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t("favorites.title")}
+        </h1>
+        <p className="text-muted-foreground">{t("favorites.description")}</p>
       </div>
 
       <Suspense fallback={<FavoritesListSkeleton />}>

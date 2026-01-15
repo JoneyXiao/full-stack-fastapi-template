@@ -9,6 +9,7 @@ import {
   MessageSquare,
   Wrench,
 } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 
 interface FeaturedTopicsProps {
@@ -16,21 +17,51 @@ interface FeaturedTopicsProps {
 }
 
 const FEATURED_TOPICS = [
-  { label: "Machine Learning", query: "machine learning", icon: Brain },
-  { label: "GPT & LLMs", query: "GPT LLM", icon: MessageSquare },
-  { label: "Computer Vision", query: "computer vision", icon: Eye },
-  { label: "NLP", query: "natural language processing", icon: BookOpen },
-  { label: "Datasets", query: "dataset", icon: Database },
-  { label: "Tutorials", query: "tutorial", icon: GraduationCap },
-  { label: "Research Papers", query: "paper research", icon: FileText },
-  { label: "Tools", query: "tool", icon: Wrench },
+  {
+    labelKey: "landing.featuredTopics.machineLearning",
+    query: "machine learning",
+    icon: Brain,
+  },
+  {
+    labelKey: "landing.featuredTopics.gptLlms",
+    query: "GPT LLM",
+    icon: MessageSquare,
+  },
+  {
+    labelKey: "landing.featuredTopics.computerVision",
+    query: "computer vision",
+    icon: Eye,
+  },
+  {
+    labelKey: "landing.featuredTopics.nlp",
+    query: "natural language processing",
+    icon: BookOpen,
+  },
+  {
+    labelKey: "landing.featuredTopics.datasets",
+    query: "dataset",
+    icon: Database,
+  },
+  {
+    labelKey: "landing.featuredTopics.tutorials",
+    query: "tutorial",
+    icon: GraduationCap,
+  },
+  {
+    labelKey: "landing.featuredTopics.papers",
+    query: "paper research",
+    icon: FileText,
+  },
+  { labelKey: "landing.featuredTopics.tools", query: "tool", icon: Wrench },
 ]
 
 export function FeaturedTopics({ className }: FeaturedTopicsProps) {
+  const { t } = useTranslation()
+
   return (
     <section className={cn("py-12", className)} data-testid="featured-topics">
       <h2 className="mb-6 text-center text-sm font-medium uppercase tracking-wider text-muted-foreground">
-        Popular Topics
+        {t("landing.featuredTopics.title")}
       </h2>
       <div className="flex flex-wrap items-center justify-center gap-3">
         {FEATURED_TOPICS.map((topic) => (
@@ -46,7 +77,7 @@ export function FeaturedTopics({ className }: FeaturedTopicsProps) {
           >
             <topic.icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
             <span className="transition-colors group-hover:text-primary">
-              {topic.label}
+              {t(topic.labelKey)}
             </span>
           </Link>
         ))}

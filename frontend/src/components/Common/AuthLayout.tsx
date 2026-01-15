@@ -1,4 +1,6 @@
+import { Appearance } from "@/components/Common/Appearance"
 import { Logo } from "@/components/Common/Logo"
+import { LocaleSwitcher } from "@/components/Nav/LocaleSwitcher"
 import { Footer } from "./Footer"
 
 interface AuthLayoutProps {
@@ -12,7 +14,11 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         <Logo variant="full" className="h-16" asLink={false} />
       </div>
       <div className="flex flex-col gap-4 p-6 md:p-10">
-        {/* Theme control is now provided by AppNavbar in frontend/src/components/Nav/AppNavbar.tsx */}
+        {/* Theme + locale controls for auth pages */}
+        <div className="flex justify-end gap-2">
+          <LocaleSwitcher />
+          <Appearance />
+        </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">{children}</div>
         </div>

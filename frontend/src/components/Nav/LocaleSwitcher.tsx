@@ -1,4 +1,5 @@
 import { Globe } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -11,6 +12,7 @@ import { useLocale } from "@/hooks/useLocale"
 import { SUPPORTED_LOCALES } from "@/lib/locale"
 
 export function LocaleSwitcher() {
+  const { t } = useTranslation()
   const { locale, setLocale } = useLocale()
   const currentLabel =
     SUPPORTED_LOCALES.find((l) => l.value === locale)?.label ?? locale
@@ -22,10 +24,12 @@ export function LocaleSwitcher() {
           variant="ghost"
           size="icon"
           data-testid="nav-locale-switcher"
-          aria-label="Select language"
+          aria-label={t("common.selectLanguage")}
         >
           <Globe className="h-4 w-4" />
-          <span className="sr-only">Current language: {currentLabel}</span>
+          <span className="sr-only">
+            {t("common.currentLanguage", { language: currentLabel })}
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

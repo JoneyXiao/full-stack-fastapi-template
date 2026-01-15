@@ -6,6 +6,7 @@ import {
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { CheckCircle, Clock, ExternalLink, XCircle } from "lucide-react"
 import { Suspense, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import {
   ResourcesService,
@@ -14,7 +15,7 @@ import {
   UsersService,
 } from "@/client"
 import AddUser from "@/components/Admin/AddUser"
-import { columns, type UserTableData } from "@/components/Admin/columns"
+import { getUserColumns, type UserTableData } from "@/components/Admin/columns"
 import { DataTable } from "@/components/Common/DataTable"
 import PendingUsers from "@/components/Pending/PendingUsers"
 import { Badge } from "@/components/ui/badge"
@@ -70,6 +71,7 @@ export const Route = createFileRoute("/_layout/admin")({
 })
 
 function UsersTableContent() {
+  const { t } = useTranslation()
   const { user: currentUser } = useAuth()
   const { data: users } = useSuspenseQuery(getUsersQueryOptions())
 
@@ -78,7 +80,7 @@ function UsersTableContent() {
     isCurrentUser: currentUser?.id === user.id,
   }))
 
-  return <DataTable columns={columns} data={tableData} />
+  return <DataTable columns={getUserColumns(t)} data={tableData} />
 }
 
 function UsersTable() {
@@ -90,6 +92,7 @@ function UsersTable() {
 }
 
 function ResourcesListContent() {
+  const { t } = useTranslation()
   const { data: resources } = useSuspenseQuery(getResourcesQueryOptions())
   const queryClient = useQueryClient()
   const { showSuccessToast } = useCustomToast()
@@ -98,14 +101,14 @@ function ResourcesListContent() {
     mutationFn: (id: string) => ResourcesService.deleteResource({ id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-resources"] })
-      showSuccessToast("Resource deleted successfully")
+      showSuccessToast(t("admin.resources.deleteSuccess"))
     },
   })
 
   if (resources.data.length === 0) {
     return (
       <p className="text-muted-foreground text-center py-8">
-        No resources yet. Resources will appear here when created.
+        {t("admin.resources.noResources")}
       </p>
     )
   }
@@ -125,7 +128,9 @@ function ResourcesListContent() {
               <div className="flex items-center gap-2">
                 <Badge variant="secondary">{resource.type}</Badge>
                 <Badge variant={resource.is_published ? "default" : "outline"}>
-                  {resource.is_published ? "Published" : "Draft"}
+                  {resource.is_published
+                    ? t("admin.resources.published")
+                    : t("admin.resources.draft")}
                 </Badge>
               </div>
             </div>
@@ -146,7 +151,7 @@ function ResourcesListContent() {
               onClick={() => deleteMutation.mutate(resource.id)}
               disabled={deleteMutation.isPending}
             >
-              Delete
+              {t("common.delete")}
             </Button>
           </CardFooter>
         </Card>
@@ -164,6 +169,7 @@ function ResourcesList() {
 }
 
 function SubmissionsListContent() {
+  const { t } = useTranslation()
   const { data: submissions } = useSuspenseQuery(
     getPendingSubmissionsQueryOptions(),
   )
@@ -175,7 +181,7 @@ function SubmissionsListContent() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-submissions"] })
       queryClient.invalidateQueries({ queryKey: ["admin-resources"] })
-      showSuccessToast("Submission approved and published")
+      showSuccessToast(t("admin.submissions.approveSuccess"))
     },
     onError: (error: Error & { body?: { detail?: string } }) => {
       const detail = error.body?.detail || "Failed to approve"
@@ -187,7 +193,7 @@ function SubmissionsListContent() {
     mutationFn: (id: string) => SubmissionsService.rejectSubmission({ id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-submissions"] })
-      showSuccessToast("Submission rejected")
+      showSuccessToast(t("admin.submissions.rejectSuccess"))
     },
   })
 
@@ -196,7 +202,7 @@ function SubmissionsListContent() {
       <div className="text-center py-8">
         <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
         <p className="text-muted-foreground">
-          No pending submissions to review.
+          {t("admin.submissions.noSubmissions")}
         </p>
       </div>
     )
@@ -236,7 +242,9 @@ function SubmissionsListContent() {
               {submission.destination_url.slice(0, 60)}...
             </a>
             <p className="text-xs text-muted-foreground mt-2">
-              Submitted {new Date(submission.created_at).toLocaleDateString()}
+              {t("submissions.submitted", {
+                date: new Date(submission.created_at).toLocaleDateString(),
+              })}
             </p>
           </CardContent>
           <CardFooter className="flex gap-2">
@@ -247,7 +255,7 @@ function SubmissionsListContent() {
               disabled={approveMutation.isPending || rejectMutation.isPending}
             >
               <CheckCircle className="h-4 w-4 mr-1" />
-              Approve
+              {t("admin.submissions.approve")}
             </Button>
             <Button
               variant="destructive"
@@ -256,14 +264,14 @@ function SubmissionsListContent() {
               disabled={approveMutation.isPending || rejectMutation.isPending}
             >
               <XCircle className="h-4 w-4 mr-1" />
-              Reject
+              {t("admin.submissions.reject")}
             </Button>
             <Link
               to="/submissions/$submissionId"
               params={{ submissionId: submission.id }}
             >
               <Button variant="outline" size="sm">
-                View Details
+                {t("resources.viewDetails")}
               </Button>
             </Link>
           </CardFooter>
@@ -282,30 +290,37 @@ function SubmissionsList() {
 }
 
 function Admin() {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState("users")
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
-        <p className="text-muted-foreground">
-          Manage users, resources, and submissions
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t("admin.title")}
+        </h1>
+        <p className="text-muted-foreground">{t("admin.description")}</p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="users">Users</TabsTrigger>
-          <TabsTrigger value="resources">Resources</TabsTrigger>
-          <TabsTrigger value="submissions">Pending Submissions</TabsTrigger>
+          <TabsTrigger value="users">{t("admin.tabs.users")}</TabsTrigger>
+          <TabsTrigger value="resources">
+            {t("admin.tabs.resources")}
+          </TabsTrigger>
+          <TabsTrigger value="submissions">
+            {t("admin.tabs.submissions")}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="mt-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-semibold">Users</h2>
+              <h2 className="text-xl font-semibold">
+                {t("admin.users.title")}
+              </h2>
               <p className="text-muted-foreground text-sm">
-                Manage user accounts and permissions
+                {t("admin.users.description")}
               </p>
             </div>
             <AddUser />
@@ -315,9 +330,11 @@ function Admin() {
 
         <TabsContent value="resources" className="mt-6">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold">Resources</h2>
+            <h2 className="text-xl font-semibold">
+              {t("admin.resources.title")}
+            </h2>
             <p className="text-muted-foreground text-sm">
-              Manage published AI resources
+              {t("admin.resources.description")}
             </p>
           </div>
           <ResourcesList />
@@ -325,9 +342,11 @@ function Admin() {
 
         <TabsContent value="submissions" className="mt-6">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold">Pending Submissions</h2>
+            <h2 className="text-xl font-semibold">
+              {t("admin.submissions.title")}
+            </h2>
             <p className="text-muted-foreground text-sm">
-              Review and approve or reject submitted resources
+              {t("admin.submissions.description")}
             </p>
           </div>
           <SubmissionsList />

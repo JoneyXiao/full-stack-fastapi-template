@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query"
+import i18next from "i18next"
 import { type LandingChatRequest, LandingChatService } from "@/client"
 import useCustomToast from "./useCustomToast"
 
@@ -19,11 +20,9 @@ export function useLandingChat() {
       // Check for 503 (chat unavailable)
       const apiError = error as { status?: number }
       if (apiError.status === 503) {
-        showErrorToast(
-          "Chat is currently unavailable. Please try keyword search instead.",
-        )
+        showErrorToast(i18next.t("chat.landing.unavailable"))
       } else {
-        showErrorToast("Failed to get recommendations. Please try again.")
+        showErrorToast(i18next.t("chat.landing.failed"))
       }
     },
   })

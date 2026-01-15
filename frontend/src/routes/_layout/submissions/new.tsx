@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import { ArrowLeft } from "lucide-react"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import { SubmissionsService } from "@/client"
 import { Button } from "@/components/ui/button"
@@ -36,18 +37,19 @@ export const Route = createFileRoute("/_layout/submissions/new")({
 })
 
 const RESOURCE_TYPES = [
-  { value: "tutorial", label: "Tutorial" },
-  { value: "tool", label: "Tool" },
-  { value: "paper", label: "Paper" },
-  { value: "course", label: "Course" },
-  { value: "dataset", label: "Dataset" },
-  { value: "library", label: "Library" },
-  { value: "article", label: "Article" },
-  { value: "video", label: "Video" },
-  { value: "other", label: "Other" },
-]
+  "tutorial",
+  "tool",
+  "paper",
+  "course",
+  "dataset",
+  "library",
+  "article",
+  "video",
+  "other",
+] as const
 
 function NewSubmissionPage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { showSuccessToast, showErrorToast } = useCustomToast()
 
@@ -69,14 +71,14 @@ function NewSubmissionPage() {
         },
       }),
     onSuccess: (data) => {
-      showSuccessToast("Your resource submission is now pending review")
+      showSuccessToast(t("submissions.new.createSuccessPending"))
       navigate({
         to: "/submissions/$submissionId" as const,
         params: { submissionId: data.id },
       })
     },
     onError: (error: Error & { body?: { detail?: string } }) => {
-      const detail = error.body?.detail || "Failed to create submission"
+      const detail = error.body?.detail || t("submissions.new.createFailed")
       showErrorToast(detail)
     },
   })
@@ -96,24 +98,23 @@ function NewSubmissionPage() {
         className="inline-flex items-center text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
-        Back to Submissions
+        {t("submissions.backToSubmissions")}
       </Link>
 
       <Card>
         <CardHeader>
-          <CardTitle>Submit a New Resource</CardTitle>
-          <CardDescription>
-            Suggest an AI resource to be added to our collection. Your
-            submission will be reviewed by our team.
-          </CardDescription>
+          <CardTitle>{t("submissions.new.title")}</CardTitle>
+          <CardDescription>{t("submissions.new.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Title *</Label>
+              <Label htmlFor="title">
+                {t("submissions.new.fields.title")} *
+              </Label>
               <Input
                 id="title"
-                placeholder="e.g., Introduction to Machine Learning"
+                placeholder={t("submissions.new.placeholders.title")}
                 value={formData.title}
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
@@ -123,11 +124,13 @@ function NewSubmissionPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="destination_url">URL *</Label>
+              <Label htmlFor="destination_url">
+                {t("submissions.new.fields.url")} *
+              </Label>
               <Input
                 id="destination_url"
                 type="url"
-                placeholder="https://example.com/resource"
+                placeholder={t("submissions.new.placeholders.url")}
                 value={formData.destination_url}
                 onChange={(e) =>
                   setFormData({ ...formData, destination_url: e.target.value })
@@ -137,7 +140,7 @@ function NewSubmissionPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="type">Resource Type *</Label>
+              <Label htmlFor="type">{t("submissions.new.fields.type")} *</Label>
               <Select
                 value={formData.type}
                 onValueChange={(value) =>
@@ -145,12 +148,14 @@ function NewSubmissionPage() {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a type" />
+                  <SelectValue
+                    placeholder={t("submissions.new.placeholders.type")}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {RESOURCE_TYPES.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
+                    <SelectItem key={type} value={type}>
+                      {t(`submissions.types.${type}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -158,10 +163,12 @@ function NewSubmissionPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">
+                {t("submissions.new.fields.description")}
+              </Label>
               <Textarea
                 id="description"
-                placeholder="Briefly describe what this resource is about..."
+                placeholder={t("submissions.new.placeholders.description")}
                 value={formData.description}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   setFormData({ ...formData, description: e.target.value })
@@ -175,7 +182,9 @@ function NewSubmissionPage() {
               disabled={!isValid || createMutation.isPending}
               className="w-full"
             >
-              {createMutation.isPending ? "Submitting..." : "Submit Resource"}
+              {createMutation.isPending
+                ? t("submissions.new.submitting")
+                : t("submissions.submitResource")}
             </Button>
           </form>
         </CardContent>

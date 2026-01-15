@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import i18next from "i18next"
 import { type ChatTranscriptCreate, ChatTranscriptsService } from "@/client"
 import { handleError } from "@/utils"
 import { isLoggedIn } from "./useAuth"
@@ -21,7 +22,7 @@ export function useChatTranscripts() {
     mutationFn: (data: ChatTranscriptCreate) =>
       ChatTranscriptsService.saveTranscript({ requestBody: data }),
     onSuccess: () => {
-      showSuccessToast("Chat saved!")
+      showSuccessToast(i18next.t("chat.savedTranscripts.toast.saved"))
       queryClient.invalidateQueries({ queryKey: ["chat-transcripts"] })
     },
     onError: handleError.bind(showErrorToast),
@@ -32,7 +33,7 @@ export function useChatTranscripts() {
     mutationFn: (id: string) =>
       ChatTranscriptsService.deleteMyTranscript({ id }),
     onSuccess: () => {
-      showSuccessToast("Chat deleted")
+      showSuccessToast(i18next.t("chat.savedTranscripts.toast.deleted"))
       queryClient.invalidateQueries({ queryKey: ["chat-transcripts"] })
     },
     onError: handleError.bind(showErrorToast),
