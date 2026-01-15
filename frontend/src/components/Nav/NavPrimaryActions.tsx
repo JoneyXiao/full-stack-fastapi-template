@@ -1,4 +1,5 @@
 import { MessageSquare, Search } from "lucide-react"
+import type { Ref } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -11,11 +12,13 @@ import { Kbd } from "@/components/ui/kbd"
 interface NavPrimaryActionsProps {
   onSearchClick: () => void
   onChatClick: () => void
+  chatButtonRef?: Ref<HTMLButtonElement>
 }
 
 export function NavPrimaryActions({
   onSearchClick,
   onChatClick,
+  chatButtonRef,
 }: NavPrimaryActionsProps) {
   return (
     <div className="flex items-center gap-2">
@@ -44,6 +47,7 @@ export function NavPrimaryActions({
         variant="outline"
         size="sm"
         onClick={onChatClick}
+        ref={chatButtonRef}
         data-testid="nav-chat-trigger"
         className="gap-2"
       >

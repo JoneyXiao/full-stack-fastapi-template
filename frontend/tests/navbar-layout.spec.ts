@@ -18,11 +18,11 @@ test.describe("Navbar Layout", () => {
     await expect(navbar).toBeVisible()
   })
 
-  test("Navbar is visible on login page (/login)", async ({ page }) => {
+  test("Navbar is not visible on login page (/login)", async ({ page }) => {
     await page.goto("/login")
 
-    const navbar = page.getByTestId("app-navbar")
-    await expect(navbar).toBeVisible()
+    // Login page uses AuthLayout (not the authenticated /_layout), so AppNavbar should not render.
+    await expect(page.getByTestId("app-navbar")).toHaveCount(0)
   })
 
   test("Upper row contains expected elements", async ({ page }) => {
@@ -68,7 +68,7 @@ test.describe("Navbar Layout", () => {
     await expect(lowerNav).toBeVisible()
 
     // Dashboard link should be visible
-    const dashboardLink = page.getByTestId("nav-link-/")
+    const dashboardLink = page.getByTestId("nav-link-/dashboard")
     await expect(dashboardLink).toBeVisible()
 
     // Resources link should be visible

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { Appearance } from "@/components/Common/Appearance"
 import { Logo } from "@/components/Common/Logo"
@@ -22,6 +22,8 @@ export function AppNavbar({ className }: AppNavbarProps) {
   const { user } = useAuth()
   const [searchOpen, setSearchOpen] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
+  const chatButtonRef = useRef<HTMLButtonElement>(null)
+  const wasChatOpenRef = useRef(false)
 
   const navItems = getNavItems(!!user, user?.is_superuser ?? false)
 
@@ -36,6 +38,15 @@ export function AppNavbar({ className }: AppNavbarProps) {
     document.addEventListener("keydown", handleKeyDown)
     return () => document.removeEventListener("keydown", handleKeyDown)
   }, [])
+
+  // Restore focus to the chat trigger when the dialog closes (accessibility + tests).
+  useEffect(() => {
+    if (wasChatOpenRef.current && !chatOpen) {
+      // Defer to next frame so Radix can finish unmounting.
+      requestAnimationFrame(() => chatButtonRef.current?.focus())
+    }
+    wasChatOpenRef.current = chatOpen
+  }, [chatOpen])
 
   return (
     <header
@@ -61,6 +72,7 @@ export function AppNavbar({ className }: AppNavbarProps) {
             <NavPrimaryActions
               onSearchClick={() => setSearchOpen(true)}
               onChatClick={() => setChatOpen(true)}
+              chatButtonRef={chatButtonRef}
             />
 
             {/* Right: Locale, Theme, Auth */}

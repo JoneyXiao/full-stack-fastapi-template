@@ -7,7 +7,7 @@ import {
   Send,
   Trash2,
 } from "lucide-react"
-import { type FormEvent, type KeyboardEvent, useRef, useState } from "react"
+import { type FormEvent, type KeyboardEvent, useEffect, useRef, useState } from "react"
 
 import type { ChatTranscriptPublic, ResourcePreview } from "@/client"
 import { ChatMessageList } from "@/components/Landing/ChatMessageList"
@@ -46,6 +46,14 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
 
   const { sendMessageAsync, isLoading, isError, reset } = useLandingChat()
   const { saveTranscript, isSaving } = useChatTranscripts()
+
+  // SavedTranscriptsDialog is rendered as a sibling to the main Dialog.
+  // Ensure it can't remain open if the parent chat dialog closes.
+  useEffect(() => {
+    if (!open) {
+      setShowTranscripts(false)
+    }
+  }, [open])
 
   const handleSubmit = async (e?: FormEvent) => {
     e?.preventDefault()

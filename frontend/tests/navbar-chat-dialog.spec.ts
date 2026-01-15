@@ -37,7 +37,7 @@ test.describe("Navbar Chat Dialog", () => {
     await expect(chatDialog).toBeVisible()
 
     // Click outside the dialog (on the overlay)
-    await page.locator('[data-testid="chat-dialog-overlay"]').click({
+    await page.locator('[data-slot="dialog-overlay"]').click({
       position: { x: 10, y: 10 },
       force: true,
     })
