@@ -152,6 +152,20 @@ CSV_CONFIG = {
             "Notes",
         ],
     },
+    "icons": {
+        "file": "icons.csv",
+        "search_cols": ["Category", "Icon Name", "Keywords", "Best For"],
+        "output_cols": [
+            "Category",
+            "Icon Name",
+            "Keywords",
+            "Library",
+            "Import Code",
+            "Usage",
+            "Best For",
+            "Style",
+        ],
+    },
 }
 
 STACK_CONFIG = {
@@ -165,6 +179,7 @@ STACK_CONFIG = {
     "swiftui": {"file": "stacks/swiftui.csv"},
     "react-native": {"file": "stacks/react-native.csv"},
     "flutter": {"file": "stacks/flutter.csv"},
+    "shadcn": {"file": "stacks/shadcn.csv"},
 }
 
 # Common columns for all stacks
@@ -354,6 +369,16 @@ def detect_domain(query):
             "mobile",
         ],
         "typography": ["font", "typography", "heading", "serif", "sans"],
+        "icons": [
+            "icon",
+            "icons",
+            "lucide",
+            "heroicons",
+            "symbol",
+            "glyph",
+            "pictogram",
+            "svg icon",
+        ],
     }
 
     scores = {

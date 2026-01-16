@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "shadcn": {
+      "command": "/bin/sh",
+      "args": [
+        "-c",
+        "source $HOME/.nvm/nvm.sh && npx shadcn@latest mcp"
+      ]
+    }
+  }
+}

@@ -27,6 +27,16 @@ test.describe("Landing Page Smoke Test", () => {
     await expect(chatSection).toBeVisible()
   })
 
+  test("Onboarding and FAQ sections are visible", async ({ page }) => {
+    await page.goto("/")
+
+    await expect(page.getByTestId("landing-trust")).toBeVisible()
+    await expect(page.getByTestId("landing-onboarding")).toBeVisible()
+    await expect(page.getByTestId("landing-testimonials")).toBeVisible()
+    await expect(page.getByTestId("landing-faq")).toBeVisible()
+    await expect(page.getByTestId("landing-final-cta")).toBeVisible()
+  })
+
   test("Featured topics link to search", async ({ page }) => {
     await page.goto("/")
 

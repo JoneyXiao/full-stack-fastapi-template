@@ -1,9 +1,3 @@
----
-name: ui-ux-pro-max
-description: 'UI/UX design intelligence with 50 styles, 21 palettes, 50 font pairings, and stack-specific best practices'
-agent: 'agent'
----
-
 # ui-ux-pro-max
 
 Searchable database of UI styles, color palettes, font pairings, chart types, product recommendations, UX guidelines, and stack-specific best practices.
@@ -74,7 +68,7 @@ If user doesn't specify a stack, **default to `html-tailwind`**.
 python3 .shared/ui-ux-pro-max/scripts/search.py "<keyword>" --stack html-tailwind
 ```
 
-Available stacks: `html-tailwind`, `react`, `nextjs`, `vue`, `svelte`, `swiftui`, `react-native`, `flutter`
+Available stacks: `html-tailwind`, `react`, `nextjs`, `vue`, `svelte`, `swiftui`, `react-native`, `flutter`, `shadcn`
 
 ---
 
@@ -111,7 +105,7 @@ Available stacks: `html-tailwind`, `react`, `nextjs`, `vue`, `svelte`, `swiftui`
 
 ## Example Workflow
 
-**User request:** "Build a landing page for a skincare service"
+**User request:** "Làm landing page cho dịch vụ chăm sóc da chuyên nghiệp"
 
 **AI should:**
 
@@ -207,7 +201,6 @@ Before delivering UI code, verify these items:
 - [ ] All icons from consistent icon set (Heroicons/Lucide)
 - [ ] Brand logos are correct (verified from Simple Icons)
 - [ ] Hover states don't cause layout shift
-- [ ] Use theme colors directly (bg-primary) not var() wrapper
 
 ### Interaction
 - [ ] All clickable elements have `cursor-pointer`

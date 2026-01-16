@@ -1,18 +1,27 @@
 import { useQuery } from "@tanstack/react-query"
+import { motion, useReducedMotion } from "framer-motion"
 import { Loader2, Search } from "lucide-react"
-import { type FormEvent, type KeyboardEvent, useState } from "react"
+import {
+  type FormEvent,
+  type KeyboardEvent,
+  type ReactElement,
+  useState,
+} from "react"
 import { useTranslation } from "react-i18next"
 import { ResourcesService } from "@/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { createFadeUp } from "./landingMotion"
 import { ResourceResultCard } from "./ResourceResultCard"
 
 interface LandingSearchProps {
   className?: string
 }
 
-export function LandingSearch({ className }: LandingSearchProps) {
+export function LandingSearch({ className }: LandingSearchProps): ReactElement {
   const { t } = useTranslation()
+  const reduceMotion = useReducedMotion()
+  const containerVariants = createFadeUp(reduceMotion, 16, 0.5)
   const [query, setQuery] = useState("")
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null)
 
@@ -41,9 +50,9 @@ export function LandingSearch({ className }: LandingSearchProps) {
   }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSubmit()
-    }
+    if (e.key !== "Enter") return
+    e.preventDefault()
+    handleSubmit()
   }
 
   const hasSubmitted = submittedQuery !== null
@@ -53,7 +62,13 @@ export function LandingSearch({ className }: LandingSearchProps) {
     hasSubmitted && !isEmptyQuery && data && data.data.length === 0
 
   return (
-    <section className={className}>
+    <motion.section
+      className={className}
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.3 }}
+    >
       {/* Search Form */}
       <form onSubmit={handleSubmit} className="flex gap-2">
         <div className="relative flex-1">
@@ -80,6 +95,7 @@ export function LandingSearch({ className }: LandingSearchProps) {
         <div
           className="mt-8 flex items-center justify-center"
           data-testid="landing-search-loading"
+          aria-live="polite"
         >
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
           <span className="ml-2 text-muted-foreground">
@@ -101,7 +117,9 @@ export function LandingSearch({ className }: LandingSearchProps) {
       {/* Error State */}
       {isError && !isLoading && (
         <div className="mt-8 text-center" data-testid="landing-search-error">
-          <p className="text-destructive">{t("landing.searchError")}</p>
+          <p className="text-destructive" role="alert">
+            {t("landing.searchError")}
+          </p>
           <Button variant="outline" onClick={() => refetch()} className="mt-4">
             {t("errors.tryAgain")}
           </Button>
@@ -133,6 +151,6 @@ export function LandingSearch({ className }: LandingSearchProps) {
           {t("common.found", { count: data.count })}
         </p>
       )}
-    </section>
+    </motion.section>
   )
 }

@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router"
+import { motion, useReducedMotion } from "framer-motion"
 import {
   BookOpen,
   Brain,
@@ -9,8 +10,10 @@ import {
   MessageSquare,
   Wrench,
 } from "lucide-react"
+import type { ReactElement } from "react"
 import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
+import { createFadeUp, createStagger } from "./landingMotion"
 
 interface FeaturedTopicsProps {
   className?: string
@@ -55,33 +58,49 @@ const FEATURED_TOPICS = [
   { labelKey: "landing.featuredTopics.tools", query: "tool", icon: Wrench },
 ]
 
-export function FeaturedTopics({ className }: FeaturedTopicsProps) {
+export function FeaturedTopics({
+  className,
+}: FeaturedTopicsProps): ReactElement {
   const { t } = useTranslation()
+  const reduceMotion = useReducedMotion()
+  const containerVariants = createStagger(reduceMotion, 0.08, 0.05)
+  const itemVariants = createFadeUp(reduceMotion, 12, 0.4)
 
   return (
-    <section className={cn("py-12", className)} data-testid="featured-topics">
-      <h2 className="mb-6 text-center text-sm font-medium uppercase tracking-wider text-muted-foreground">
+    <motion.section
+      className={cn("py-12", className)}
+      data-testid="featured-topics"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.4 }}
+    >
+      <motion.h2
+        variants={itemVariants}
+        className="mb-6 text-center text-sm font-medium uppercase tracking-wider text-muted-foreground"
+      >
         {t("landing.featuredTopics.title")}
-      </h2>
+      </motion.h2>
       <div className="flex flex-wrap items-center justify-center gap-3">
         {FEATURED_TOPICS.map((topic) => (
-          <Link
-            key={topic.query}
-            to="/resources"
-            search={{ q: topic.query }}
-            className={cn(
-              "group flex cursor-pointer items-center gap-2 rounded-full border bg-background px-4 py-2.5 text-sm font-medium shadow-sm",
-              "transition-all duration-200 hover:border-primary/50 hover:bg-primary/5 hover:shadow-md",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-            )}
-          >
-            <topic.icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
-            <span className="transition-colors group-hover:text-primary">
-              {t(topic.labelKey)}
-            </span>
-          </Link>
+          <motion.div key={topic.query} variants={itemVariants}>
+            <Link
+              to="/resources"
+              search={{ q: topic.query }}
+              className={cn(
+                "group flex cursor-pointer items-center gap-2 rounded-full border bg-background px-4 py-2.5 text-sm font-medium shadow-sm",
+                "transition-all duration-200 hover:border-primary/50 hover:bg-primary/5 hover:shadow-md",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              )}
+            >
+              <topic.icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
+              <span className="transition-colors group-hover:text-primary">
+                {t(topic.labelKey)}
+              </span>
+            </Link>
+          </motion.div>
         ))}
       </div>
-    </section>
+    </motion.section>
   )
 }

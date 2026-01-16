@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router"
+import { motion, useReducedMotion } from "framer-motion"
 import {
   History,
   Loader2,
@@ -7,7 +8,13 @@ import {
   Send,
   Trash2,
 } from "lucide-react"
-import { type FormEvent, type KeyboardEvent, useRef, useState } from "react"
+import {
+  type FormEvent,
+  type KeyboardEvent,
+  type ReactElement,
+  useRef,
+  useState,
+} from "react"
 import { useTranslation } from "react-i18next"
 import type { ResourcePreview } from "@/client"
 import { Button } from "@/components/ui/button"
@@ -15,6 +22,7 @@ import { Input } from "@/components/ui/input"
 import { useChatTranscripts } from "@/hooks/useChatTranscripts"
 import { useLandingChat } from "@/hooks/useLandingChat"
 import { ChatMessageList } from "./ChatMessageList"
+import { createFadeUp } from "./landingMotion"
 import { SavedTranscriptsDialog } from "./SavedTranscriptsDialog"
 
 interface LandingChatProps {
@@ -28,8 +36,13 @@ interface DisplayMessage {
   resources?: ResourcePreview[]
 }
 
-export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
+export function LandingChat({
+  className,
+  isAuthenticated,
+}: LandingChatProps): ReactElement {
   const { t } = useTranslation()
+  const reduceMotion = useReducedMotion()
+  const containerVariants = createFadeUp(reduceMotion, 18, 0.55)
   const [inputValue, setInputValue] = useState("")
   const [messages, setMessages] = useState<DisplayMessage[]>([])
   const [showTranscripts, setShowTranscripts] = useState(false)
@@ -102,8 +115,15 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
   // Show sign-in prompt for unauthenticated users
   if (!isAuthenticated) {
     return (
-      <section className={className} data-testid="landing-chat-section">
-        <div className="rounded-lg border bg-card p-6 text-center">
+      <motion.section
+        className={className}
+        data-testid="landing-chat-section"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+      >
+        <div className="rounded-2xl border bg-card/80 p-6 text-center shadow-sm">
           <h2 className="flex items-center justify-center gap-2 text-lg font-semibold">
             <MessageSquare className="h-5 w-5" />
             {t("landing.aiChat.signInPrompt")}
@@ -117,13 +137,20 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
             </Link>
           </div>
         </div>
-      </section>
+      </motion.section>
     )
   }
 
   return (
-    <section className={className} data-testid="landing-chat-section">
-      <div className="rounded-lg border bg-card p-4">
+    <motion.section
+      className={className}
+      data-testid="landing-chat-section"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.3 }}
+    >
+      <div className="rounded-2xl border bg-card/90 p-4 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="flex items-center gap-2 text-lg font-semibold">
             <MessageSquare className="h-5 w-5" />
@@ -135,6 +162,7 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
               size="icon"
               onClick={() => setShowTranscripts(true)}
               title={t("landing.aiChat.viewSaved")}
+              aria-label={t("landing.aiChat.viewSaved")}
             >
               <History className="h-4 w-4" />
             </Button>
@@ -146,6 +174,7 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
                   onClick={handleSave}
                   disabled={isSaving}
                   title={t("landing.aiChat.saveChat")}
+                  aria-label={t("landing.aiChat.saveChat")}
                   data-testid="landing-chat-save"
                 >
                   {isSaving ? (
@@ -159,6 +188,7 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
                   size="icon"
                   onClick={handleClear}
                   title={t("landing.aiChat.clearChat")}
+                  aria-label={t("landing.aiChat.clearChat")}
                   data-testid="landing-chat-clear"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -177,6 +207,7 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
             <div
               className="mt-4 flex items-center justify-center"
               data-testid="landing-chat-loading"
+              aria-live="polite"
             >
               <Loader2 className="h-5 w-5 animate-spin text-primary" />
               <span className="ml-2 text-sm text-muted-foreground">
@@ -211,6 +242,7 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
           <Button
             type="submit"
             disabled={!inputValue.trim() || isLoading}
+            aria-label={t("landing.aiChat.send")}
             data-testid="landing-chat-send"
           >
             <Send className="h-4 w-4" />
@@ -235,6 +267,6 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
           setShowTranscripts(false)
         }}
       />
-    </section>
+    </motion.section>
   )
 }

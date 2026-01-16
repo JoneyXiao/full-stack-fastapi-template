@@ -51,7 +51,7 @@
     "login": "Log In",
     "signup": "Sign Up",
     "openSearch": "Open search",
-    "askAi": "Ask AI"
+    "askAi": "Try AI chat"
   },
   "auth": {
     "login": "Log In",
@@ -146,23 +146,32 @@
   },
   "landing": {
     "title": "AI Resource Hub - Find the best AI resources fast",
-    "curatedResources": "Curated AI Resources",
-    "heroTitle": "Find the best",
-    "heroTitleHighlight": "AI resources",
-    "heroTitleEnd": "—fast.",
-    "heroDescription": "Discover curated tutorials, tools, datasets, and papers. Search directly or ask our AI assistant for personalized recommendations.",
+    "heroBadge": "AI Resource Hub",
+    "heroTitle": "Ask once,",
+    "heroTitleHighlight": "discover the best",
+    "heroTitleEnd": "AI resources.",
+    "heroDescription": "Get guided recommendations from AI or search the community library in seconds.",
+    "primaryCta": "Try AI chat",
+    "secondaryCta": "Search by keyword",
     "browseResources": "Browse Resources",
-    "quickSearch": "Quick Search",
-    "instantSearch": "Instant keyword search",
-    "aiRecommendations": "AI-powered recommendations",
-    "communityCurated": "Community curated",
-    "searchResources": "Search Resources",
-    "findWhatYouNeed": "Find exactly what you need",
-    "searchPlaceholder": "Search for tutorials, tools, papers...",
+    "heroNote": "Keyword search is open to everyone.",
+    "heroFeatures": {
+      "guided": "Guided by AI recommendations",
+      "fastSearch": "Fast keyword search",
+      "community": "Community-vetted resources"
+    },
+    "searchResources": "Search the library",
+    "findWhatYouNeed": "Find what you need with a focused keyword search",
+    "searchPlaceholder": "Search for tutorials, tools, datasets...",
     "searchButton": "Search",
+    "searchNote": "No sign-up required to search. Save and contribute after you sign in.",
     "noResults": "No resources found. Try different keywords.",
     "emptyQueryHint": "Enter keywords above and press Search to find resources.",
     "searchError": "Could not load search results. Please try again.",
+    "chatSection": {
+      "title": "Get tailored recommendations in minutes",
+      "subtitle": "Describe your goal and let AI surface curated tutorials, tools, and papers."
+    },
     "aiChat": {
       "title": "Ask for Recommendations",
       "signInPrompt": "Get AI-Powered Recommendations",
@@ -174,20 +183,21 @@
       "disclaimer": "Recommendations are based on our curated resource catalog.",
       "viewSaved": "View saved chats",
       "saveChat": "Save chat",
-      "clearChat": "Clear chat"
+      "clearChat": "Clear chat",
+      "send": "Send message"
     },
     "howItWorks": {
       "title": "How It Works",
-      "subtitle": "Get started in three simple steps",
-      "searchTitle": "Search",
-      "searchDescription": "Enter keywords to instantly find relevant tutorials, tools, and papers.",
-      "askTitle": "Ask",
-      "askDescription": "Sign in to chat with our AI for personalized recommendations based on your needs.",
-      "contributeTitle": "Contribute",
-      "contributeDescription": "Submit new resources to help grow the community collection."
+      "subtitle": "A predictable, three-step path from question to action",
+      "askTitle": "Ask or describe your goal",
+      "askDescription": "Start with AI chat to get a shortlist tailored to your context.",
+      "discoverTitle": "Review and refine",
+      "discoverDescription": "Open resources, compare options, and save what fits.",
+      "contributeTitle": "Share back",
+      "contributeDescription": "Submit new resources to keep the library fresh for everyone."
     },
     "featuredTopics": {
-      "title": "Popular Topics",
+      "title": "Explore Popular Topics",
       "machineLearning": "Machine Learning",
       "gptLlms": "GPT & LLMs",
       "computerVision": "Computer Vision",
@@ -196,6 +206,86 @@
       "tutorials": "Tutorials",
       "papers": "Research Papers",
       "tools": "Tools"
+    },
+    "trust": {
+      "items": {
+        "curated": {
+          "title": "Curated for clarity",
+          "description": "Short, relevant lists instead of endless results."
+        },
+        "community": {
+          "title": "Community-vetted",
+          "description": "Resources are reviewed and improved by contributors."
+        },
+        "fast": {
+          "title": "Fast to value",
+          "description": "Get an answer path in minutes, not hours."
+        },
+        "transparent": {
+          "title": "Transparent sources",
+          "description": "Clear links back to original tutorials, tools, and papers."
+        }
+      }
+    },
+    "onboarding": {
+      "title": "Get started in 60 seconds",
+      "subtitle": "Choose your starting point and keep momentum.",
+      "ctaChat": "Start with AI chat",
+      "ctaSearch": "Search by keyword",
+      "skip": "Skip to explore",
+      "steps": {
+        "ask": "Describe your goal in one sentence.",
+        "search": "Scan a short, relevant list of resources.",
+        "save": "Save what you want to revisit later.",
+        "contribute": "Share a resource to help the community grow."
+      }
+    },
+    "testimonials": {
+      "title": "Built for curious builders",
+      "subtitle": "Calm, focused, and built for serious research.",
+      "items": {
+        "finding": "I can go from question to a shortlist in minutes without getting lost.",
+        "focus": "The AI suggestions are concise, which keeps me focused on learning.",
+        "workflow": "It feels like a calm research assistant for my daily workflow."
+      },
+      "authors": {
+        "communityBuilder": "Community member",
+        "researcher": "Research learner",
+        "mlEngineer": "ML engineer"
+      },
+      "roles": {
+        "communityBuilder": "Open-source contributor",
+        "researcher": "Early-career researcher",
+        "mlEngineer": "Applied AI team"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Clear answers before you dive in.",
+      "items": {
+        "sources": {
+          "question": "Where do the resources come from?",
+          "answer": "Resources are curated from community submissions and vetted for relevance."
+        },
+        "chat": {
+          "question": "Does AI chat replace keyword search?",
+          "answer": "No. Chat is for guidance, while search stays available for direct browsing."
+        },
+        "submissions": {
+          "question": "How do I submit a resource?",
+          "answer": "Sign in, open submissions, and share a link with a short description."
+        },
+        "privacy": {
+          "question": "What happens to my chat input?",
+          "answer": "We only use it to generate recommendations and improve the experience."
+        }
+      }
+    },
+    "finalCta": {
+      "title": "Ready to discover your next resource?",
+      "subtitle": "Start with AI chat or browse the library directly.",
+      "primary": "Try AI chat",
+      "secondary": "Browse resources"
     },
     "footer": {
       "title": "AI Resource Hub",

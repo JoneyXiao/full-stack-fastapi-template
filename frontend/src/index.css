@@ -43,6 +43,12 @@
 
 :root {
   --radius: 0.625rem;
+  --font-sans:
+    "Noto Sans SC", "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+  --font-heading:
+    "Plus Jakarta Sans", "Noto Sans SC", system-ui, -apple-system, "Segoe UI",
+    sans-serif;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -116,6 +122,15 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
   }
   button,
   [role="button"] {
