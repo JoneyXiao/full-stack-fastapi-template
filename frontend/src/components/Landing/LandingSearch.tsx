@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { Loader2, Search } from "lucide-react"
 import { type FormEvent, type KeyboardEvent, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { ResourcesService } from "@/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,6 +12,7 @@ interface LandingSearchProps {
 }
 
 export function LandingSearch({ className }: LandingSearchProps) {
+  const { t } = useTranslation()
   const [query, setQuery] = useState("")
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null)
 
@@ -61,7 +63,7 @@ export function LandingSearch({ className }: LandingSearchProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Search for tutorials, tools, papers..."
+            placeholder={t("landing.searchPlaceholder")}
             aria-label="Search resources"
             data-testid="landing-search-input"
             className="pl-10"
@@ -69,7 +71,7 @@ export function LandingSearch({ className }: LandingSearchProps) {
         </div>
         <Button type="submit" data-testid="landing-search-button">
           <Search className="mr-2 h-4 w-4" />
-          Search
+          {t("landing.searchButton")}
         </Button>
       </form>
 
@@ -81,7 +83,7 @@ export function LandingSearch({ className }: LandingSearchProps) {
         >
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
           <span className="ml-2 text-muted-foreground">
-            Searching resources...
+            {t("common.loading")}
           </span>
         </div>
       )}
@@ -92,23 +94,16 @@ export function LandingSearch({ className }: LandingSearchProps) {
           className="mt-8 text-center"
           data-testid="landing-search-empty-guidance"
         >
-          <p className="text-muted-foreground">
-            Enter a keyword to search for AI resources.
-          </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Try "machine learning", "GPT", "tutorial", or "dataset".
-          </p>
+          <p className="text-muted-foreground">{t("landing.emptyQueryHint")}</p>
         </div>
       )}
 
       {/* Error State */}
       {isError && !isLoading && (
         <div className="mt-8 text-center" data-testid="landing-search-error">
-          <p className="text-destructive">
-            Something went wrong while searching.
-          </p>
+          <p className="text-destructive">{t("landing.searchError")}</p>
           <Button variant="outline" onClick={() => refetch()} className="mt-4">
-            Try again
+            {t("errors.tryAgain")}
           </Button>
         </div>
       )}
@@ -116,12 +111,7 @@ export function LandingSearch({ className }: LandingSearchProps) {
       {/* No Results */}
       {hasNoResults && !isLoading && (
         <div className="mt-8 text-center" data-testid="landing-search-empty">
-          <p className="text-muted-foreground">
-            No results match "{submittedQuery}"
-          </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Try a different keyword or ask the AI assistant below.
-          </p>
+          <p className="text-muted-foreground">{t("landing.noResults")}</p>
         </div>
       )}
 
@@ -140,7 +130,7 @@ export function LandingSearch({ className }: LandingSearchProps) {
       {/* Results count */}
       {hasResults && !isLoading && (
         <p className="mt-4 text-center text-sm text-muted-foreground">
-          Found {data.count} resource{data.count !== 1 ? "s" : ""}
+          {t("common.found", { count: data.count })}
         </p>
       )}
     </section>

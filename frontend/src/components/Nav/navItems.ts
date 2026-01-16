@@ -3,6 +3,9 @@ import { Bookmark, BookOpen, Briefcase, Home, Send, Users } from "lucide-react"
 
 export interface NavItem {
   icon: LucideIcon
+  /** Translation key for the nav item title (e.g., "nav.dashboard") */
+  titleKey: string
+  /** Fallback English title (used as display if translation not available) */
   title: string
   path: string
 }
@@ -11,17 +14,37 @@ export interface NavItem {
  * Base navigation items visible to all users (including unauthenticated).
  */
 export const baseNavItems: NavItem[] = [
-  { icon: Home, title: "Dashboard", path: "/dashboard" },
-  { icon: BookOpen, title: "Resources", path: "/resources" },
-  { icon: Briefcase, title: "Items", path: "/items" },
+  {
+    icon: Home,
+    titleKey: "nav.dashboard",
+    title: "Dashboard",
+    path: "/dashboard",
+  },
+  {
+    icon: BookOpen,
+    titleKey: "nav.resources",
+    title: "Resources",
+    path: "/resources",
+  },
+  { icon: Briefcase, titleKey: "nav.items", title: "Items", path: "/items" },
 ]
 
 /**
  * Additional navigation items visible only to authenticated users.
  */
 export const authenticatedNavItems: NavItem[] = [
-  { icon: Bookmark, title: "Favorites", path: "/favorites" },
-  { icon: Send, title: "Submissions", path: "/submissions" },
+  {
+    icon: Bookmark,
+    titleKey: "nav.favorites",
+    title: "Favorites",
+    path: "/favorites",
+  },
+  {
+    icon: Send,
+    titleKey: "nav.submissions",
+    title: "Submissions",
+    path: "/submissions",
+  },
 ]
 
 /**
@@ -29,6 +52,7 @@ export const authenticatedNavItems: NavItem[] = [
  */
 export const adminNavItem: NavItem = {
   icon: Users,
+  titleKey: "nav.admin",
   title: "Admin",
   path: "/admin",
 }

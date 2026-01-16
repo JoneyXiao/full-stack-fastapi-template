@@ -1,16 +1,17 @@
 import { AxiosError } from "axios"
 import type { ApiError } from "./client"
+import { localizeError } from "./i18n/errors"
 
 function extractErrorMessage(err: ApiError): string {
   if (err instanceof AxiosError) {
-    return err.message
+    return localizeError(err.message)
   }
 
   const errDetail = (err.body as any)?.detail
   if (Array.isArray(errDetail) && errDetail.length > 0) {
-    return errDetail[0].msg
+    return localizeError(errDetail[0].msg)
   }
-  return errDetail || "Something went wrong."
+  return localizeError(errDetail || "Something went wrong.")
 }
 
 export const handleError = function (

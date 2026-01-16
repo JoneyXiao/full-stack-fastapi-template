@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { FileText, Loader2, Search } from "lucide-react"
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import { ResourcesService } from "@/client"
 import {
@@ -19,6 +20,7 @@ interface SearchDialogProps {
 }
 
 export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [query, setQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
@@ -70,12 +72,12 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
     <CommandDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Search Resources"
-      description="Search for AI resources by keyword"
+      title={t("search.title")}
+      description={t("search.description")}
     >
       <div data-testid="search-dialog">
         <CommandInput
-          placeholder="Search resources..."
+          placeholder={t("search.placeholder")}
           value={query}
           onValueChange={setQuery}
           data-testid="search-dialog-input"
@@ -86,7 +88,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
             <div className="flex items-center justify-center py-6">
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
               <span className="ml-2 text-sm text-muted-foreground">
-                Searching...
+                {t("search.searching")}
               </span>
             </div>
           )}
@@ -97,15 +99,15 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
               className="py-6 text-center text-sm text-muted-foreground"
               data-testid="search-error-state"
             >
-              <p>Unable to search at this time.</p>
-              <p className="mt-1 text-xs">Please try again later.</p>
+              <p>{t("search.errorTitle")}</p>
+              <p className="mt-1 text-xs">{t("search.errorHint")}</p>
             </div>
           )}
 
           {/* Empty state */}
           {hasNoResults && !isLoading && (
             <CommandEmpty data-testid="search-empty-state">
-              No resources found for "{debouncedQuery}"
+              {t("search.noResults", { query: debouncedQuery })}
             </CommandEmpty>
           )}
 
@@ -137,7 +139,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                   className="cursor-pointer justify-center text-primary"
                 >
                   <Search className="mr-2 h-4 w-4" />
-                  View all results
+                  {t("search.viewAllResults")}
                 </CommandItem>
               )}
             </CommandGroup>
@@ -146,7 +148,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
           {/* Empty query prompt */}
           {!debouncedQuery && !isLoading && (
             <div className="py-6 text-center text-sm text-muted-foreground">
-              Start typing to search resources
+              {t("search.startTyping")}
             </div>
           )}
         </CommandList>

@@ -14,6 +14,7 @@ import {
   XCircle,
 } from "lucide-react"
 import { Suspense, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import { SubmissionsService } from "@/client"
 import { Badge } from "@/components/ui/badge"
@@ -57,26 +58,28 @@ export const Route = createFileRoute("/_layout/submissions/$submissionId")({
 })
 
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useTranslation()
+
   switch (status) {
     case "pending":
       return (
         <Badge variant="outline" className="text-yellow-600 border-yellow-600">
           <Clock className="h-3 w-3 mr-1" />
-          Pending Review
+          {t("submissions.status.pending")}
         </Badge>
       )
     case "approved":
       return (
         <Badge variant="outline" className="text-green-600 border-green-600">
           <CheckCircle className="h-3 w-3 mr-1" />
-          Approved
+          {t("submissions.status.approved")}
         </Badge>
       )
     case "rejected":
       return (
         <Badge variant="outline" className="text-red-600 border-red-600">
           <XCircle className="h-3 w-3 mr-1" />
-          Rejected
+          {t("submissions.status.rejected")}
         </Badge>
       )
     default:
@@ -85,6 +88,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
+  const { t } = useTranslation()
   const { data: submission } = useSuspenseQuery(
     getSubmissionQueryOptions(submissionId),
   )
@@ -102,10 +106,10 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["submission", submissionId] })
       queryClient.invalidateQueries({ queryKey: ["submissions"] })
-      showSuccessToast("Submission has been approved and published")
+      showSuccessToast(t("submissions.detail.approveSuccess"))
     },
     onError: (error: Error & { body?: { detail?: string } }) => {
-      const detail = error.body?.detail || "Failed to approve submission"
+      const detail = error.body?.detail || t("submissions.detail.approveFailed")
       showErrorToast(detail)
     },
   })
@@ -115,7 +119,11 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["submission", submissionId] })
       queryClient.invalidateQueries({ queryKey: ["submissions"] })
-      showSuccessToast("Submission has been rejected")
+      showSuccessToast(t("submissions.detail.rejectSuccess"))
+    },
+    onError: (error: Error & { body?: { detail?: string } }) => {
+      const detail = error.body?.detail || t("submissions.detail.rejectFailed")
+      showErrorToast(detail)
     },
   })
 
@@ -130,7 +138,11 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
         queryKey: ["submission-comments", submissionId],
       })
       setNewComment("")
-      showSuccessToast("Your comment has been posted")
+      showSuccessToast(t("submissions.detail.commentSuccess"))
+    },
+    onError: (error: Error & { body?: { detail?: string } }) => {
+      const detail = error.body?.detail || t("submissions.detail.commentFailed")
+      showErrorToast(detail)
     },
   })
 
@@ -150,7 +162,7 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
         className="inline-flex items-center text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
-        Back to Submissions
+        {t("submissions.backToSubmissions")}
       </Link>
 
       <div className="space-y-6">
@@ -162,7 +174,11 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
                 {submission.title}
               </h1>
               <div className="flex items-center gap-2 mt-2">
-                <Badge variant="secondary">{submission.type}</Badge>
+                <Badge variant="secondary">
+                  {t(`submissions.types.${submission.type}`, {
+                    defaultValue: submission.type,
+                  })}
+                </Badge>
                 <StatusBadge status={submission.status} />
               </div>
             </div>
@@ -173,7 +189,7 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
             >
               <Button variant="outline">
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Preview URL
+                {t("submissions.detail.previewUrl")}
               </Button>
             </a>
           </div>
@@ -183,7 +199,9 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
             </p>
           )}
           <p className="text-sm text-muted-foreground mt-2">
-            Submitted {new Date(submission.created_at).toLocaleDateString()}
+            {t("submissions.submitted", {
+              date: new Date(submission.created_at).toLocaleDateString(),
+            })}
           </p>
         </div>
 
@@ -191,9 +209,9 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
         {isAdmin && submission.status === "pending" && (
           <Card>
             <CardHeader>
-              <CardTitle>Admin Actions</CardTitle>
+              <CardTitle>{t("submissions.detail.adminActionsTitle")}</CardTitle>
               <CardDescription>
-                Review and take action on this submission
+                {t("submissions.detail.adminActionsDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent className="flex gap-2">
@@ -203,7 +221,7 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
                 className="bg-green-600 hover:bg-green-700"
               >
                 <CheckCircle className="h-4 w-4 mr-1" />
-                Approve & Publish
+                {t("submissions.detail.approveAndPublish")}
               </Button>
               <Button
                 variant="destructive"
@@ -211,7 +229,7 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
                 disabled={approveMutation.isPending || rejectMutation.isPending}
               >
                 <XCircle className="h-4 w-4 mr-1" />
-                Reject
+                {t("submissions.detail.reject")}
               </Button>
             </CardContent>
           </Card>
@@ -222,16 +240,16 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
-              Discussion
+              {t("submissions.detail.discussionTitle")}
             </CardTitle>
             <CardDescription>
-              Discuss this submission with the community
+              {t("submissions.detail.discussionDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={handleSubmitComment} className="space-y-2">
               <Textarea
-                placeholder="Share your thoughts about this submission..."
+                placeholder={t("submissions.detail.commentPlaceholder")}
                 value={newComment}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   setNewComment(e.target.value)
@@ -244,7 +262,7 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
                 disabled={!newComment.trim() || commentMutation.isPending}
               >
                 <Send className="h-4 w-4 mr-1" />
-                Post Comment
+                {t("submissions.detail.postComment")}
               </Button>
             </form>
 
@@ -254,13 +272,17 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
                 {comments.data.map((comment) => (
                   <div key={comment.id} className="space-y-1">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span className="font-medium text-foreground">User</span>
+                      <span className="font-medium text-foreground">
+                        {t("submissions.detail.commentAuthorFallback")}
+                      </span>
                       <span>•</span>
                       <span>
                         {new Date(comment.created_at).toLocaleDateString()}
                       </span>
                       {comment.updated_at !== comment.created_at && (
-                        <span className="italic">(edited)</span>
+                        <span className="italic">
+                          {t("submissions.detail.edited")}
+                        </span>
                       )}
                     </div>
                     <p className="text-sm">{comment.body}</p>
@@ -269,7 +291,7 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
               </div>
             ) : (
               <p className="text-sm text-muted-foreground pt-4 border-t">
-                No comments yet. Be the first to share your thoughts!
+                {t("submissions.detail.noComments")}
               </p>
             )}
           </CardContent>

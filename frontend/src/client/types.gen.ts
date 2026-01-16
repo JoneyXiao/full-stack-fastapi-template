@@ -239,6 +239,7 @@ export type UserPublic = {
     is_superuser?: boolean;
     full_name?: (string | null);
     id: string;
+    locale?: ('en' | 'zh' | null);
 };
 
 export type UserRegister = {
@@ -263,6 +264,7 @@ export type UserUpdate = {
 export type UserUpdateMe = {
     full_name?: (string | null);
     email?: (string | null);
+    locale?: ('en' | 'zh' | null);
 };
 
 export type ValidationError = {

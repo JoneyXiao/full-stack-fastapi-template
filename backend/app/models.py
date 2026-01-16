@@ -1,7 +1,11 @@
 import uuid
+from typing import Literal
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
+
+# Supported locale codes
+SupportedLocale = Literal["en", "zh"]
 
 
 # Shared properties
@@ -32,6 +36,7 @@ class UserUpdate(UserBase):
 class UserUpdateMe(SQLModel):
     full_name: str | None = Field(default=None, max_length=255)
     email: EmailStr | None = Field(default=None, max_length=255)
+    locale: SupportedLocale | None = Field(default=None)
 
 
 class UpdatePassword(SQLModel):
@@ -43,12 +48,14 @@ class UpdatePassword(SQLModel):
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     hashed_password: str
+    locale: str | None = Field(default=None, max_length=10)
     items: list["Item"] = Relationship(back_populates="owner", cascade_delete=True)
 
 
 # Properties to return via API, id is always required
 class UserPublic(UserBase):
     id: uuid.UUID
+    locale: SupportedLocale | None = None
 
 
 class UsersPublic(SQLModel):

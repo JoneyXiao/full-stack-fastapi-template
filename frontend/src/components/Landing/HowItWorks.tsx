@@ -1,4 +1,5 @@
 import { MessageSquare, Search, Send } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 
 interface HowItWorksProps {
@@ -8,36 +9,38 @@ interface HowItWorksProps {
 const STEPS = [
   {
     icon: Search,
-    title: "Search",
-    description:
-      "Enter keywords to instantly find relevant tutorials, tools, and papers.",
+    titleKey: "landing.howItWorks.searchTitle",
+    descriptionKey: "landing.howItWorks.searchDescription",
   },
   {
     icon: MessageSquare,
-    title: "Ask",
-    description:
-      "Sign in to chat with our AI for personalized recommendations based on your needs.",
+    titleKey: "landing.howItWorks.askTitle",
+    descriptionKey: "landing.howItWorks.askDescription",
   },
   {
     icon: Send,
-    title: "Contribute",
-    description: "Submit new resources to help grow the community collection.",
+    titleKey: "landing.howItWorks.contributeTitle",
+    descriptionKey: "landing.howItWorks.contributeDescription",
   },
 ]
 
 export function HowItWorks({ className }: HowItWorksProps) {
+  const { t } = useTranslation()
+
   return (
     <section className={cn("py-16", className)} data-testid="how-it-works">
       <div className="mb-12 text-center">
-        <h2 className="text-2xl font-bold md:text-3xl">How It Works</h2>
+        <h2 className="text-2xl font-bold md:text-3xl">
+          {t("landing.howItWorks.title")}
+        </h2>
         <p className="mt-2 text-muted-foreground">
-          Get started in three simple steps
+          {t("landing.howItWorks.subtitle")}
         </p>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
         {STEPS.map((step, index) => (
           <div
-            key={step.title}
+            key={step.titleKey}
             className={cn(
               "group relative flex flex-col items-center rounded-2xl border bg-background/50 p-8 text-center shadow-sm backdrop-blur-sm",
               "transition-all duration-300 hover:border-primary/30 hover:shadow-lg",
@@ -54,9 +57,9 @@ export function HowItWorks({ className }: HowItWorksProps) {
             </div>
 
             {/* Content */}
-            <h3 className="mb-2 text-lg font-semibold">{step.title}</h3>
+            <h3 className="mb-2 text-lg font-semibold">{t(step.titleKey)}</h3>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              {step.description}
+              {t(step.descriptionKey)}
             </p>
           </div>
         ))}

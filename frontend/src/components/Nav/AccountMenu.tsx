@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router"
 import { LogOut, Settings, User } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 import type { UserPublic } from "@/client"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -30,6 +31,7 @@ function getInitials(user: UserPublic): string {
 }
 
 export function AccountMenu({ user }: AccountMenuProps) {
+  const { t } = useTranslation()
   const { logout } = useAuth()
   const initials = getInitials(user)
 
@@ -40,7 +42,7 @@ export function AccountMenu({ user }: AccountMenuProps) {
           variant="ghost"
           size="icon"
           data-testid="user-menu"
-          aria-label="User menu"
+          aria-label={t("common.menu")}
           className="relative h-8 w-8 rounded-full"
         >
           <Avatar className="h-8 w-8">
@@ -64,13 +66,13 @@ export function AccountMenu({ user }: AccountMenuProps) {
         <DropdownMenuItem asChild>
           <Link to="/settings" className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
-            Settings
+            {t("settings.title")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link to="/settings" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            My Profile
+            {t("settings.myProfile")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -79,7 +81,7 @@ export function AccountMenu({ user }: AccountMenuProps) {
           className="flex items-center gap-2"
         >
           <LogOut className="h-4 w-4" />
-          Log out
+          {t("auth.logout")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

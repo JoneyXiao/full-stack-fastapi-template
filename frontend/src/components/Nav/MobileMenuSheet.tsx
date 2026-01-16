@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router"
 import { ChevronDown, Globe, Menu, Monitor, Moon, Sun } from "lucide-react"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import { type Theme, useTheme } from "@/components/theme-provider"
 import {
@@ -35,6 +36,7 @@ interface MobileMenuSheetProps {
 }
 
 export function MobileMenuSheet({ items }: MobileMenuSheetProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
@@ -45,10 +47,10 @@ export function MobileMenuSheet({ items }: MobileMenuSheetProps) {
   const localeLabel =
     SUPPORTED_LOCALES.find((l) => l.value === locale)?.label ?? locale
 
-  const themeLabel: Record<Theme, string> = {
-    system: "System",
-    light: "Light",
-    dark: "Dark",
+  const themeLabels: Record<Theme, string> = {
+    system: t("settings.theme.system"),
+    light: t("settings.theme.light"),
+    dark: t("settings.theme.dark"),
   }
 
   const ThemeIcon = { system: Monitor, light: Sun, dark: Moon }[theme]
@@ -61,7 +63,7 @@ export function MobileMenuSheet({ items }: MobileMenuSheetProps) {
           size="icon"
           className="md:hidden justify-start p-0 hover:bg-transparent"
           data-testid="nav-mobile-menu"
-          aria-label="Open menu"
+          aria-label={t("common.openMenu")}
         >
           <Menu className="h-5 w-5" />
         </Button>
@@ -74,12 +76,15 @@ export function MobileMenuSheet({ items }: MobileMenuSheetProps) {
         <div className="flex h-full flex-col">
           <div className="sticky top-0 z-10 border-b bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <SheetHeader>
-              <SheetTitle>Menu</SheetTitle>
+              <SheetTitle>{t("common.menu")}</SheetTitle>
             </SheetHeader>
           </div>
 
           <div className="flex-1 overflow-y-auto px-4 py-4">
-            <nav className="flex flex-col gap-1" aria-label="Mobile navigation">
+            <nav
+              className="flex flex-col gap-1"
+              aria-label={t("common.mobileNavigation")}
+            >
               {items.map((item) => {
                 const isActive = isNavItemActive(item.path, currentPath)
                 const Icon = item.icon
@@ -98,7 +103,7 @@ export function MobileMenuSheet({ items }: MobileMenuSheetProps) {
                     )}
                   >
                     <Icon className="h-4 w-4" />
-                    {item.title}
+                    {t(item.titleKey, item.title)}
                   </Link>
                 )
               })}
@@ -109,7 +114,7 @@ export function MobileMenuSheet({ items }: MobileMenuSheetProps) {
             <Accordion type="single" collapsible defaultValue="preferences">
               <AccordionItem value="preferences">
                 <AccordionTrigger className="py-3">
-                  Preferences
+                  {t("settings.preferences")}
                 </AccordionTrigger>
                 <AccordionContent className="pb-2">
                   <div className="flex flex-col gap-2">
@@ -122,7 +127,7 @@ export function MobileMenuSheet({ items }: MobileMenuSheetProps) {
                         >
                           <span className="flex items-center gap-2">
                             <Globe className="h-4 w-4" />
-                            Language
+                            {t("settings.language")}
                           </span>
                           <span className="text-muted-foreground flex items-center gap-2">
                             {localeLabel}
@@ -153,10 +158,10 @@ export function MobileMenuSheet({ items }: MobileMenuSheetProps) {
                         >
                           <span className="flex items-center gap-2">
                             <ThemeIcon className="h-4 w-4" />
-                            Theme
+                            {t("settings.theme.title")}
                           </span>
                           <span className="text-muted-foreground flex items-center gap-2">
-                            {themeLabel[theme]}
+                            {themeLabels[theme]}
                             <ChevronDown className="h-4 w-4" />
                           </span>
                         </Button>
@@ -167,18 +172,18 @@ export function MobileMenuSheet({ items }: MobileMenuSheetProps) {
                           onClick={() => setTheme("light")}
                         >
                           <Sun className="mr-2 h-4 w-4" />
-                          Light
+                          {t("settings.theme.light")}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           data-testid="dark-mode"
                           onClick={() => setTheme("dark")}
                         >
                           <Moon className="mr-2 h-4 w-4" />
-                          Dark
+                          {t("settings.theme.dark")}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => setTheme("system")}>
                           <Monitor className="mr-2 h-4 w-4" />
-                          System
+                          {t("settings.theme.system")}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

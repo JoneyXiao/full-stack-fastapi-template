@@ -1,4 +1,5 @@
 import { Loader2, Trash2 } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import type { ChatTranscriptPublic } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,6 +21,7 @@ export function SavedTranscriptsDialog({
   onOpenChange,
   onLoadTranscript,
 }: SavedTranscriptsDialogProps) {
+  const { t } = useTranslation()
   const { transcripts, isLoading, deleteTranscript, isDeleting } =
     useChatTranscripts()
 
@@ -30,7 +32,7 @@ export function SavedTranscriptsDialog({
         data-testid="saved-transcripts-dialog"
       >
         <DialogHeader>
-          <DialogTitle>Saved Chats</DialogTitle>
+          <DialogTitle>{t("chat.savedTranscripts.title")}</DialogTitle>
         </DialogHeader>
 
         {isLoading && (
@@ -41,9 +43,9 @@ export function SavedTranscriptsDialog({
 
         {!isLoading && transcripts.length === 0 && (
           <div className="py-8 text-center text-muted-foreground">
-            <p>No saved chats yet.</p>
+            <p>{t("chat.savedTranscripts.emptyTitle")}</p>
             <p className="mt-1 text-sm">
-              Click the save button during a chat to save it here.
+              {t("chat.savedTranscripts.emptyHint")}
             </p>
           </div>
         )}
@@ -65,8 +67,10 @@ export function SavedTranscriptsDialog({
                       {transcript.title}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {transcript.messages.length} messages •{" "}
-                      {new Date(transcript.created_at).toLocaleDateString()}
+                      {t("chat.savedTranscripts.messagesCount", {
+                        count: transcript.messages.length,
+                      })}{" "}
+                      • {new Date(transcript.created_at).toLocaleDateString()}
                     </p>
                   </button>
                   <Button
@@ -74,7 +78,7 @@ export function SavedTranscriptsDialog({
                     size="icon-sm"
                     onClick={() => deleteTranscript(transcript.id)}
                     disabled={isDeleting}
-                    title="Delete chat"
+                    title={t("chat.savedTranscripts.deleteTitle")}
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>

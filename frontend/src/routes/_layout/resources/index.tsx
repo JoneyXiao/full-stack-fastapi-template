@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { ExternalLink, Search } from "lucide-react"
 import { Suspense, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import { ResourcesService } from "@/client"
 import { Badge } from "@/components/ui/badge"
@@ -37,6 +38,7 @@ export const Route = createFileRoute("/_layout/resources/")({
 })
 
 function ResourcesListContent({ q, type }: { q?: string; type?: string }) {
+  const { t } = useTranslation()
   const { data: resources } = useSuspenseQuery(
     getResourcesQueryOptions(q, type),
   )
@@ -47,11 +49,11 @@ function ResourcesListContent({ q, type }: { q?: string; type?: string }) {
         <div className="rounded-full bg-muted p-4 mb-4">
           <Search className="h-8 w-8 text-muted-foreground" />
         </div>
-        <h3 className="text-lg font-semibold">No resources found</h3>
+        <h3 className="text-lg font-semibold">{t("resources.noResults")}</h3>
         <p className="text-muted-foreground">
           {q
-            ? `No results for "${q}"`
-            : "Check back later for new AI resources"}
+            ? t("resources.noResultsForQuery", { query: q })
+            : t("resources.checkBackLater")}
         </p>
       </div>
     )
@@ -72,7 +74,11 @@ function ResourcesListContent({ q, type }: { q?: string; type?: string }) {
                   {resource.title}
                 </Link>
               </CardTitle>
-              <Badge variant="secondary">{resource.type}</Badge>
+              <Badge variant="secondary">
+                {t(`resources.types.${resource.type}`, {
+                  defaultValue: resource.type,
+                })}
+              </Badge>
             </div>
             <CardDescription className="line-clamp-3">
               {resource.description}
@@ -85,7 +91,7 @@ function ResourcesListContent({ q, type }: { q?: string; type?: string }) {
               params={{ resourceId: resource.id }}
             >
               <Button variant="outline" size="sm">
-                View Details
+                {t("resources.viewDetails")}
               </Button>
             </Link>
             <a
@@ -95,7 +101,7 @@ function ResourcesListContent({ q, type }: { q?: string; type?: string }) {
             >
               <Button variant="ghost" size="sm">
                 <ExternalLink className="h-4 w-4 mr-1" />
-                Visit
+                {t("resources.visit")}
               </Button>
             </a>
           </CardFooter>
@@ -126,6 +132,7 @@ function ResourcesListSkeleton() {
 }
 
 function ResourcesPage() {
+  const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState("")
   const [activeQuery, setActiveQuery] = useState("")
 
@@ -138,22 +145,22 @@ function ResourcesPage() {
     <div className="container mx-auto py-8 px-4">
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">AI Resources</h1>
-          <p className="text-muted-foreground">
-            Discover tools, tutorials, papers, and more for AI development
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t("resources.title")}
+          </h1>
+          <p className="text-muted-foreground">{t("resources.description")}</p>
         </div>
 
         <form onSubmit={handleSearch} className="flex gap-2 max-w-md">
           <Input
             type="search"
-            placeholder="Search resources..."
+            placeholder={t("resources.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           <Button type="submit">
             <Search className="h-4 w-4 mr-2" />
-            Search
+            {t("common.search")}
           </Button>
         </form>
 

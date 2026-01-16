@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { CheckCircle, Clock, Plus, Search, XCircle } from "lucide-react"
 import { Suspense } from "react"
+import { useTranslation } from "react-i18next"
 
 import { SubmissionsService } from "@/client"
 import { Badge } from "@/components/ui/badge"
@@ -36,26 +37,28 @@ export const Route = createFileRoute("/_layout/submissions/")({
 })
 
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useTranslation()
+
   switch (status) {
     case "pending":
       return (
         <Badge variant="outline" className="text-yellow-600 border-yellow-600">
           <Clock className="h-3 w-3 mr-1" />
-          Pending
+          {t("submissions.status.pending")}
         </Badge>
       )
     case "approved":
       return (
         <Badge variant="outline" className="text-green-600 border-green-600">
           <CheckCircle className="h-3 w-3 mr-1" />
-          Approved
+          {t("submissions.status.approved")}
         </Badge>
       )
     case "rejected":
       return (
         <Badge variant="outline" className="text-red-600 border-red-600">
           <XCircle className="h-3 w-3 mr-1" />
-          Rejected
+          {t("submissions.status.rejected")}
         </Badge>
       )
     default:
@@ -64,6 +67,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function SubmissionsListContent() {
+  const { t } = useTranslation()
   const { data: submissions } = useSuspenseQuery(
     getPendingSubmissionsQueryOptions(),
   )
@@ -74,14 +78,16 @@ function SubmissionsListContent() {
         <div className="rounded-full bg-muted p-4 mb-4">
           <Search className="h-8 w-8 text-muted-foreground" />
         </div>
-        <h3 className="text-lg font-semibold">No pending submissions</h3>
+        <h3 className="text-lg font-semibold">
+          {t("submissions.noSubmissions")}
+        </h3>
         <p className="text-muted-foreground mb-4">
-          Be the first to suggest a new AI resource!
+          {t("submissions.noSubmissionsHint")}
         </p>
         <Link to="/submissions/new">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Submit a Resource
+            {t("submissions.submitResource")}
           </Button>
         </Link>
       </div>
@@ -110,10 +116,16 @@ function SubmissionsListContent() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex-grow">
-            <Badge variant="secondary">{submission.type}</Badge>
+            <Badge variant="secondary">
+              {t(`resources.types.${submission.type}`, {
+                defaultValue: submission.type,
+              })}
+            </Badge>
           </CardContent>
           <CardFooter className="text-sm text-muted-foreground">
-            Submitted {new Date(submission.created_at).toLocaleDateString()}
+            {t("submissions.submitted", {
+              date: new Date(submission.created_at).toLocaleDateString(),
+            })}
           </CardFooter>
         </Card>
       ))}
@@ -144,21 +156,23 @@ function SubmissionsListSkeleton() {
 }
 
 function SubmissionsPage() {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Resource Submissions
+            {t("submissions.title")}
           </h1>
           <p className="text-muted-foreground">
-            Browse and discuss pending resource submissions
+            {t("submissions.description")}
           </p>
         </div>
         <Link to="/submissions/new">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Submit Resource
+            {t("submissions.submitResource")}
           </Button>
         </Link>
       </div>

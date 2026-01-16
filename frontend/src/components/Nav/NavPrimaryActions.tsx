@@ -1,5 +1,6 @@
 import { MessageSquare, Search } from "lucide-react"
 import type { KeyboardEvent, Ref } from "react"
+import { useTranslation } from "react-i18next"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -22,6 +23,8 @@ export function NavPrimaryActions({
   chatButtonRef,
   searchTriggerRef,
 }: NavPrimaryActionsProps) {
+  const { t } = useTranslation()
+
   const handleSearchKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault()
@@ -38,7 +41,7 @@ export function NavPrimaryActions({
         onKeyDown={handleSearchKeyDown}
         role="button"
         tabIndex={0}
-        aria-label="Open search"
+        aria-label={t("nav.openSearch")}
         data-testid="nav-search-trigger"
         ref={searchTriggerRef}
       >
@@ -46,7 +49,7 @@ export function NavPrimaryActions({
           <Search className="h-4 w-4" />
         </InputGroupAddon>
         <InputGroupInput
-          placeholder="Search..."
+          placeholder={t("search.placeholder")}
           readOnly
           className="cursor-pointer"
         />
@@ -66,7 +69,7 @@ export function NavPrimaryActions({
         className="gap-2"
       >
         <MessageSquare className="h-4 w-4" />
-        <span className="hidden sm:inline">Ask AI</span>
+        <span className="hidden sm:inline">{t("nav.askAi")}</span>
       </Button>
     </div>
   )

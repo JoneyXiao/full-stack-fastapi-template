@@ -7,7 +7,14 @@ import {
   Send,
   Trash2,
 } from "lucide-react"
-import { type FormEvent, type KeyboardEvent, useEffect, useRef, useState } from "react"
+import {
+  type FormEvent,
+  type KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
+import { useTranslation } from "react-i18next"
 
 import type { ChatTranscriptPublic, ResourcePreview } from "@/client"
 import { ChatMessageList } from "@/components/Landing/ChatMessageList"
@@ -37,6 +44,7 @@ interface DisplayMessage {
 }
 
 export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
+  const { t } = useTranslation()
   const { user } = useAuth()
   const isAuthenticated = !!user
   const [inputValue, setInputValue] = useState("")
@@ -76,8 +84,7 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
     } catch {
       const errorMessage: DisplayMessage = {
         role: "assistant",
-        content:
-          "Sorry, I couldn't process your request. Please try using keyword search instead.",
+        content: t("chat.errorMessage"),
       }
       setMessages((prev) => [...prev, errorMessage])
     }
@@ -134,11 +141,9 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
-              AI Chat
+              {t("chat.title")}
             </DialogTitle>
-            <DialogDescription>
-              Get AI-powered resource recommendations
-            </DialogDescription>
+            <DialogDescription>{t("chat.description")}</DialogDescription>
           </DialogHeader>
 
           {/* Unauthenticated state */}
@@ -148,11 +153,10 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
               data-testid="chat-auth-prompt"
             >
               <p className="text-muted-foreground text-center mb-4">
-                Sign in to ask our AI assistant for personalized resource
-                recommendations.
+                {t("chat.signInPrompt")}
               </p>
               <Link to="/login" onClick={() => onOpenChange(false)}>
-                <Button>Sign in to Chat</Button>
+                <Button>{t("chat.signInButton")}</Button>
               </Link>
             </div>
           )}
@@ -166,7 +170,7 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
                   variant="ghost"
                   size="icon"
                   onClick={() => setShowTranscripts(true)}
-                  title="View saved chats"
+                  title={t("chat.viewSaved")}
                 >
                   <History className="h-4 w-4" />
                 </Button>
@@ -177,7 +181,7 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
                       size="icon"
                       onClick={handleSave}
                       disabled={isSaving}
-                      title="Save chat"
+                      title={t("chat.saveChat")}
                     >
                       {isSaving ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -189,7 +193,7 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
                       variant="ghost"
                       size="icon"
                       onClick={handleClear}
-                      title="Clear chat"
+                      title={t("chat.clearChat")}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -202,7 +206,7 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
                 {messages.length === 0 && !isLoading && (
                   <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                     <MessageSquare className="h-8 w-8 mb-2" />
-                    <p>Ask me anything about AI resources!</p>
+                    <p>{t("chat.emptyPrompt")}</p>
                   </div>
                 )}
 
@@ -212,7 +216,7 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
                   <div className="flex items-center justify-center py-4">
                     <Loader2 className="h-5 w-5 animate-spin text-primary" />
                     <span className="ml-2 text-sm text-muted-foreground">
-                      Thinking...
+                      {t("chat.thinking")}
                     </span>
                   </div>
                 )}
@@ -222,10 +226,8 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
                     className="text-center text-sm text-muted-foreground py-4"
                     data-testid="chat-error-state"
                   >
-                    <p>Chat service is temporarily unavailable.</p>
-                    <p className="mt-1 text-xs">
-                      Try using keyword search instead.
-                    </p>
+                    <p>{t("chat.errorTitle")}</p>
+                    <p className="mt-1 text-xs">{t("chat.errorHint")}</p>
                   </div>
                 )}
               </div>
@@ -241,7 +243,7 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Ask about AI resources..."
+                  placeholder={t("chat.placeholder")}
                   disabled={isLoading}
                   data-testid="chat-dialog-input"
                 />

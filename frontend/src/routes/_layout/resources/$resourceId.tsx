@@ -14,6 +14,7 @@ import {
   Share2,
 } from "lucide-react"
 import { Suspense, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import { ResourcesService } from "@/client"
 import { Badge } from "@/components/ui/badge"
@@ -57,6 +58,7 @@ export const Route = createFileRoute("/_layout/resources/$resourceId")({
 })
 
 function ResourceDetailContent({ resourceId }: { resourceId: string }) {
+  const { t } = useTranslation()
   const { data: resource } = useSuspenseQuery(
     getResourceQueryOptions(resourceId),
   )
@@ -73,7 +75,7 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
     mutationFn: () => ResourcesService.likeResource({ id: resourceId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["resource", resourceId] })
-      showSuccessToast("Resource added to your likes")
+      showSuccessToast(t("resources.detail.likeSuccess"))
     },
   })
 
@@ -81,7 +83,7 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
     mutationFn: () => ResourcesService.favoriteResource({ id: resourceId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["resource", resourceId] })
-      showSuccessToast("Resource added to your favorites")
+      showSuccessToast(t("resources.detail.favoriteSuccess"))
     },
   })
 
@@ -96,13 +98,13 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
         queryKey: ["resource-comments", resourceId],
       })
       setNewComment("")
-      showSuccessToast("Your comment has been posted")
+      showSuccessToast(t("resources.detail.commentSuccess"))
     },
   })
 
   const handleShare = () => {
     copyToClipboard(window.location.href)
-    showSuccessToast("Resource link copied to clipboard")
+    showSuccessToast(t("resources.detail.shareSuccess"))
   }
 
   const handleSubmitComment = (e: React.FormEvent) => {
@@ -119,7 +121,7 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
         className="inline-flex items-center text-muted-foreground hover:text-foreground mb-6"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
-        Back to Resources
+        {t("resources.detail.backToResources")}
       </Link>
 
       <div className="space-y-6">
@@ -131,7 +133,9 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                 {resource.title}
               </h1>
               <Badge variant="secondary" className="mt-2">
-                {resource.type}
+                {t(`resources.types.${resource.type}`, {
+                  defaultValue: resource.type,
+                })}
               </Badge>
             </div>
             <a
@@ -141,7 +145,7 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
             >
               <Button>
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Visit Resource
+                {t("resources.detail.visitResource")}
               </Button>
             </a>
           </div>
@@ -161,7 +165,7 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                 disabled={likeMutation.isPending}
               >
                 <Heart className="h-4 w-4 mr-1" />
-                Like
+                {t("resources.detail.like")}
               </Button>
               <Button
                 variant="outline"
@@ -170,13 +174,13 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                 disabled={favoriteMutation.isPending}
               >
                 <Bookmark className="h-4 w-4 mr-1" />
-                Favorite
+                {t("resources.detail.favorite")}
               </Button>
             </>
           )}
           <Button variant="outline" size="sm" onClick={handleShare}>
             <Share2 className="h-4 w-4 mr-1" />
-            Share
+            {t("resources.detail.share")}
           </Button>
         </div>
 
@@ -185,10 +189,10 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
-              Comments ({comments.count})
+              {t("resources.detail.comments", { count: comments.count })}
             </CardTitle>
             <CardDescription>
-              Join the discussion about this resource
+              {t("resources.detail.commentsDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -196,7 +200,7 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
             {user ? (
               <form onSubmit={handleSubmitComment} className="space-y-2">
                 <Textarea
-                  placeholder="Write a comment..."
+                  placeholder={t("resources.detail.commentPlaceholder")}
                   value={newComment}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setNewComment(e.target.value)
@@ -209,15 +213,15 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                   disabled={!newComment.trim() || commentMutation.isPending}
                 >
                   <Send className="h-4 w-4 mr-1" />
-                  Post Comment
+                  {t("resources.detail.postComment")}
                 </Button>
               </form>
             ) : (
               <p className="text-sm text-muted-foreground">
                 <Link to="/login" className="text-primary hover:underline">
-                  Sign in
+                  {t("auth.signIn")}
                 </Link>{" "}
-                to leave a comment
+                {t("resources.detail.toLeaveComment")}
               </p>
             )}
 
@@ -227,13 +231,15 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                 {comments.data.map((comment) => (
                   <div key={comment.id} className="space-y-1">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span className="font-medium text-foreground">User</span>
+                      <span className="font-medium text-foreground">
+                        {t("common.user")}
+                      </span>
                       <span>•</span>
                       <span>
                         {new Date(comment.created_at).toLocaleDateString()}
                       </span>
                       {comment.updated_at !== comment.created_at && (
-                        <span className="italic">(edited)</span>
+                        <span className="italic">({t("common.edited")})</span>
                       )}
                     </div>
                     <p className="text-sm">{comment.body}</p>
@@ -242,7 +248,7 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
               </div>
             ) : (
               <p className="text-sm text-muted-foreground pt-4 border-t">
-                No comments yet. Be the first to share your thoughts!
+                {t("resources.detail.noComments")}
               </p>
             )}
           </CardContent>

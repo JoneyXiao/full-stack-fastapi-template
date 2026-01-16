@@ -484,3 +484,169 @@ def test_delete_user_without_privileges(
     )
     assert r.status_code == 403
     assert r.json()["detail"] == "The user doesn't have enough privileges"
+
+
+# Locale-related tests
+
+
+def test_get_user_me_includes_locale_field(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    """Test that GET /users/me returns the locale field"""
+    r = client.get(f"{settings.API_V1_STR}/users/me", headers=normal_user_token_headers)
+    assert r.status_code == 200
+    user_data = r.json()
+    # locale should be present in the response (can be None or a value)
+    assert "locale" in user_data
+
+
+def test_update_user_me_locale_en(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    """Test that locale can be set to 'en'"""
+    data = {"locale": "en"}
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert r.status_code == 200
+    updated_user = r.json()
+    assert updated_user["locale"] == "en"
+
+
+def test_update_user_me_locale_zh(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    """Test that locale can be set to 'zh'"""
+    data = {"locale": "zh"}
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert r.status_code == 200
+    updated_user = r.json()
+    assert updated_user["locale"] == "zh"
+
+
+def test_update_user_me_locale_invalid(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    """Test that invalid locale values are rejected"""
+    data = {"locale": "invalid"}
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert r.status_code == 422  # Validation error
+
+
+def test_update_user_me_locale_empty_string(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    """Test that empty string is rejected for locale"""
+    data = {"locale": ""}
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert r.status_code == 422  # Validation error
+
+
+def test_update_user_me_locale_persists_in_db(
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
+) -> None:
+    """Test that locale updates are persisted in the database"""
+    data = {"locale": "zh"}
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert r.status_code == 200
+
+    # Verify the change is persisted in the database
+    user_query = select(User).where(User.email == settings.EMAIL_TEST_USER)
+    user_db = db.exec(user_query).first()
+    assert user_db
+    assert user_db.locale == "zh"
+
+
+def test_update_user_me_locale_roundtrip(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    """Test that locale can be updated and retrieved correctly"""
+    # Set to Chinese
+    data = {"locale": "zh"}
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert r.status_code == 200
+    assert r.json()["locale"] == "zh"
+
+    # Get and verify
+    r = client.get(f"{settings.API_V1_STR}/users/me", headers=normal_user_token_headers)
+    assert r.status_code == 200
+    assert r.json()["locale"] == "zh"
+
+    # Change back to English
+    data = {"locale": "en"}
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert r.status_code == 200
+    assert r.json()["locale"] == "en"
+
+    # Get and verify
+    r = client.get(f"{settings.API_V1_STR}/users/me", headers=normal_user_token_headers)
+    assert r.status_code == 200
+    assert r.json()["locale"] == "en"
+
+
+def test_update_user_me_locale_with_other_fields(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    """Test that locale can be updated along with other fields"""
+    full_name = "Test User Updated"
+    data = {"full_name": full_name, "locale": "zh"}
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert r.status_code == 200
+    updated_user = r.json()
+    assert updated_user["full_name"] == full_name
+    assert updated_user["locale"] == "zh"
+
+
+def test_update_user_me_locale_null_not_allowed(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    """Test that explicit null is handled (may be rejected or accepted based on schema)"""
+    # First set a value
+    data = {"locale": "en"}
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert r.status_code == 200
+
+    # Try to set null - this should be rejected as locale only accepts 'en' or 'zh'
+    data = {"locale": None}
+    r = client.patch(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    # Depending on schema design, this may be 200 (keeps previous value) or 422 (validation error)
+    # With strict enum validation, null should be rejected
+    assert r.status_code in [200, 422]

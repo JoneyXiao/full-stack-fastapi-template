@@ -8,6 +8,7 @@ import {
   Trash2,
 } from "lucide-react"
 import { type FormEvent, type KeyboardEvent, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
 import type { ResourcePreview } from "@/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -28,6 +29,7 @@ interface DisplayMessage {
 }
 
 export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
+  const { t } = useTranslation()
   const [inputValue, setInputValue] = useState("")
   const [messages, setMessages] = useState<DisplayMessage[]>([])
   const [showTranscripts, setShowTranscripts] = useState(false)
@@ -59,8 +61,7 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
       // Error is handled by the hook's toast, but we show a fallback message
       const errorMessage: DisplayMessage = {
         role: "assistant",
-        content:
-          "Sorry, I couldn't process your request. Please try using keyword search instead.",
+        content: t("landing.aiChat.errorMessage"),
       }
       setMessages((prev) => [...prev, errorMessage])
     }
@@ -105,15 +106,14 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
         <div className="rounded-lg border bg-card p-6 text-center">
           <h2 className="flex items-center justify-center gap-2 text-lg font-semibold">
             <MessageSquare className="h-5 w-5" />
-            Get AI-Powered Recommendations
+            {t("landing.aiChat.signInPrompt")}
           </h2>
           <p className="mt-2 text-muted-foreground">
-            Sign in to ask our AI assistant for personalized resource
-            recommendations.
+            {t("landing.aiChat.signInDescription")}
           </p>
           <div className="mt-4" data-testid="chat-signin-cta">
             <Link to="/login">
-              <Button>Sign in to Chat</Button>
+              <Button>{t("landing.aiChat.signInButton")}</Button>
             </Link>
           </div>
         </div>
@@ -127,14 +127,14 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
         <div className="mb-4 flex items-center justify-between">
           <h2 className="flex items-center gap-2 text-lg font-semibold">
             <MessageSquare className="h-5 w-5" />
-            Ask for Recommendations
+            {t("landing.aiChat.title")}
           </h2>
           <div className="flex gap-2">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setShowTranscripts(true)}
-              title="View saved chats"
+              title={t("landing.aiChat.viewSaved")}
             >
               <History className="h-4 w-4" />
             </Button>
@@ -145,7 +145,7 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
                   size="icon"
                   onClick={handleSave}
                   disabled={isSaving}
-                  title="Save chat"
+                  title={t("landing.aiChat.saveChat")}
                   data-testid="landing-chat-save"
                 >
                   {isSaving ? (
@@ -158,7 +158,7 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
                   variant="ghost"
                   size="icon"
                   onClick={handleClear}
-                  title="Clear chat"
+                  title={t("landing.aiChat.clearChat")}
                   data-testid="landing-chat-clear"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -180,7 +180,7 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
             >
               <Loader2 className="h-5 w-5 animate-spin text-primary" />
               <span className="ml-2 text-sm text-muted-foreground">
-                Thinking...
+                {t("landing.aiChat.thinking")}
               </span>
             </div>
           )}
@@ -203,7 +203,7 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about tutorials, tools, datasets..."
+            placeholder={t("landing.aiChat.placeholder")}
             aria-label="Chat message"
             data-testid="landing-chat-input"
             disabled={isLoading}
@@ -218,7 +218,7 @@ export function LandingChat({ className, isAuthenticated }: LandingChatProps) {
         </form>
 
         <p className="mt-2 text-xs text-muted-foreground">
-          Recommendations are based on our curated resource catalog.
+          {t("landing.aiChat.disclaimer")}
         </p>
       </div>
 
