@@ -24,16 +24,10 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import useCustomToast from "@/hooks/useCustomToast"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 export const Route = createFileRoute("/_layout/submissions/new")({
   component: NewSubmissionPage,
-  head: () => ({
-    meta: [
-      {
-        title: "Submit a Resource - AI Resources",
-      },
-    ],
-  }),
 })
 
 const RESOURCE_TYPES = [
@@ -52,6 +46,7 @@ function NewSubmissionPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { showSuccessToast, showErrorToast } = useCustomToast()
+  useDocumentTitle("submissions.newPageTitle")
 
   const [formData, setFormData] = useState({
     title: "",

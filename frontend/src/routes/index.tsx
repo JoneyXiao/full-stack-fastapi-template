@@ -14,17 +14,11 @@ import {
 } from "@/components/Landing"
 import { AppNavbar } from "@/components/Nav"
 import { isLoggedIn } from "@/hooks/useAuth"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 import { cn } from "@/lib/utils"
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
-  head: () => ({
-    meta: [
-      {
-        title: "AI Resource Hub - Find the best AI resources fast",
-      },
-    ],
-  }),
 })
 
 type SectionWrapProps = {
@@ -58,6 +52,7 @@ function scrollToSection(id: string, focusSelector?: string): void {
 function LandingPage(): ReactElement {
   const { t } = useTranslation()
   const authenticated = isLoggedIn()
+  useDocumentTitle("landing.pageTitle")
 
   function handleChatClick(): void {
     scrollToSection("landing-chat", '[data-testid="landing-chat-input"]')

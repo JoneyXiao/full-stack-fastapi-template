@@ -54,6 +54,10 @@
   },
   "auth": {
     "login": "登录",
+    "loginTitle": "云喜AI | 灵狐快码 - 登录",
+    "signupTitle": "云喜AI | 灵狐快码 - 注册",
+    "resetPasswordTitle": "云喜AI | 灵狐快码 - 重置密码",
+    "recoverPasswordTitle": "云喜AI | 灵狐快码 - 找回密码",
     "logout": "退出",
     "register": "注册",
     "email": "邮箱",
@@ -107,6 +111,7 @@
     "sessionExpired": "您的会话已过期，请重新登录。"
   },
   "dashboard": {
+    "pageTitle": "云喜AI | 灵狐快码 - 仪表盘",
     "welcome": "欢迎，{{name}}！",
     "welcomeDefault": "欢迎！",
     "overview": "概览",
@@ -114,6 +119,7 @@
     "quickActions": "快捷操作"
   },
   "settings": {
+    "pageTitle": "云喜AI | 灵狐快码 - 设置",
     "title": "设置",
     "account": "账户",
     "appearance": "外观",
@@ -144,6 +150,10 @@
     "updatePassword": "更新密码"
   },
   "landing": {
+    "logo": {
+      "title": "云喜AI | 灵狐快码"
+    },
+    "pageTitle": "云喜AI | 灵狐快码 - 快速发现最佳AI资源",
     "title": "AI资源中心 - 快速找到最佳AI资源",
     "heroBadge": "AI资源中心",
     "heroTitle": "一句话描述，",
@@ -287,7 +297,7 @@
       "secondary": "浏览资源"
     },
     "footer": {
-      "title": "AI资源中心",
+      "title": "云喜AI | 灵狐快码",
       "description": "为AI社区精选的资源",
       "browse": "浏览",
       "contribute": "贡献"
@@ -300,6 +310,8 @@
     "info": "提示"
   },
   "resources": {
+    "pageTitle": "云喜AI | 灵狐快码 - 资源",
+    "detailPageTitle": "云喜AI | 灵狐快码 - 资源详情",
     "title": "AI资源",
     "description": "发现用于AI开发的工具、教程、论文等",
     "searchPlaceholder": "搜索资源...",
@@ -337,12 +349,14 @@
     }
   },
   "items": {
+    "pageTitle": "云喜AI | 灵狐快码 - 项目",
     "title": "项目",
     "description": "创建和管理您的项目",
     "noItems": "您还没有任何项目",
     "addItemHint": "添加新项目以开始使用"
   },
   "favorites": {
+    "pageTitle": "云喜AI | 灵狐快码 - 我的收藏",
     "title": "我的收藏",
     "description": "您收藏的AI资源",
     "noFavorites": "暂无收藏",
@@ -350,6 +364,9 @@
     "browseResources": "浏览资源"
   },
   "submissions": {
+    "pageTitle": "云喜AI | 灵狐快码 - 资源投稿",
+    "newPageTitle": "云喜AI | 灵狐快码 - 提交资源",
+    "detailPageTitle": "云喜AI | 灵狐快码 - 投稿详情",
     "title": "资源提交",
     "description": "浏览和讨论待审核的资源提交",
     "noSubmissions": "暂无待审核的提交",
@@ -414,6 +431,7 @@
     }
   },
   "admin": {
+    "pageTitle": "云喜AI | 灵狐快码 - 管理",
     "title": "管理控制台",
     "description": "管理用户、资源和提交",
     "tabs": {

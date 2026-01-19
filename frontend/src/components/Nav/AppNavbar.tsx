@@ -77,9 +77,9 @@ export function AppNavbar({ className }: AppNavbarProps): ReactElement {
             </div>
 
             {/* Center: Logo (centered on small screens) */}
-            <div className="order-2 flex items-center justify-center md:order-1 md:ml-2">
+            <div className="order-2 flex items-center justify-center md:order-1">
               <Link to="/" data-testid="nav-logo">
-                <Logo variant="full" asLink={false} className="p-2" />
+                <Logo variant="full" asLink={false} className="py-2" />
               </Link>
             </div>
 

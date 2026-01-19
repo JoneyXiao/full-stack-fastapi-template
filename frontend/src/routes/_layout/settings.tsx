@@ -6,6 +6,7 @@ import DeleteAccount from "@/components/UserSettings/DeleteAccount"
 import UserInformation from "@/components/UserSettings/UserInformation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import useAuth from "@/hooks/useAuth"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 const tabsConfig = [
   {
@@ -27,18 +28,12 @@ const tabsConfig = [
 
 export const Route = createFileRoute("/_layout/settings")({
   component: UserSettings,
-  head: () => ({
-    meta: [
-      {
-        title: "Settings - FastAPI Cloud",
-      },
-    ],
-  }),
 })
 
 function UserSettings() {
   const { t } = useTranslation()
   const { user: currentUser } = useAuth()
+  useDocumentTitle("settings.pageTitle")
   const finalTabs = currentUser?.is_superuser
     ? tabsConfig.slice(0, 3)
     : tabsConfig

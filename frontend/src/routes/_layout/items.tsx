@@ -9,6 +9,7 @@ import { DataTable } from "@/components/Common/DataTable"
 import AddItem from "@/components/Items/AddItem"
 import { columns } from "@/components/Items/columns"
 import PendingItems from "@/components/Pending/PendingItems"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 function getItemsQueryOptions() {
   return {
@@ -19,13 +20,6 @@ function getItemsQueryOptions() {
 
 export const Route = createFileRoute("/_layout/items")({
   component: Items,
-  head: () => ({
-    meta: [
-      {
-        title: "Items - FastAPI Cloud",
-      },
-    ],
-  }),
 })
 
 function ItemsTableContent() {
@@ -57,6 +51,7 @@ function ItemsTable() {
 
 function Items() {
   const { t } = useTranslation()
+  useDocumentTitle("items.pageTitle")
 
   return (
     <div className="flex flex-col gap-6">

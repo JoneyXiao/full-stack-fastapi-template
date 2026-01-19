@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router"
 import type { ReactElement } from "react"
-import { FaSkyatlas } from "react-icons/fa"
+import { GiFox } from "react-icons/gi"
 
 import { cn } from "@/lib/utils"
+import { useTranslation } from "react-i18next"
 
 interface LogoProps {
   variant?: "full" | "icon" | "responsive"
@@ -16,14 +17,14 @@ export function Logo({
   asLink = true,
 }: LogoProps): ReactElement {
   let content: ReactElement
-
+  const { t } = useTranslation()
   switch (variant) {
     case "responsive":
       content = (
         <span className={cn("inline-flex items-center gap-2", className)}>
-          <FaSkyatlas className="shrink-0 size-[2em]" aria-hidden="true" />
-          <span className="text-lg font-semibold leading-none group-data-[collapsible=icon]:hidden">
-            Yunxi AI
+          <GiFox className="shrink-0 size-[2em]" aria-hidden="true" />
+          <span className="text-lg font-medium leading-none group-data-[collapsible=icon]:hidden">
+            {t("landing.logo.title")}
           </span>
         </span>
       )
@@ -31,20 +32,20 @@ export function Logo({
     case "icon":
       content = (
         <span className={cn("inline-flex items-center", className)}>
-          <FaSkyatlas className="size-[2em]" aria-hidden="true" />
-          <span className="sr-only">Yunxi AI</span>
+          <GiFox className="size-[2em]" aria-hidden="true" />
+          <span className="sr-only">{t("landing.logo.title")}</span>
         </span>
       )
       break
     default:
       content = (
         <span className={cn("inline-flex items-center gap-2", className)}>
-          <FaSkyatlas
+          <GiFox
             className="shrink-0 size-[2em] text-primary"
             aria-hidden="true"
           />
-          <span className="text-lg font-semibold leading-none text-primary">
-            Yunxi AI
+          <span className="text-lg font-medium leading-none text-primary">
+            {t("landing.logo.title")}
           </span>
         </span>
       )
