@@ -166,6 +166,36 @@ CSV_CONFIG = {
             "Style",
         ],
     },
+    "react": {
+        "file": "react-performance.csv",
+        "search_cols": ["Category", "Issue", "Keywords", "Description"],
+        "output_cols": [
+            "Category",
+            "Issue",
+            "Platform",
+            "Description",
+            "Do",
+            "Don't",
+            "Code Example Good",
+            "Code Example Bad",
+            "Severity",
+        ],
+    },
+    "web": {
+        "file": "web-interface.csv",
+        "search_cols": ["Category", "Issue", "Keywords", "Description"],
+        "output_cols": [
+            "Category",
+            "Issue",
+            "Platform",
+            "Description",
+            "Do",
+            "Don't",
+            "Code Example Good",
+            "Code Example Bad",
+            "Severity",
+        ],
+    },
 }
 
 STACK_CONFIG = {
@@ -180,6 +210,7 @@ STACK_CONFIG = {
     "react-native": {"file": "stacks/react-native.csv"},
     "flutter": {"file": "stacks/flutter.csv"},
     "shadcn": {"file": "stacks/shadcn.csv"},
+    "jetpack-compose": {"file": "stacks/jetpack-compose.csv"},
 }
 
 # Common columns for all stacks
@@ -378,6 +409,33 @@ def detect_domain(query):
             "glyph",
             "pictogram",
             "svg icon",
+        ],
+        "react": [
+            "react",
+            "next.js",
+            "nextjs",
+            "suspense",
+            "memo",
+            "usecallback",
+            "useeffect",
+            "rerender",
+            "bundle",
+            "waterfall",
+            "barrel",
+            "dynamic import",
+            "rsc",
+            "server component",
+        ],
+        "web": [
+            "aria",
+            "focus",
+            "outline",
+            "semantic",
+            "virtualize",
+            "autocomplete",
+            "form",
+            "input type",
+            "preconnect",
         ],
     }
 
