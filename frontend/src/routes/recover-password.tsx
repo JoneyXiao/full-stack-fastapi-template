@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { isLoggedIn } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 import { handleError } from "@/utils"
 
 const formSchema = z.object({
@@ -40,17 +41,12 @@ export const Route = createFileRoute("/recover-password")({
       })
     }
   },
-  head: () => ({
-    meta: [
-      {
-        title: "Recover Password - FastAPI Cloud",
-      },
-    ],
-  }),
 })
 
 function RecoverPassword() {
   const { t } = useTranslation()
+  useDocumentTitle("auth.recoverPasswordTitle")
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {

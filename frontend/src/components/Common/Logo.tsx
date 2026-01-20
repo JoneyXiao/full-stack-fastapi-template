@@ -1,11 +1,8 @@
 import { Link } from "@tanstack/react-router"
-
-import { useTheme } from "@/components/theme-provider"
+import type { ReactElement } from "react"
+import { useTranslation } from "react-i18next"
+import { GiFox } from "react-icons/gi"
 import { cn } from "@/lib/utils"
-import icon from "/assets/images/fastapi-icon.svg"
-import iconLight from "/assets/images/fastapi-icon-light.svg"
-import logo from "/assets/images/fastapi-logo.svg"
-import logoLight from "/assets/images/fastapi-logo-light.svg"
 
 interface LogoProps {
   variant?: "full" | "icon" | "responsive"
@@ -17,40 +14,41 @@ export function Logo({
   variant = "full",
   className,
   asLink = true,
-}: LogoProps) {
-  const { resolvedTheme } = useTheme()
-  const isDark = resolvedTheme === "dark"
-
-  const fullLogo = isDark ? logoLight : logo
-  const iconLogo = isDark ? iconLight : icon
-
-  const content =
-    variant === "responsive" ? (
-      <>
-        <img
-          src={fullLogo}
-          alt="FastAPI"
-          className={cn(
-            "h-6 w-auto group-data-[collapsible=icon]:hidden",
-            className,
-          )}
-        />
-        <img
-          src={iconLogo}
-          alt="FastAPI"
-          className={cn(
-            "size-5 hidden group-data-[collapsible=icon]:block",
-            className,
-          )}
-        />
-      </>
-    ) : (
-      <img
-        src={variant === "full" ? fullLogo : iconLogo}
-        alt="FastAPI"
-        className={cn(variant === "full" ? "h-6 w-auto" : "size-5", className)}
-      />
-    )
+}: LogoProps): ReactElement {
+  let content: ReactElement
+  const { t } = useTranslation()
+  switch (variant) {
+    case "responsive":
+      content = (
+        <span className={cn("inline-flex items-center gap-2", className)}>
+          <GiFox className="shrink-0 size-[2em]" aria-hidden="true" />
+          <span className="text-lg font-medium leading-none group-data-[collapsible=icon]:hidden">
+            {t("landing.logo.title")}
+          </span>
+        </span>
+      )
+      break
+    case "icon":
+      content = (
+        <span className={cn("inline-flex items-center", className)}>
+          <GiFox className="size-[2em]" aria-hidden="true" />
+          <span className="sr-only">{t("landing.logo.title")}</span>
+        </span>
+      )
+      break
+    default:
+      content = (
+        <span className={cn("inline-flex items-center gap-2 pr-2", className)}>
+          <GiFox
+            className="shrink-0 size-[2em] text-primary"
+            aria-hidden="true"
+          />
+          <span className="text-lg font-medium leading-none text-primary">
+            {t("landing.logo.title")}
+          </span>
+        </span>
+      )
+  }
 
   if (!asLink) {
     return content

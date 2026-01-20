@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { PasswordInput } from "@/components/ui/password-input"
 import useAuth, { isLoggedIn } from "@/hooks/useAuth"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 const formSchema = z.object({
   username: z.email(),
@@ -42,18 +43,13 @@ export const Route = createFileRoute("/login")({
       })
     }
   },
-  head: () => ({
-    meta: [
-      {
-        title: "Log In - FastAPI Cloud",
-      },
-    ],
-  }),
 })
 
 function Login() {
   const { t } = useTranslation()
   const { loginMutation } = useAuth()
+  useDocumentTitle("auth.loginTitle")
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",

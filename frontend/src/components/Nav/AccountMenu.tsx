@@ -46,14 +46,14 @@ export function AccountMenu({ user }: AccountMenuProps) {
           className="relative h-8 w-8 rounded-full"
         >
           <Avatar className="h-8 w-8">
-            <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+            <AvatarFallback className="text-sm">{initials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <div className="flex items-center gap-2 p-2">
           <Avatar className="h-8 w-8">
-            <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+            <AvatarFallback className="text-sm">{initials}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col space-y-0.5">
             {user.full_name && (

@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router"
-import { useEffect, useRef, useState } from "react"
+import type { ReactElement } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 
 import { Appearance } from "@/components/Common/Appearance"
 import { Logo } from "@/components/Common/Logo"
 import useAuth from "@/hooks/useAuth"
+import { NavDialogsContext } from "@/hooks/useNavDialogs"
 import { cn } from "@/lib/utils"
 import { AuthControls } from "./AuthControls"
 import { ChatDialog } from "./ChatDialog"
@@ -18,10 +20,19 @@ interface AppNavbarProps {
   className?: string
 }
 
-export function AppNavbar({ className }: AppNavbarProps) {
+export function AppNavbar({ className }: AppNavbarProps): ReactElement {
   const { user } = useAuth()
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [chatOpen, setChatOpen] = useState(false)
+
+  // Use context if available (when wrapped in NavDialogsProvider), otherwise use local state
+  const dialogsContext = useContext(NavDialogsContext)
+  const [localSearchOpen, setLocalSearchOpen] = useState(false)
+  const [localChatOpen, setLocalChatOpen] = useState(false)
+
+  const searchOpen = dialogsContext?.searchOpen ?? localSearchOpen
+  const chatOpen = dialogsContext?.chatOpen ?? localChatOpen
+  const setSearchOpen = dialogsContext?.setSearchOpen ?? setLocalSearchOpen
+  const setChatOpen = dialogsContext?.setChatOpen ?? setLocalChatOpen
+
   const searchTriggerRef = useRef<HTMLDivElement>(null)
   const chatButtonRef = useRef<HTMLButtonElement>(null)
   const wasSearchOpenRef = useRef(false)
@@ -31,15 +42,15 @@ export function AppNavbar({ className }: AppNavbarProps) {
 
   // Keyboard shortcut: ⌘+K or Ctrl+K to open search
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault()
+    function handleKeyDown(event: KeyboardEvent): void {
+      if ((event.metaKey || event.ctrlKey) && event.key === "k") {
+        event.preventDefault()
         setSearchOpen(true)
       }
     }
     document.addEventListener("keydown", handleKeyDown)
     return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [])
+  }, [setSearchOpen])
 
   // Restore focus to the chat trigger when the dialog closes (accessibility + tests).
   useEffect(() => {
@@ -69,25 +80,31 @@ export function AppNavbar({ className }: AppNavbarProps) {
       {/* Upper Row */}
       <div className="px-6 md:px-8">
         <div className="mx-auto max-w-7xl md:border-b">
-          <div className="flex h-16 items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-y-2 py-3 md:h-16 md:py-0">
             {/* Left: Logo + Mobile Menu */}
-            <div className="flex items-center gap-2">
+            <div className="order-1 flex flex-1 items-center gap-2 md:flex-none">
               <MobileMenuSheet items={navItems} />
+            </div>
+
+            {/* Center: Logo (centered on small screens) */}
+            <div className="order-2 flex items-center justify-center md:order-1">
               <Link to="/" data-testid="nav-logo">
-                <Logo variant="full" asLink={false} />
+                <Logo variant="full" asLink={false} className="py-2" />
               </Link>
             </div>
 
             {/* Center: Search + Chat triggers */}
-            <NavPrimaryActions
-              onSearchClick={() => setSearchOpen(true)}
-              onChatClick={() => setChatOpen(true)}
-              chatButtonRef={chatButtonRef}
-              searchTriggerRef={searchTriggerRef}
-            />
+            <div className="order-4 w-full md:order-2 md:w-auto md:flex-1 md:flex md:justify-center">
+              <NavPrimaryActions
+                onSearchClick={() => setSearchOpen(true)}
+                onChatClick={() => setChatOpen(true)}
+                chatButtonRef={chatButtonRef}
+                searchTriggerRef={searchTriggerRef}
+              />
+            </div>
 
             {/* Right: Locale, Theme, Auth */}
-            <div className="flex items-center gap-1">
+            <div className="order-3 flex flex-1 items-center justify-end gap-2 md:order-3 md:flex-none">
               <div className="hidden md:flex items-center gap-1">
                 <LocaleSwitcher />
                 <div data-testid="nav-theme-switcher">

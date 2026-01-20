@@ -24,6 +24,7 @@ import { LoadingButton } from "@/components/ui/loading-button"
 import { PasswordInput } from "@/components/ui/password-input"
 import { isLoggedIn } from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 import { handleError } from "@/utils"
 
 const searchSchema = z.object({
@@ -58,13 +59,6 @@ export const Route = createFileRoute("/reset-password")({
       throw redirect({ to: "/login" })
     }
   },
-  head: () => ({
-    meta: [
-      {
-        title: "Reset Password - FastAPI Cloud",
-      },
-    ],
-  }),
 })
 
 function ResetPassword() {
@@ -72,6 +66,7 @@ function ResetPassword() {
   const { token } = Route.useSearch()
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const navigate = useNavigate()
+  useDocumentTitle("auth.resetPasswordTitle")
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),

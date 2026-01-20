@@ -31,6 +31,7 @@ import { Textarea } from "@/components/ui/textarea"
 import useAuth from "@/hooks/useAuth"
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard"
 import useCustomToast from "@/hooks/useCustomToast"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 function getResourceQueryOptions(resourceId: string) {
   return {
@@ -48,13 +49,6 @@ function getCommentsQueryOptions(resourceId: string) {
 
 export const Route = createFileRoute("/_layout/resources/$resourceId")({
   component: ResourceDetailPage,
-  head: () => ({
-    meta: [
-      {
-        title: "Resource Details - AI Resources",
-      },
-    ],
-  }),
 })
 
 function ResourceDetailContent({ resourceId }: { resourceId: string }) {
@@ -282,6 +276,7 @@ function ResourceDetailSkeleton() {
 
 function ResourceDetailPage() {
   const { resourceId } = Route.useParams()
+  useDocumentTitle("resources.detailPageTitle")
 
   return (
     <Suspense fallback={<ResourceDetailSkeleton />}>

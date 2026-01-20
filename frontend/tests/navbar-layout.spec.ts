@@ -1,4 +1,7 @@
 import { expect, test } from "@playwright/test"
+import { createUser } from "./utils/privateApi"
+import { randomEmail, randomPassword } from "./utils/random"
+import { logInUser } from "./utils/user"
 
 // Fresh storage state (not logged in)
 test.use({ storageState: { cookies: [], origins: [] } })
@@ -84,6 +87,30 @@ test.describe("Navbar Layout", () => {
 
     const signupButton = page.getByTestId("nav-signup")
     await expect(signupButton).toBeVisible()
+  })
+
+  test("Navbar refreshes auth + lower nav after logout on landing page", async ({
+    page,
+  }) => {
+    const email = randomEmail()
+    const password = randomPassword()
+
+    await createUser({ email, password })
+    await logInUser(page, email, password)
+
+    await page.setViewportSize({ width: 1024, height: 768 })
+    await page.goto("/")
+
+    await expect(page.getByTestId("nav-link-/favorites")).toBeVisible()
+    await expect(page.getByTestId("user-menu")).toBeVisible()
+
+    await page.getByTestId("user-menu").click()
+    await page.getByRole("menuitem", { name: "Log out" }).click()
+
+    await expect(page.getByTestId("nav-login")).toBeVisible()
+    await expect(page.getByTestId("nav-signup")).toBeVisible()
+    await expect(page.getByTestId("nav-link-/favorites")).toHaveCount(0)
+    await expect(page.getByTestId("user-menu")).toHaveCount(0)
   })
 
   test("No sidebar is present on authenticated layout routes", async ({

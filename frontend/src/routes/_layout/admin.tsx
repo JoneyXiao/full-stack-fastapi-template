@@ -32,6 +32,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import useAuth from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 function getUsersQueryOptions() {
   return {
@@ -61,13 +62,6 @@ function getPendingSubmissionsQueryOptions() {
 
 export const Route = createFileRoute("/_layout/admin")({
   component: Admin,
-  head: () => ({
-    meta: [
-      {
-        title: "Admin - FastAPI Cloud",
-      },
-    ],
-  }),
 })
 
 function UsersTableContent() {
@@ -292,6 +286,7 @@ function SubmissionsList() {
 function Admin() {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState("users")
+  useDocumentTitle("admin.pageTitle")
 
   return (
     <div className="flex flex-col gap-6">

@@ -50,10 +50,14 @@
     "login": "登录",
     "signup": "注册",
     "openSearch": "打开搜索",
-    "askAi": "问问AI"
+    "askAi": "试试AI对话"
   },
   "auth": {
     "login": "登录",
+    "loginTitle": "云喜AI | 灵狐快码 - 登录",
+    "signupTitle": "云喜AI | 灵狐快码 - 注册",
+    "resetPasswordTitle": "云喜AI | 灵狐快码 - 重置密码",
+    "recoverPasswordTitle": "云喜AI | 灵狐快码 - 找回密码",
     "logout": "退出",
     "register": "注册",
     "email": "邮箱",
@@ -107,6 +111,7 @@
     "sessionExpired": "您的会话已过期，请重新登录。"
   },
   "dashboard": {
+    "pageTitle": "云喜AI | 灵狐快码 - 仪表盘",
     "welcome": "欢迎，{{name}}！",
     "welcomeDefault": "欢迎！",
     "overview": "概览",
@@ -114,6 +119,7 @@
     "quickActions": "快捷操作"
   },
   "settings": {
+    "pageTitle": "云喜AI | 灵狐快码 - 设置",
     "title": "设置",
     "account": "账户",
     "appearance": "外观",
@@ -144,24 +150,37 @@
     "updatePassword": "更新密码"
   },
   "landing": {
+    "logo": {
+      "title": "云喜AI | 灵狐快码"
+    },
+    "pageTitle": "云喜AI | 灵狐快码 - 快速发现最佳AI资源",
     "title": "AI资源中心 - 快速找到最佳AI资源",
-    "curatedResources": "精选AI资源",
-    "heroTitle": "快速找到",
-    "heroTitleHighlight": "最佳AI资源",
-    "heroTitleEnd": "。",
-    "heroDescription": "发现精选的教程、工具、数据集和论文。直接搜索或向我们的AI助手咨询个性化推荐。",
+    "heroBadge": "AI资源中心",
+    "heroTitle": "一句话描述，",
+    "heroTitleHighlight": "快速找到最佳",
+    "heroTitleEnd": "AI资源。",
+    "heroDescription": "用AI获取指引式推荐，或在社区资源库中快速搜索。",
+    "primaryCta": "试试AI对话",
+    "secondaryCta": "关键词搜索",
     "browseResources": "浏览资源",
-    "quickSearch": "快速搜索",
-    "instantSearch": "即时关键词搜索",
-    "aiRecommendations": "AI智能推荐",
-    "communityCurated": "社区精选",
-    "searchResources": "搜索资源",
-    "findWhatYouNeed": "找到您需要的内容",
-    "searchPlaceholder": "搜索教程、工具、论文...",
+    "heroNote": "关键词搜索对所有人开放。",
+    "heroFeatures": {
+      "guided": "AI指引式推荐",
+      "fastSearch": "快速关键词搜索",
+      "community": "社区精选资源"
+    },
+    "searchResources": "搜索资源库",
+    "findWhatYouNeed": "用聚焦关键词快速找到所需内容",
+    "searchPlaceholder": "搜索教程、工具、数据集...",
     "searchButton": "搜索",
+    "searchNote": "搜索无需登录。登录后可保存对话并投稿。",
     "noResults": "未找到资源。请尝试其他关键词。",
     "emptyQueryHint": "在上方输入关键词并点击搜索以查找资源。",
     "searchError": "无法加载搜索结果，请重试。",
+    "chatSection": {
+      "title": "几分钟内获得定制推荐",
+      "subtitle": "描述你的目标，让AI推荐精选教程、工具和论文。"
+    },
     "aiChat": {
       "title": "获取推荐",
       "signInPrompt": "获取AI智能推荐",
@@ -173,20 +192,21 @@
       "disclaimer": "推荐基于我们精选的资源目录。",
       "viewSaved": "查看已保存的对话",
       "saveChat": "保存对话",
-      "clearChat": "清空对话"
+      "clearChat": "清空对话",
+      "send": "发送消息"
     },
     "howItWorks": {
       "title": "使用方法",
-      "subtitle": "三个简单步骤开始使用",
-      "searchTitle": "搜索",
-      "searchDescription": "输入关键词即时查找相关教程、工具和论文。",
-      "askTitle": "咨询",
-      "askDescription": "登录后与AI对话，获取基于您需求的个性化推荐。",
-      "contributeTitle": "贡献",
-      "contributeDescription": "提交新资源，帮助社区收藏不断壮大。"
+      "subtitle": "从问题到行动的清晰三步流程",
+      "askTitle": "描述你的目标",
+      "askDescription": "先用AI对话得到符合需求的短清单。",
+      "discoverTitle": "查看并筛选",
+      "discoverDescription": "打开资源、对比选择、保存合适内容。",
+      "contributeTitle": "分享回馈",
+      "contributeDescription": "提交新资源，让社区持续更新。"
     },
     "featuredTopics": {
-      "title": "热门主题",
+      "title": "探索热门主题",
       "machineLearning": "机器学习",
       "gptLlms": "GPT与大语言模型",
       "computerVision": "计算机视觉",
@@ -196,8 +216,88 @@
       "papers": "研究论文",
       "tools": "工具"
     },
+    "trust": {
+      "items": {
+        "curated": {
+          "title": "精选且清晰",
+          "description": "更短、更相关的结果列表。"
+        },
+        "community": {
+          "title": "社区共建",
+          "description": "由贡献者审阅和优化。"
+        },
+        "fast": {
+          "title": "快速产生价值",
+          "description": "几分钟内得到可执行路径。"
+        },
+        "transparent": {
+          "title": "来源透明",
+          "description": "提供原始教程、工具和论文链接。"
+        }
+      }
+    },
+    "onboarding": {
+      "title": "60秒快速开始",
+      "subtitle": "选择起点，保持节奏。",
+      "ctaChat": "从AI对话开始",
+      "ctaSearch": "关键词搜索",
+      "skip": "先去浏览",
+      "steps": {
+        "ask": "一句话描述你的目标。",
+        "search": "浏览简短而相关的资源列表。",
+        "save": "保存需要稍后查看的资源。",
+        "contribute": "分享资源，帮助社区成长。"
+      }
+    },
+    "testimonials": {
+      "title": "为好奇的探索者打造",
+      "subtitle": "冷静、专注、为严肃研究打造。",
+      "items": {
+        "finding": "我能在几分钟内从问题到短清单，不会迷失。",
+        "focus": "AI推荐简洁明了，让我保持学习专注。",
+        "workflow": "像一个安静的研究助手融入日常工作。"
+      },
+      "authors": {
+        "communityBuilder": "社区成员",
+        "researcher": "研究学习者",
+        "mlEngineer": "机器学习工程师"
+      },
+      "roles": {
+        "communityBuilder": "开源贡献者",
+        "researcher": "初级研究者",
+        "mlEngineer": "应用AI团队"
+      }
+    },
+    "faq": {
+      "title": "常见问题",
+      "subtitle": "进入前的清晰解答。",
+      "items": {
+        "sources": {
+          "question": "资源从哪里来？",
+          "answer": "来自社区提交并经过相关性审核。"
+        },
+        "chat": {
+          "question": "AI对话会取代搜索吗？",
+          "answer": "不会。对话用于引导，搜索仍可直接浏览。"
+        },
+        "submissions": {
+          "question": "如何提交资源？",
+          "answer": "登录后进入投稿，提供链接和简要描述。"
+        },
+        "privacy": {
+          "question": "我的对话内容如何处理？",
+          "answer": "仅用于生成推荐和改进体验。"
+        }
+      }
+    },
+    "finalCta": {
+      "title": "准备好发现下一个资源了吗？",
+      "subtitle": "从AI对话开始，或直接浏览资源库。",
+      "primary": "试试AI对话",
+      "secondary": "浏览资源"
+    },
     "footer": {
-      "title": "AI资源中心",
+      "title": "云喜AI | 灵狐快码",
       "description": "为AI社区精选的资源",
       "browse": "浏览",
       "contribute": "贡献"
@@ -210,6 +310,8 @@
     "info": "提示"
   },
   "resources": {
+    "pageTitle": "云喜AI | 灵狐快码 - 资源",
+    "detailPageTitle": "云喜AI | 灵狐快码 - 资源详情",
     "title": "AI资源",
     "description": "发现用于AI开发的工具、教程、论文等",
     "searchPlaceholder": "搜索资源...",
@@ -247,12 +349,14 @@
     }
   },
   "items": {
+    "pageTitle": "云喜AI | 灵狐快码 - 项目",
     "title": "项目",
     "description": "创建和管理您的项目",
     "noItems": "您还没有任何项目",
     "addItemHint": "添加新项目以开始使用"
   },
   "favorites": {
+    "pageTitle": "云喜AI | 灵狐快码 - 我的收藏",
     "title": "我的收藏",
     "description": "您收藏的AI资源",
     "noFavorites": "暂无收藏",
@@ -260,6 +364,9 @@
     "browseResources": "浏览资源"
   },
   "submissions": {
+    "pageTitle": "云喜AI | 灵狐快码 - 资源投稿",
+    "newPageTitle": "云喜AI | 灵狐快码 - 提交资源",
+    "detailPageTitle": "云喜AI | 灵狐快码 - 投稿详情",
     "title": "资源提交",
     "description": "浏览和讨论待审核的资源提交",
     "noSubmissions": "暂无待审核的提交",
@@ -324,6 +431,7 @@
     }
   },
   "admin": {
+    "pageTitle": "云喜AI | 灵狐快码 - 管理",
     "title": "管理控制台",
     "description": "管理用户、资源和提交",
     "tabs": {

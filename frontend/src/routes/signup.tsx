@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { PasswordInput } from "@/components/ui/password-input"
 import useAuth, { isLoggedIn } from "@/hooks/useAuth"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 function getFormSchema(t: TFunction) {
   return z
@@ -52,18 +53,12 @@ export const Route = createFileRoute("/signup")({
       })
     }
   },
-  head: () => ({
-    meta: [
-      {
-        title: "Sign Up - FastAPI Cloud",
-      },
-    ],
-  }),
 })
 
 function SignUp() {
   const { t } = useTranslation()
   const { signUpMutation } = useAuth()
+  useDocumentTitle("auth.signupTitle")
   const form = useForm<FormData>({
     resolver: zodResolver(getFormSchema(t)),
     mode: "onBlur",

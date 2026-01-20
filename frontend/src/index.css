@@ -43,71 +43,123 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.5982 0.10687 182.4689);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --font-sans:
+    "Poppins", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-heading:
+    "Poppins", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* AI Resource Hub - Light Mode (Approach B: Energetic First)
+     Vibrant amber primary with electric blue accent
+     Professional yet energetic - excellent onboarding experience */
+
+  /* Base surfaces - warm white with subtle warmth */
+  --background: oklch(0.985 0.005 70);
+  --foreground: oklch(0.18 0.02 55);
+
+  /* Cards & popovers - clean white with warm undertone */
+  --card: oklch(0.995 0.003 70);
+  --card-foreground: oklch(0.18 0.02 55);
+  --popover: oklch(0.995 0.003 70);
+  --popover-foreground: oklch(0.18 0.02 55);
+
+  /* Primary - Vibrant Amber (Energy, Creativity, Action) - Contrast-Safe */
+  --primary: oklch(0.62 0.19 55);
+  --primary-foreground: oklch(0.995 0 0);
+
+  /* Secondary - Warm neutral for UI chrome */
+  --secondary: oklch(0.965 0.008 70);
+  --secondary-foreground: oklch(0.25 0.02 55);
+
+  /* Muted - Subtle warm backgrounds */
+  --muted: oklch(0.965 0.008 70);
+  --muted-foreground: oklch(0.45 0.02 55);
+
+  /* Accent - Electric Blue (Tech, Trust, Innovation) */
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
+
+  /* Destructive - Warm Red */
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.5982 0.10687 182.4689);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Borders & inputs */
+  --border: oklch(0.9 0.01 70);
+  --input: oklch(0.9 0.01 70);
+  --ring: oklch(0.62 0.19 55);
+
+  /* Chart palette - Amber-anchored with complementary colors
+     Optimized for data visualization with clear separation */
+  --chart-1: oklch(0.62 0.19 55);
+  --chart-2: oklch(0.546 0.245 262.88);
+  --chart-3: oklch(0.65 0.2 160);
+  --chart-4: oklch(0.58 0.22 320);
+  --chart-5: oklch(0.62 0.2 30);
+
+  /* Sidebar */
+  --sidebar: oklch(0.99 0.003 70);
+  --sidebar-foreground: oklch(0.18 0.02 55);
+  --sidebar-primary: oklch(0.62 0.19 55);
+  --sidebar-primary-foreground: oklch(0.995 0 0);
+  --sidebar-accent: oklch(0.965 0.008 70);
+  --sidebar-accent-foreground: oklch(0.25 0.02 55);
+  --sidebar-border: oklch(0.9 0.01 70);
+  --sidebar-ring: oklch(0.62 0.19 55);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.65 0.10687 182.4689);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
+  /* AI Resource Hub - Dark Mode (Approach B: Energetic First)
+     Warm dark theme with vibrant amber primary
+     Immersive and energetic while reducing eye strain */
+
+  /* Base surfaces - Deep warm charcoal for depth */
+  --background: oklch(0.145 0.015 55);
+  --foreground: oklch(0.95 0.01 70);
+
+  /* Cards & popovers - Elevated warm surfaces */
+  --card: oklch(0.195 0.015 55);
+  --card-foreground: oklch(0.95 0.01 70);
+  --popover: oklch(0.195 0.015 55);
+  --popover-foreground: oklch(0.95 0.01 70);
+
+  /* Primary - Vibrant Amber (brighter for dark mode visibility) */
+  --primary: oklch(0.75 0.18 55);
+  --primary-foreground: oklch(0.15 0.03 55);
+
+  /* Secondary - Elevated warm surface */
+  --secondary: oklch(0.25 0.015 55);
+  --secondary-foreground: oklch(0.95 0.01 70);
+
+  /* Muted - Subtle warm surfaces */
+  --muted: oklch(0.25 0.015 55);
+  --muted-foreground: oklch(0.65 0.015 70);
+
+  /* Accent - Electric Blue (pops against warm dark bg) */
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
+
+  /* Destructive - Lighter red for dark mode visibility */
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.65 0.10687 182.4689);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+
+  /* Borders & inputs */
+  --border: oklch(1 0.01 70 / 12%);
+  --input: oklch(1 0.01 70 / 15%);
+  --ring: oklch(0.75 0.18 55);
+
+  /* Chart palette - Amber-anchored, vibrant on dark backgrounds */
+  --chart-1: oklch(0.75 0.18 55);
+  --chart-2: oklch(0.65 0.22 262.88);
+  --chart-3: oklch(0.72 0.18 160);
+  --chart-4: oklch(0.68 0.22 320);
+  --chart-5: oklch(0.72 0.2 30);
+
+  /* Sidebar */
+  --sidebar: oklch(0.175 0.015 55);
+  --sidebar-foreground: oklch(0.95 0.01 70);
+  --sidebar-primary: oklch(0.75 0.18 55);
+  --sidebar-primary-foreground: oklch(0.15 0.03 55);
+  --sidebar-accent: oklch(0.25 0.015 55);
+  --sidebar-accent-foreground: oklch(0.95 0.01 70);
+  --sidebar-border: oklch(1 0.01 70 / 12%);
+  --sidebar-ring: oklch(0.75 0.18 55);
 }
 
 @layer base {
@@ -116,6 +168,15 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
   }
   button,
   [role="button"] {

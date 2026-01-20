@@ -2,21 +2,16 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useTranslation } from "react-i18next"
 
 import useAuth from "@/hooks/useAuth"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 export const Route = createFileRoute("/_layout/dashboard")({
   component: Dashboard,
-  head: () => ({
-    meta: [
-      {
-        title: "Dashboard - FastAPI Cloud",
-      },
-    ],
-  }),
 })
 
 function Dashboard() {
   const { t } = useTranslation()
   const { user: currentUser } = useAuth()
+  useDocumentTitle("dashboard.pageTitle")
 
   return (
     <div>

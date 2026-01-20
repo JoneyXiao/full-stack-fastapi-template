@@ -30,6 +30,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
 import useAuth from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 function getSubmissionQueryOptions(submissionId: string) {
   return {
@@ -48,13 +49,6 @@ function getSubmissionCommentsQueryOptions(submissionId: string) {
 
 export const Route = createFileRoute("/_layout/submissions/$submissionId")({
   component: SubmissionDetailPage,
-  head: () => ({
-    meta: [
-      {
-        title: "Submission Details - AI Resources",
-      },
-    ],
-  }),
 })
 
 function StatusBadge({ status }: { status: string }) {
@@ -323,6 +317,7 @@ function SubmissionDetailSkeleton() {
 
 function SubmissionDetailPage() {
   const { submissionId } = Route.useParams()
+  useDocumentTitle("submissions.detailPageTitle")
 
   return (
     <Suspense fallback={<SubmissionDetailSkeleton />}>

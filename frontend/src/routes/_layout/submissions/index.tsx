@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 function getPendingSubmissionsQueryOptions() {
   return {
@@ -27,13 +28,6 @@ function getPendingSubmissionsQueryOptions() {
 
 export const Route = createFileRoute("/_layout/submissions/")({
   component: SubmissionsPage,
-  head: () => ({
-    meta: [
-      {
-        title: "Resource Submissions - AI Resources",
-      },
-    ],
-  }),
 })
 
 function StatusBadge({ status }: { status: string }) {
@@ -157,6 +151,7 @@ function SubmissionsListSkeleton() {
 
 function SubmissionsPage() {
   const { t } = useTranslation()
+  useDocumentTitle("submissions.pageTitle")
 
   return (
     <div className="flex flex-col gap-6">

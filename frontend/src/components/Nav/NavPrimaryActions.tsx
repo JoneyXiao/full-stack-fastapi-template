@@ -1,6 +1,7 @@
-import { MessageSquare, Search } from "lucide-react"
-import type { KeyboardEvent, Ref } from "react"
+import { Search } from "lucide-react"
+import type { KeyboardEvent, ReactElement, Ref } from "react"
 import { useTranslation } from "react-i18next"
+import { RiChatSmileAiLine } from "react-icons/ri"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -22,21 +23,20 @@ export function NavPrimaryActions({
   onChatClick,
   chatButtonRef,
   searchTriggerRef,
-}: NavPrimaryActionsProps) {
+}: NavPrimaryActionsProps): ReactElement {
   const { t } = useTranslation()
 
-  const handleSearchKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault()
-      onSearchClick()
-    }
+  function handleSearchKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
+    if (event.key !== "Enter" && event.key !== " ") return
+    event.preventDefault()
+    onSearchClick()
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex w-full items-center justify-center gap-2">
       {/* Search Input - Neon style */}
       <InputGroup
-        className="w-48 cursor-pointer sm:w-64 lg:w-80"
+        className="w-full max-w-xs cursor-pointer sm:max-w-md lg:max-w-lg"
         onClick={onSearchClick}
         onKeyDown={handleSearchKeyDown}
         role="button"
@@ -51,7 +51,7 @@ export function NavPrimaryActions({
         <InputGroupInput
           placeholder={t("search.placeholder")}
           readOnly
-          className="cursor-pointer"
+          className="cursor-pointer text-xs font-normal text-muted-foreground"
         />
         <InputGroupAddon align="inline-end">
           <Kbd>⌘</Kbd>
@@ -68,8 +68,18 @@ export function NavPrimaryActions({
         data-testid="nav-chat-trigger"
         className="gap-2"
       >
-        <MessageSquare className="h-4 w-4" />
-        <span className="hidden sm:inline">{t("nav.askAi")}</span>
+        <span className="flex items-center gap-2">
+          <span className="relative inline-flex h-6 w-6 items-center justify-center rounded-full">
+            <RiChatSmileAiLine className="h-4 w-4 text-primary" />
+            <span
+              aria-hidden
+              className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(224,123,26,0.7)] motion-safe:animate-pulse motion-reduce:animate-none dark:shadow-[0_0_10px_rgba(245,166,35,0.8)]"
+            />
+          </span>
+          <span className="hidden sm:inline font-normal text-foreground">
+            {t("nav.askAi")}
+          </span>
+        </span>
       </Button>
     </div>
   )

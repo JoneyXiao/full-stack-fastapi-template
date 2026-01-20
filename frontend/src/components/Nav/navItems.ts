@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react"
-import { Bookmark, BookOpen, Briefcase, Home, Send, Users } from "lucide-react"
+import { Bookmark, BookOpen, Send, Users } from "lucide-react"
 
 export interface NavItem {
   icon: LucideIcon
@@ -12,21 +12,22 @@ export interface NavItem {
 
 /**
  * Base navigation items visible to all users (including unauthenticated).
+ * Hide dashboard and items for now
  */
 export const baseNavItems: NavItem[] = [
-  {
-    icon: Home,
-    titleKey: "nav.dashboard",
-    title: "Dashboard",
-    path: "/dashboard",
-  },
+  // {
+  //   icon: Home,
+  //   titleKey: "nav.dashboard",
+  //   title: "Dashboard",
+  //   path: "/dashboard",
+  // },
   {
     icon: BookOpen,
     titleKey: "nav.resources",
     title: "Resources",
     path: "/resources",
   },
-  { icon: Briefcase, titleKey: "nav.items", title: "Items", path: "/items" },
+  // { icon: Briefcase, titleKey: "nav.items", title: "Items", path: "/items" },
 ]
 
 /**

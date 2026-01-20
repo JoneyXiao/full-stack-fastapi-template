@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 function getResourcesQueryOptions(q?: string, type?: string) {
   return {
@@ -28,13 +29,6 @@ function getResourcesQueryOptions(q?: string, type?: string) {
 
 export const Route = createFileRoute("/_layout/resources/")({
   component: ResourcesPage,
-  head: () => ({
-    meta: [
-      {
-        title: "AI Resources - Discover AI Tools & Tutorials",
-      },
-    ],
-  }),
 })
 
 function ResourcesListContent({ q, type }: { q?: string; type?: string }) {
@@ -135,6 +129,7 @@ function ResourcesPage() {
   const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState("")
   const [activeQuery, setActiveQuery] = useState("")
+  useDocumentTitle("resources.pageTitle")
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

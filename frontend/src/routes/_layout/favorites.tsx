@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 function getFavoritesQueryOptions() {
   return {
@@ -26,13 +27,6 @@ function getFavoritesQueryOptions() {
 
 export const Route = createFileRoute("/_layout/favorites")({
   component: FavoritesPage,
-  head: () => ({
-    meta: [
-      {
-        title: "My Favorites - AI Resources",
-      },
-    ],
-  }),
 })
 
 function FavoritesListContent() {
@@ -130,6 +124,7 @@ function FavoritesListSkeleton() {
 
 function FavoritesPage() {
   const { t } = useTranslation()
+  useDocumentTitle("favorites.pageTitle")
 
   return (
     <div className="flex flex-col gap-6">
