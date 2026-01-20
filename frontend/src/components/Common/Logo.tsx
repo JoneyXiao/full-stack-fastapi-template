@@ -1,9 +1,8 @@
 import { Link } from "@tanstack/react-router"
 import type { ReactElement } from "react"
-import { GiFox } from "react-icons/gi"
-
-import { cn } from "@/lib/utils"
 import { useTranslation } from "react-i18next"
+import { GiFox } from "react-icons/gi"
+import { cn } from "@/lib/utils"
 
 interface LogoProps {
   variant?: "full" | "icon" | "responsive"
@@ -39,7 +38,7 @@ export function Logo({
       break
     default:
       content = (
-        <span className={cn("inline-flex items-center gap-2", className)}>
+        <span className={cn("inline-flex items-center gap-2 pr-2", className)}>
           <GiFox
             className="shrink-0 size-[2em] text-primary"
             aria-hidden="true"

@@ -68,9 +68,17 @@ export function NavPrimaryActions({
         data-testid="nav-chat-trigger"
         className="gap-2"
       >
-        <RiChatSmileAiLine className="h-4 w-4 text-muted-foreground" />
-        <span className="hidden sm:inline font-normal text-muted-foreground">
-          {t("nav.askAi")}
+        <span className="flex items-center gap-2">
+          <span className="relative inline-flex h-6 w-6 items-center justify-center rounded-full">
+            <RiChatSmileAiLine className="h-4 w-4 text-primary" />
+            <span
+              aria-hidden
+              className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)] motion-safe:animate-pulse motion-reduce:animate-none dark:bg-red-400 dark:shadow-[0_0_10px_rgba(248,113,113,0.8)]"
+            />
+          </span>
+          <span className="hidden sm:inline font-normal text-foreground">
+            {t("nav.askAi")}
+          </span>
         </span>
       </Button>
     </div>
