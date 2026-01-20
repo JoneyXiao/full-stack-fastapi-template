@@ -6,15 +6,14 @@ import {
   FinalCTA,
   Hero,
   HowItWorks,
-  LandingChat,
   LandingFAQ,
-  LandingSearch,
   Testimonials,
   TrustStrip,
 } from "@/components/Landing"
 import { AppNavbar } from "@/components/Nav"
 import { isLoggedIn } from "@/hooks/useAuth"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
+import { NavDialogsProvider, useNavDialogs } from "@/hooks/useNavDialogs"
 import { cn } from "@/lib/utils"
 
 export const Route = createFileRoute("/")({
@@ -39,28 +38,11 @@ function SectionWrap({
   )
 }
 
-function scrollToSection(id: string, focusSelector?: string): void {
-  const section = document.getElementById(id)
-  section?.scrollIntoView({ behavior: "smooth", block: "start" })
-  if (focusSelector) {
-    setTimeout(() => {
-      document.querySelector<HTMLElement>(focusSelector)?.focus()
-    }, 250)
-  }
-}
-
-function LandingPage(): ReactElement {
+function LandingPageContent(): ReactElement {
   const { t } = useTranslation()
   const authenticated = isLoggedIn()
+  const { openChat, openSearch } = useNavDialogs()
   useDocumentTitle("landing.pageTitle")
-
-  function handleChatClick(): void {
-    scrollToSection("landing-chat", '[data-testid="landing-chat-input"]')
-  }
-
-  function handleSearchClick(): void {
-    scrollToSection("landing-search", '[data-testid="landing-search-input"]')
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -69,10 +51,7 @@ function LandingPage(): ReactElement {
       <main className="relative">
         {/* Hero Section */}
         <SectionWrap>
-          <Hero
-            onChatClick={handleChatClick}
-            onSearchClick={handleSearchClick}
-          />
+          <Hero onChatClick={openChat} onSearchClick={openSearch} />
         </SectionWrap>
 
         {/* Trust Strip */}
@@ -83,44 +62,6 @@ function LandingPage(): ReactElement {
         {/* How It Works */}
         <SectionWrap className="mt-6">
           <HowItWorks className="mx-auto max-w-5xl" />
-        </SectionWrap>
-
-        {/* Chat Section */}
-        <SectionWrap className="mt-16" id="landing-chat">
-          <div className="rounded-3xl border bg-muted/20 p-6 md:p-10">
-            <div className="mb-6 text-center">
-              <h2 className="text-xl font-semibold md:text-2xl">
-                {t("landing.chatSection.title")}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t("landing.chatSection.subtitle")}
-              </p>
-            </div>
-            <LandingChat
-              className="mx-auto max-w-3xl"
-              isAuthenticated={authenticated}
-            />
-          </div>
-        </SectionWrap>
-
-        {/* Search Section */}
-        <SectionWrap className="mt-16" id="landing-search">
-          <div className="rounded-3xl border bg-background/60 p-6 shadow-sm md:p-10">
-            <div className="mb-6 text-center">
-              <h2 className="text-xl font-semibold md:text-2xl">
-                {t("landing.searchResources")}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t("landing.findWhatYouNeed")}
-              </p>
-            </div>
-            <div className="mx-auto max-w-4xl rounded-2xl border bg-card/80 p-6">
-              <LandingSearch />
-              <p className="mt-4 text-center text-xs text-muted-foreground">
-                {t("landing.searchNote")}
-              </p>
-            </div>
-          </div>
         </SectionWrap>
 
         {/* Featured Topics */}
@@ -140,7 +81,7 @@ function LandingPage(): ReactElement {
 
         {/* Final CTA */}
         <SectionWrap className="mt-24">
-          <FinalCTA onChatClick={handleChatClick} />
+          <FinalCTA onChatClick={openChat} />
         </SectionWrap>
       </main>
 
@@ -176,5 +117,13 @@ function LandingPage(): ReactElement {
         </div>
       </footer>
     </div>
+  )
+}
+
+function LandingPage(): ReactElement {
+  return (
+    <NavDialogsProvider>
+      <LandingPageContent />
+    </NavDialogsProvider>
   )
 }

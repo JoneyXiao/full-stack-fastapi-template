@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router"
 import type { ReactElement } from "react"
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 
 import { Appearance } from "@/components/Common/Appearance"
 import { Logo } from "@/components/Common/Logo"
 import useAuth from "@/hooks/useAuth"
+import { NavDialogsContext } from "@/hooks/useNavDialogs"
 import { cn } from "@/lib/utils"
 import { AuthControls } from "./AuthControls"
 import { ChatDialog } from "./ChatDialog"
@@ -21,8 +22,17 @@ interface AppNavbarProps {
 
 export function AppNavbar({ className }: AppNavbarProps): ReactElement {
   const { user } = useAuth()
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [chatOpen, setChatOpen] = useState(false)
+
+  // Use context if available (when wrapped in NavDialogsProvider), otherwise use local state
+  const dialogsContext = useContext(NavDialogsContext)
+  const [localSearchOpen, setLocalSearchOpen] = useState(false)
+  const [localChatOpen, setLocalChatOpen] = useState(false)
+
+  const searchOpen = dialogsContext?.searchOpen ?? localSearchOpen
+  const chatOpen = dialogsContext?.chatOpen ?? localChatOpen
+  const setSearchOpen = dialogsContext?.setSearchOpen ?? setLocalSearchOpen
+  const setChatOpen = dialogsContext?.setChatOpen ?? setLocalChatOpen
+
   const searchTriggerRef = useRef<HTMLDivElement>(null)
   const chatButtonRef = useRef<HTMLButtonElement>(null)
   const wasSearchOpenRef = useRef(false)
@@ -40,7 +50,7 @@ export function AppNavbar({ className }: AppNavbarProps): ReactElement {
     }
     document.addEventListener("keydown", handleKeyDown)
     return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [])
+  }, [setSearchOpen])
 
   // Restore focus to the chat trigger when the dialog closes (accessibility + tests).
   useEffect(() => {
