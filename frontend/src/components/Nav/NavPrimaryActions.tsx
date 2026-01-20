@@ -73,7 +73,7 @@ export function NavPrimaryActions({
             <RiChatSmileAiLine className="h-4 w-4 text-primary" />
             <span
               aria-hidden
-              className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)] motion-safe:animate-pulse motion-reduce:animate-none dark:bg-red-400 dark:shadow-[0_0_10px_rgba(248,113,113,0.8)]"
+              className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(224,123,26,0.7)] motion-safe:animate-pulse motion-reduce:animate-none dark:shadow-[0_0_10px_rgba(245,166,35,0.8)]"
             />
           </span>
           <span className="hidden sm:inline font-normal text-foreground">
