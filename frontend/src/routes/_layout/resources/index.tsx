@@ -137,32 +137,30 @@ function ResourcesPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="flex flex-col gap-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t("resources.title")}
-          </h1>
-          <p className="text-muted-foreground">{t("resources.description")}</p>
-        </div>
-
-        <form onSubmit={handleSearch} className="flex gap-2 max-w-md">
-          <Input
-            type="search"
-            placeholder={t("resources.searchPlaceholder")}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <Button type="submit">
-            <Search className="h-4 w-4 mr-2" />
-            {t("common.search")}
-          </Button>
-        </form>
-
-        <Suspense fallback={<ResourcesListSkeleton />}>
-          <ResourcesListContent q={activeQuery || undefined} />
-        </Suspense>
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t("resources.title")}
+        </h1>
+        <p className="text-muted-foreground">{t("resources.description")}</p>
       </div>
+
+      <form onSubmit={handleSearch} className="flex gap-2 max-w-md">
+        <Input
+          type="search"
+          placeholder={t("resources.searchPlaceholder")}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <Button type="submit">
+          <Search className="h-4 w-4 mr-2" />
+          {t("common.search")}
+        </Button>
+      </form>
+
+      <Suspense fallback={<ResourcesListSkeleton />}>
+        <ResourcesListContent q={activeQuery || undefined} />
+      </Suspense>
     </div>
   )
 }

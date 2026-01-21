@@ -109,7 +109,7 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
+    <div className="flex flex-col gap-6">
       <Link
         to="/resources"
         className="inline-flex items-center text-muted-foreground hover:text-foreground mb-6"
@@ -254,7 +254,7 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
 
 function ResourceDetailSkeleton() {
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
+    <div className="flex flex-col gap-6">
       <Skeleton className="h-4 w-32 mb-6" />
       <div className="space-y-6">
         <div>
