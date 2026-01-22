@@ -489,10 +489,10 @@ export class ResourcesService {
     
     /**
      * Get Resource
-     * Get resource by ID.
+     * Get resource by ID with reaction counts and per-user state.
      * @param data The data for the request.
      * @param data.id
-     * @returns ResourcePublic Successful Response
+     * @returns ResourceDetailPublic Successful Response
      * @throws ApiError
      */
     public static getResource(data: ResourcesGetResourceData): CancelablePromise<ResourcesGetResourceResponse> {

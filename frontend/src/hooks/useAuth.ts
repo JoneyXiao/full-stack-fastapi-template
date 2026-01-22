@@ -68,7 +68,7 @@ const useAuth = () => {
         queryFn: UsersService.readUserMe,
       })
       syncLocaleFromUser(user)
-      navigate({ to: "/dashboard" })
+      navigate({ to: "/resources" })
     },
     onError: handleError.bind(showErrorToast),
   })

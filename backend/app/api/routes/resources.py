@@ -18,9 +18,11 @@ from app.models import (
     ReactionState,
     Resource,
     ResourceCreate,
+    ResourceDetailPublic,
     ResourcePublic,
     ResourcesPublic,
     ResourceUpdate,
+    User,
 )
 
 router = APIRouter(prefix="/resources", tags=["resources"])
@@ -78,10 +80,10 @@ def list_resources(
     return ResourcesPublic(data=resources, count=count)
 
 
-@router.get("/{id}", response_model=ResourcePublic)
+@router.get("/{id}", response_model=ResourceDetailPublic)
 def get_resource(session: SessionDep, current_user: OptionalUser, id: uuid.UUID) -> Any:
     """
-    Get resource by ID.
+    Get resource by ID with reaction counts and per-user state.
     """
     resource = session.get(Resource, id)
     if not resource:
@@ -92,7 +94,42 @@ def get_resource(session: SessionDep, current_user: OptionalUser, id: uuid.UUID)
         if current_user is None or not current_user.is_superuser:
             raise HTTPException(status_code=404, detail="Resource not found")
 
-    return resource
+    # Compute reaction counts
+    likes_count = session.exec(
+        select(func.count()).select_from(Like).where(Like.resource_id == id)
+    ).one()
+    favorites_count = session.exec(
+        select(func.count()).select_from(Favorite).where(Favorite.resource_id == id)
+    ).one()
+
+    # Compute per-user state
+    liked_by_me = False
+    favorited_by_me = False
+    if current_user is not None:
+        liked_by_me = (
+            session.exec(
+                select(Like).where(
+                    Like.user_id == current_user.id, Like.resource_id == id
+                )
+            ).first()
+            is not None
+        )
+        favorited_by_me = (
+            session.exec(
+                select(Favorite).where(
+                    Favorite.user_id == current_user.id, Favorite.resource_id == id
+                )
+            ).first()
+            is not None
+        )
+
+    return ResourceDetailPublic(
+        **resource.model_dump(),
+        likes_count=likes_count,
+        favorites_count=favorites_count,
+        liked_by_me=liked_by_me,
+        favorited_by_me=favorited_by_me,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -360,13 +397,24 @@ def list_resource_comments(
     count = session.exec(count_query).one()
 
     query = (
-        select(Comment)
+        select(Comment, User.full_name, User.email)
+        .join(User, User.id == Comment.author_id)
         .where(Comment.resource_id == id)
         .offset(skip)
         .limit(limit)
         .order_by(Comment.created_at.asc())
     )
-    comments = session.exec(query).all()
+    rows = session.exec(query).all()
+
+    comments = [
+        CommentPublic.model_validate(
+            {
+                **c.model_dump(),
+                "author_display": full_name or email,
+            }
+        )
+        for c, full_name, email in rows
+    ]
 
     return CommentsPublic(data=comments, count=count)
 
@@ -393,4 +441,9 @@ def create_resource_comment(
     session.add(comment)
     session.commit()
     session.refresh(comment)
-    return comment
+    return CommentPublic.model_validate(
+        {
+            **comment.model_dump(),
+            "author_display": (current_user.full_name or current_user.email),
+        }
+    )

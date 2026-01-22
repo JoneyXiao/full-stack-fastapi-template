@@ -178,6 +178,14 @@ class ResourcePublic(ResourceBase):
     updated_at: datetime
 
 
+# Extended response for resource detail (single resource) with reaction info
+class ResourceDetailPublic(ResourcePublic):
+    likes_count: int = 0
+    favorites_count: int = 0
+    liked_by_me: bool = False
+    favorited_by_me: bool = False
+
+
 class ResourcesPublic(SQLModel):
     data: list[ResourcePublic]
     count: int
@@ -299,6 +307,7 @@ class Comment(CommentBase, table=True):
 class CommentPublic(CommentBase):
     id: uuid.UUID
     author_id: uuid.UUID
+    author_display: str | None = None
     resource_id: uuid.UUID
     created_at: datetime
     updated_at: datetime
@@ -337,6 +346,7 @@ class SubmissionCommentPublic(SQLModel):
     id: uuid.UUID
     body: str
     author_id: uuid.UUID
+    author_display: str | None = None
     submission_id: uuid.UUID
     created_at: datetime
     updated_at: datetime

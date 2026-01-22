@@ -53,6 +53,7 @@ export type CommentPublic = {
     body: string;
     id: string;
     author_id: string;
+    author_display?: (string | null);
     resource_id: string;
     created_at: string;
     updated_at: string;
@@ -136,6 +137,21 @@ export type ResourceCreate = {
     type: string;
 };
 
+export type ResourceDetailPublic = {
+    title: string;
+    description?: (string | null);
+    destination_url: string;
+    type: string;
+    id: string;
+    is_published: boolean;
+    created_at: string;
+    updated_at: string;
+    likes_count?: number;
+    favorites_count?: number;
+    liked_by_me?: boolean;
+    favorited_by_me?: boolean;
+};
+
 /**
  * Compact resource summary for chat recommendations.
  */
@@ -205,6 +221,7 @@ export type SubmissionCommentPublic = {
     id: string;
     body: string;
     author_id: string;
+    author_display?: (string | null);
     submission_id: string;
     created_at: string;
     updated_at: string;
@@ -414,7 +431,7 @@ export type ResourcesGetResourceData = {
     id: string;
 };
 
-export type ResourcesGetResourceResponse = (ResourcePublic);
+export type ResourcesGetResourceResponse = (ResourceDetailPublic);
 
 export type ResourcesUpdateResourceData = {
     id: string;

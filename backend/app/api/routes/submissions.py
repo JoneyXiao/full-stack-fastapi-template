@@ -19,6 +19,7 @@ from app.models import (
     SubmissionComment,
     SubmissionCommentPublic,
     SubmissionCommentsPublic,
+    User,
 )
 
 router = APIRouter(prefix="/submissions", tags=["submissions"])
@@ -337,13 +338,24 @@ def list_submission_comments(
     count = session.exec(count_query).one()
 
     query = (
-        select(SubmissionComment)
+        select(SubmissionComment, User.full_name, User.email)
+        .join(User, User.id == SubmissionComment.author_id)
         .where(SubmissionComment.submission_id == id)
         .offset(skip)
         .limit(limit)
         .order_by(SubmissionComment.created_at.asc())
     )
-    comments = session.exec(query).all()
+    rows = session.exec(query).all()
+
+    comments = [
+        SubmissionCommentPublic.model_validate(
+            {
+                **c.model_dump(),
+                "author_display": full_name or email,
+            }
+        )
+        for c, full_name, email in rows
+    ]
 
     return SubmissionCommentsPublic(data=comments, count=count)
 
@@ -370,4 +382,9 @@ def create_submission_comment(
     session.add(comment)
     session.commit()
     session.refresh(comment)
-    return comment
+    return SubmissionCommentPublic.model_validate(
+        {
+            **comment.model_dump(),
+            "author_display": (current_user.full_name or current_user.email),
+        }
+    )

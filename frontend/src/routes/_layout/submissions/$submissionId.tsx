@@ -249,6 +249,7 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
                   setNewComment(e.target.value)
                 }
                 rows={3}
+                className="resize-y text-sm placeholder:text-muted-foreground/70"
               />
               <Button
                 type="submit"
