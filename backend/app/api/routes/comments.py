@@ -40,7 +40,12 @@ def update_comment(
     session.add(comment)
     session.commit()
     session.refresh(comment)
-    return comment
+    return CommentPublic.model_validate(
+        {
+            **comment.model_dump(),
+            "author_display": (current_user.full_name or current_user.email),
+        }
+    )
 
 
 @router.delete("/{id}", response_model=Message)
@@ -89,7 +94,12 @@ def update_submission_comment(
     session.add(comment)
     session.commit()
     session.refresh(comment)
-    return comment
+    return SubmissionCommentPublic.model_validate(
+        {
+            **comment.model_dump(),
+            "author_display": (current_user.full_name or current_user.email),
+        }
+    )
 
 
 @router.delete("/submission/{id}", response_model=Message)

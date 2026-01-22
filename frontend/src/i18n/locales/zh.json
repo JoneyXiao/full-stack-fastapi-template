@@ -24,6 +24,7 @@
     "clear": "清除",
     "download": "下载",
     "upload": "上传",
+    "copy": "复制",
     "menu": "菜单",
     "openMenu": "打开菜单",
     "mobileNavigation": "移动端导航",
@@ -321,7 +322,9 @@
     "viewDetails": "查看详情",
     "visit": "访问",
     "types": {
+      "github_repo": "GitHub 仓库",
       "tool": "工具",
+      "website": "网站",
       "tutorial": "教程",
       "article": "文章",
       "paper": "论文",
@@ -330,14 +333,32 @@
       "book": "书籍",
       "other": "其他"
     },
+    "list": {
+      "allTypes": "全部",
+      "sort": "排序",
+      "view": "视图",
+      "viewGrid": "网格",
+      "viewList": "列表",
+      "sortNewest": "最新",
+      "sortOldest": "最早",
+      "sortTitleAsc": "标题（A–Z）",
+      "sortTitleDesc": "标题（Z–A）",
+      "showing": "显示第 {{from}}–{{to}} 条，共 {{count}} 条"
+    },
     "detail": {
       "backToResources": "返回资源列表",
       "visitResource": "访问资源",
       "like": "喜欢",
+      "liked": "已喜欢",
+      "unlike": "取消喜欢",
       "favorite": "收藏",
+      "favorited": "已收藏",
+      "unfavorite": "取消收藏",
       "share": "分享",
       "likeSuccess": "资源已添加到您的喜欢列表",
+      "unlikeSuccess": "资源已从您的喜欢列表移除",
       "favoriteSuccess": "资源已添加到您的收藏夹",
+      "unfavoriteSuccess": "资源已从您的收藏夹移除",
       "shareSuccess": "资源链接已复制到剪贴板",
       "comments": "评论 ({{count}})",
       "commentsDescription": "参与讨论这个资源",
@@ -345,7 +366,13 @@
       "postComment": "发表评论",
       "commentSuccess": "您的评论已发表",
       "toLeaveComment": "以发表评论",
-      "noComments": "暂无评论。成为第一个分享想法的人！"
+      "noComments": "暂无评论。成为第一个分享想法的人！",
+      "about": "关于此资源",
+      "aboutHint": "快速信息，帮助你判断这个链接是否适合。",
+      "typeLabel": "类型",
+      "domain": "URL",
+      "added": "收录时间",
+      "updated": "更新时间"
     }
   },
   "items": {

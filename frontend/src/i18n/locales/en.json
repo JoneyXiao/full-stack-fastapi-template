@@ -24,6 +24,7 @@
     "clear": "Clear",
     "download": "Download",
     "upload": "Upload",
+    "copy": "Copy",
     "menu": "Menu",
     "openMenu": "Open menu",
     "mobileNavigation": "Mobile navigation",
@@ -322,7 +323,9 @@
     "viewDetails": "View Details",
     "visit": "Visit",
     "types": {
+      "github_repo": "GitHub Repo",
       "tool": "Tool",
+      "website": "Website",
       "tutorial": "Tutorial",
       "article": "Article",
       "paper": "Paper",
@@ -331,14 +334,32 @@
       "book": "Book",
       "other": "Other"
     },
+    "list": {
+      "allTypes": "All",
+      "sort": "Sort",
+      "view": "View",
+      "viewGrid": "Grid",
+      "viewList": "List",
+      "sortNewest": "Newest",
+      "sortOldest": "Oldest",
+      "sortTitleAsc": "Title (A–Z)",
+      "sortTitleDesc": "Title (Z–A)",
+      "showing": "Showing {{from}}–{{to}} of {{count}}"
+    },
     "detail": {
       "backToResources": "Back to Resources",
       "visitResource": "Visit Resource",
       "like": "Like",
+      "liked": "Liked",
+      "unlike": "Unlike",
       "favorite": "Favorite",
+      "favorited": "Favorited",
+      "unfavorite": "Unfavorite",
       "share": "Share",
       "likeSuccess": "Resource added to your likes",
+      "unlikeSuccess": "Resource removed from your likes",
       "favoriteSuccess": "Resource added to your favorites",
+      "unfavoriteSuccess": "Resource removed from your favorites",
       "shareSuccess": "Resource link copied to clipboard",
       "comments": "Comments ({{count}})",
       "commentsDescription": "Join the discussion about this resource",
@@ -346,7 +367,13 @@
       "postComment": "Post Comment",
       "commentSuccess": "Your comment has been posted",
       "toLeaveComment": "to leave a comment",
-      "noComments": "No comments yet. Be the first to share your thoughts!"
+      "noComments": "No comments yet. Be the first to share your thoughts!",
+      "about": "About this resource",
+      "aboutHint": "Quick details to help you evaluate this link.",
+      "typeLabel": "Type",
+      "domain": "URL",
+      "added": "Added",
+      "updated": "Updated"
     }
   },
   "items": {

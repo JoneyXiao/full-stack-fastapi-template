@@ -210,6 +210,17 @@ export const CommentPublicSchema = {
             format: 'uuid',
             title: 'Author Id'
         },
+        author_display: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Author Display'
+        },
         resource_id: {
             type: 'string',
             format: 'uuid',
@@ -537,6 +548,81 @@ export const ResourceCreateSchema = {
     type: 'object',
     required: ['title', 'destination_url', 'type'],
     title: 'ResourceCreate'
+} as const;
+
+export const ResourceDetailPublicSchema = {
+    properties: {
+        title: {
+            type: 'string',
+            maxLength: 255,
+            minLength: 1,
+            title: 'Title'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 1024
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        destination_url: {
+            type: 'string',
+            maxLength: 2048,
+            title: 'Destination Url'
+        },
+        type: {
+            type: 'string',
+            maxLength: 50,
+            title: 'Type'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        is_published: {
+            type: 'boolean',
+            title: 'Is Published'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        },
+        likes_count: {
+            type: 'integer',
+            title: 'Likes Count',
+            default: 0
+        },
+        favorites_count: {
+            type: 'integer',
+            title: 'Favorites Count',
+            default: 0
+        },
+        liked_by_me: {
+            type: 'boolean',
+            title: 'Liked By Me',
+            default: false
+        },
+        favorited_by_me: {
+            type: 'boolean',
+            title: 'Favorited By Me',
+            default: false
+        }
+    },
+    type: 'object',
+    required: ['title', 'destination_url', 'type', 'id', 'is_published', 'created_at', 'updated_at'],
+    title: 'ResourceDetailPublic'
 } as const;
 
 export const ResourcePreviewSchema = {
@@ -899,6 +985,17 @@ export const SubmissionCommentPublicSchema = {
             type: 'string',
             format: 'uuid',
             title: 'Author Id'
+        },
+        author_display: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Author Display'
         },
         submission_id: {
             type: 'string',
