@@ -4,7 +4,7 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { Suspense, useState } from "react"
+import { Suspense, type ReactElement, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { FaGlobe } from "react-icons/fa"
 import { LiaComments } from "react-icons/lia"
@@ -590,23 +590,79 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
   )
 }
 
-function ResourceDetailSkeleton() {
+const COMMENT_SKELETON_ITEMS = 3
+
+function ResourceDetailSkeleton(): ReactElement {
   return (
     <div className="flex flex-col gap-6">
-      <Skeleton className="h-4 w-32 mb-6" />
+      <Skeleton className="h-4 w-32" />
+      <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-background to-background p-6 md:p-8">
+        <div className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl" />
+        <div className="pointer-events-none absolute -left-24 -bottom-24 size-72 rounded-full bg-primary/5 blur-3xl" />
+        <div className="relative flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-8 w-2/3" />
+              <Skeleton className="h-6 w-20" />
+            </div>
+            <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+            <div className="mt-2 flex items-center gap-2 lg:hidden">
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <Skeleton className="h-8 w-20" />
+              <Skeleton className="h-8 w-20" />
+            </div>
+            <div className="mt-6 space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+            </div>
+          </div>
+          <div className="hidden lg:flex lg:flex-wrap lg:gap-2">
+            <Skeleton className="h-9 w-32" />
+            <Skeleton className="h-9 w-28" />
+            <Skeleton className="h-9 w-28" />
+            <div className="flex items-center -space-x-px">
+              <Skeleton className="h-9 w-28 rounded-r-none" />
+              <Skeleton className="h-9 w-16 rounded-l-none" />
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="space-y-6">
-        <div>
-          <Skeleton className="h-10 w-3/4" />
-          <Skeleton className="h-6 w-20 mt-2" />
-          <Skeleton className="h-4 w-full mt-4" />
-          <Skeleton className="h-4 w-2/3 mt-2" />
-        </div>
-        <div className="flex gap-2">
-          <Skeleton className="h-9 w-20" />
-          <Skeleton className="h-9 w-24" />
-          <Skeleton className="h-9 w-20" />
-        </div>
-        <Skeleton className="h-64 w-full" />
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Skeleton className="h-5 w-36" />
+            </CardTitle>
+            <CardDescription>
+              <Skeleton className="h-4 w-64" />
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex gap-3">
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-20 w-full" />
+                <div className="flex justify-end">
+                  <Skeleton className="h-8 w-24" />
+                </div>
+              </div>
+            </div>
+            <Separator />
+            <div className="space-y-4">
+              {Array.from({ length: COMMENT_SKELETON_ITEMS }, (_, index) => (
+                <div key={`comment-skeleton-${index}`} className="flex gap-3">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <Skeleton className="h-24 w-full" />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

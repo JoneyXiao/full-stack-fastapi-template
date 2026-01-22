@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { LayoutGrid, List as ListIcon } from "lucide-react"
-import { Suspense, useMemo, useState } from "react"
+import { Suspense, type ReactElement, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { FaGlobe, FaWrench } from "react-icons/fa"
 import { MdClear } from "react-icons/md"
@@ -531,11 +531,10 @@ function ResourcesListContent({
   )
 }
 
-function SkeletonHeader() {
+function SkeletonHeader(): ReactElement {
   return (
-    <div className="flex items-center justify-between">
-      <Skeleton className="h-4 w-56" />
-      <Skeleton className="h-4 w-28" />
+    <div className="flex items-center">
+      <Skeleton className="h-4 w-64" />
     </div>
   )
 }
@@ -543,54 +542,58 @@ function SkeletonHeader() {
 const LIST_SKELETON_ROWS = 5
 const GRID_SKELETON_CARDS = 9
 
-function ResourcesListSkeleton({ viewMode }: { viewMode: ViewMode }) {
+function ResourcesListSkeleton({
+  viewMode,
+}: {
+  viewMode: ViewMode
+}): ReactElement {
   if (viewMode === "list") {
     return (
       <div className="space-y-4">
         <SkeletonHeader />
-        <div className="rounded-md border bg-card">
+        <div className="rounded-md bg-card">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[400px]">
-                  <Skeleton className="h-4 w-20" />
+                <TableHead className="w-[60%] md:w-[400px]">
+                  <Skeleton className="h-4 w-24" />
                 </TableHead>
-                <TableHead>
-                  <Skeleton className="h-4 w-12" />
+                <TableHead className="w-[1%] whitespace-nowrap px-2 text-center">
+                  <Skeleton className="mx-auto h-4 w-12" />
                 </TableHead>
-                <TableHead>
+                <TableHead className="hidden md:table-cell">
                   <Skeleton className="h-4 w-16" />
                 </TableHead>
-                <TableHead>
+                <TableHead className="hidden md:table-cell">
                   <Skeleton className="h-4 w-20" />
                 </TableHead>
-                <TableHead className="text-right">
-                  <Skeleton className="ml-auto h-4 w-12" />
+                <TableHead className="w-[1%] whitespace-nowrap px-2 text-right">
+                  <Skeleton className="ml-auto h-4 w-16" />
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {Array.from({ length: LIST_SKELETON_ROWS }, (_, i) => (
                 <TableRow key={i}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Skeleton className="h-9 w-9 rounded-lg" />
+                  <TableCell className="w-[60%]">
+                    <div className="flex items-start gap-3">
+                      <Skeleton className="mt-0.5 hidden h-9 w-9 rounded-lg md:inline-flex" />
                       <div className="space-y-1">
                         <Skeleton className="h-4 w-48" />
                         <Skeleton className="h-3 w-32" />
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-20" />
+                  <TableCell className="w-[1%] whitespace-nowrap px-2 text-center">
+                    <Skeleton className="mx-auto h-5 w-20" />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <Skeleton className="h-4 w-24" />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <Skeleton className="h-4 w-20" />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="w-[1%] whitespace-nowrap px-2 text-right">
                     <Skeleton className="ml-auto h-8 w-8" />
                   </TableCell>
                 </TableRow>
