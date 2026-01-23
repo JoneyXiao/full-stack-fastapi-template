@@ -1,0 +1,88 @@
+openapi: 3.0.3
+info:
+  title: Submissions (contract excerpt)
+  version: "005-rich-text-editor"
+  description: |
+    Contract excerpt focused on submission description formatting.
+    Source of truth remains backend OpenAPI; this file documents intended changes.
+
+paths:
+  /api/v1/submissions/:
+    post:
+      summary: Create a new resource submission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResourceSubmissionCreate"
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceSubmissionPublic"
+
+  /api/v1/submissions/{id}:
+    get:
+      summary: Get a submission by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceSubmissionPublic"
+
+components:
+  schemas:
+    ResourceSubmissionCreate:
+      type: object
+      required: [title, destination_url, type]
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          maxLength: 10000
+          description: |
+            Markdown-formatted text. Raw HTML is not rendered when displayed.
+        destination_url:
+          type: string
+          maxLength: 2048
+        type:
+          type: string
+          maxLength: 50
+
+    ResourceSubmissionPublic:
+      allOf:
+        - $ref: "#/components/schemas/ResourceSubmissionCreate"
+        - type: object
+          required: [id, status, submitter_id, created_at, updated_at]
+          properties:
+            id:
+              type: string
+              format: uuid
+            status:
+              type: string
+              maxLength: 20
+            submitter_id:
+              type: string
+              format: uuid
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time

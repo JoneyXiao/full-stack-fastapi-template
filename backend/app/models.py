@@ -131,7 +131,7 @@ from datetime import datetime  # noqa: E402
 # Resource base properties
 class ResourceBase(SQLModel):
     title: str = Field(min_length=1, max_length=255)
-    description: str | None = Field(default=None, max_length=1024)
+    description: str | None = Field(default=None, max_length=10000)
     destination_url: str = Field(max_length=2048)
     type: str = Field(max_length=50)  # e.g., "tutorial", "tool", "paper", etc.
 
@@ -144,7 +144,7 @@ class ResourceCreate(ResourceBase):
 # Properties to receive on resource update
 class ResourceUpdate(SQLModel):
     title: str | None = Field(default=None, min_length=1, max_length=255)
-    description: str | None = Field(default=None, max_length=1024)
+    description: str | None = Field(default=None, max_length=10000)
     destination_url: str | None = Field(default=None, max_length=2048)
     type: str | None = Field(default=None, max_length=50)
     is_published: bool | None = None
@@ -194,7 +194,7 @@ class ResourcesPublic(SQLModel):
 # ResourceSubmission base properties
 class ResourceSubmissionBase(SQLModel):
     title: str = Field(min_length=1, max_length=255)
-    description: str | None = Field(default=None, max_length=1024)
+    description: str | None = Field(default=None, max_length=10000)
     destination_url: str = Field(max_length=2048)
     type: str = Field(max_length=50)
 
@@ -207,7 +207,7 @@ class ResourceSubmissionCreate(ResourceSubmissionBase):
 # Properties to receive on submission update
 class ResourceSubmissionUpdate(SQLModel):
     title: str | None = Field(default=None, min_length=1, max_length=255)
-    description: str | None = Field(default=None, max_length=1024)
+    description: str | None = Field(default=None, max_length=10000)
     destination_url: str | None = Field(default=None, max_length=2048)
     type: str | None = Field(default=None, max_length=50)
 

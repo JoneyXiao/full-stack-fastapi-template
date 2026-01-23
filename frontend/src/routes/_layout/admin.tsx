@@ -17,13 +17,13 @@ import {
 import AddUser from "@/components/Admin/AddUser"
 import { getUserColumns, type UserTableData } from "@/components/Admin/columns"
 import { DataTable } from "@/components/Common/DataTable"
+import { Markdown } from "@/components/markdown"
 import PendingUsers from "@/components/Pending/PendingUsers"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -115,9 +115,11 @@ function ResourcesListContent() {
             <div className="flex items-start justify-between">
               <div>
                 <CardTitle className="text-lg">{resource.title}</CardTitle>
-                <CardDescription className="line-clamp-2">
-                  {resource.description}
-                </CardDescription>
+                {resource.description && (
+                  <div className="line-clamp-2 text-sm text-muted-foreground">
+                    <Markdown>{resource.description}</Markdown>
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="secondary">{resource.type}</Badge>
@@ -218,9 +220,11 @@ function SubmissionsListContent() {
                     {submission.title}
                   </Link>
                 </CardTitle>
-                <CardDescription className="line-clamp-2">
-                  {submission.description}
-                </CardDescription>
+                {submission.description && (
+                  <div className="line-clamp-2 text-sm text-muted-foreground">
+                    <Markdown>{submission.description}</Markdown>
+                  </div>
+                )}
               </div>
               <Badge variant="secondary">{submission.type}</Badge>
             </div>

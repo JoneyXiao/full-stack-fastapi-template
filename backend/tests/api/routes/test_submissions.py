@@ -243,3 +243,83 @@ def test_delete_pending_submission(
         headers=normal_user_token_headers,
     )
     assert response.status_code == 200
+
+
+def test_create_submission_with_max_description_length(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    """Test creating a submission with exactly 10,000 character description."""
+    # Create a description with exactly 10,000 characters
+    max_description = "x" * 10000
+    data = {
+        "title": "Long Description Test",
+        "description": max_description,
+        "destination_url": f"https://example.com/{uuid.uuid4().hex}",
+        "type": "tool",
+    }
+    response = client.post(
+        f"{settings.API_V1_STR}/submissions/",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert response.status_code == 200
+    content = response.json()
+    assert len(content["description"]) == 10000
+
+
+def test_create_submission_with_description_exceeds_max_length(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    """Test that creating a submission with >10,000 char description fails."""
+    # Create a description with 10,001 characters
+    over_max_description = "x" * 10001
+    data = {
+        "title": "Too Long Description Test",
+        "description": over_max_description,
+        "destination_url": f"https://example.com/{uuid.uuid4().hex}",
+        "type": "tool",
+    }
+    response = client.post(
+        f"{settings.API_V1_STR}/submissions/",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert response.status_code == 422  # Validation error
+
+
+def test_create_submission_with_markdown_description(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
+    """Test that Markdown content is preserved in description."""
+    markdown_description = """# Header
+
+This is a **bold** and *italic* text.
+
+- Item 1
+- Item 2
+- Item 3
+
+[Link](https://example.com)
+
+```python
+def hello():
+    print("Hello, World!")
+```
+"""
+    data = {
+        "title": "Markdown Description Test",
+        "description": markdown_description,
+        "destination_url": f"https://example.com/{uuid.uuid4().hex}",
+        "type": "tutorial",
+    }
+    response = client.post(
+        f"{settings.API_V1_STR}/submissions/",
+        headers=normal_user_token_headers,
+        json=data,
+    )
+    assert response.status_code == 200
+    content = response.json()
+    # Verify Markdown is preserved exactly
+    assert content["description"] == markdown_description
+    assert "**bold**" in content["description"]
+    assert "- Item 1" in content["description"]
