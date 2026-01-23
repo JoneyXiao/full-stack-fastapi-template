@@ -373,8 +373,11 @@
       "aboutHint": "Quick details to help you evaluate this link.",
       "typeLabel": "Type",
       "domain": "URL",
+      "publishedBy": "Published by",
       "added": "Added",
-      "updated": "Updated"
+      "updated": "Updated",
+      "likesCount": "Likes",
+      "favoritesCount": "Favorites"
     }
   },
   "items": {

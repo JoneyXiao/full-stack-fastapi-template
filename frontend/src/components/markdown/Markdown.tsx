@@ -1,6 +1,8 @@
 import { useState } from "react"
 import ReactMarkdown, { type Components, type ExtraProps } from "react-markdown"
+import remarkBreaks from "remark-breaks"
 import remarkGfm from "remark-gfm"
+import { ImageOff } from "lucide-react"
 
 /**
  * List of allowed URL protocols.
@@ -16,17 +18,10 @@ function getSafeUrl(href: string | undefined): string | undefined {
   if (!href) return undefined
 
   try {
-    // Parse the URL to check its protocol
     const url = new URL(href, "https://placeholder.com")
     const protocol = url.protocol.toLowerCase()
-
-    if (ALLOWED_PROTOCOLS.includes(protocol)) {
-      return href
-    }
-    // Unsafe protocol - return undefined to block
-    return undefined
+    return ALLOWED_PROTOCOLS.includes(protocol) ? href : undefined
   } catch {
-    // Malformed URL - don't render as clickable
     return undefined
   }
 }
@@ -45,7 +40,6 @@ function LinkRenderer({
   const safeHref = getSafeUrl(href)
 
   if (!safeHref) {
-    // Render as plain text for unsafe/malformed URLs
     return <span className="text-muted-foreground">{children}</span>
   }
 
@@ -77,10 +71,9 @@ function ImageRenderer({
   const safeSrc = getSafeUrl(src)
 
   if (!safeSrc || hasError) {
-    // Show fallback for unsafe URLs or load errors
     return (
       <span className="inline-flex items-center gap-1 text-sm text-muted-foreground bg-muted px-2 py-1 rounded">
-        <span aria-hidden="true">🖼️</span>
+        <ImageOff className="h-4 w-4" aria-hidden="true" />
         <span>{alt || "Image could not be loaded"}</span>
       </span>
     )
@@ -139,11 +132,15 @@ export function Markdown({ children, className = "" }: MarkdownProps) {
     return null
   }
 
+  const containerClass = className
+    ? `markdown-body ${className}`
+    : "markdown-body"
+
   return (
-    <div className={`markdown-body ${className}`.trim()}>
+    <div className={containerClass}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        skipHtml={true}
+        remarkPlugins={[remarkGfm, remarkBreaks]}
+        skipHtml
         components={markdownComponents}
       >
         {children}
