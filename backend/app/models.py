@@ -154,6 +154,9 @@ class ResourceUpdate(SQLModel):
 class Resource(ResourceBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     is_published: bool = Field(default=False, index=True)
+    published_by_id: uuid.UUID | None = Field(
+        default=None, foreign_key="user.id", nullable=True, ondelete="SET NULL"
+    )
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -174,6 +177,8 @@ class Resource(ResourceBase, table=True):
 class ResourcePublic(ResourceBase):
     id: uuid.UUID
     is_published: bool
+    published_by_id: uuid.UUID | None = None
+    published_by_display: str | None = None
     created_at: datetime
     updated_at: datetime
 

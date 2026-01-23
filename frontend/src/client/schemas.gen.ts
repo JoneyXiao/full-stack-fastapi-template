@@ -589,6 +589,29 @@ export const ResourceDetailPublicSchema = {
             type: 'boolean',
             title: 'Is Published'
         },
+        published_by_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Published By Id'
+        },
+        published_by_display: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Published By Display'
+        },
         created_at: {
             type: 'string',
             format: 'date-time',
@@ -696,6 +719,29 @@ export const ResourcePublicSchema = {
         is_published: {
             type: 'boolean',
             title: 'Is Published'
+        },
+        published_by_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Published By Id'
+        },
+        published_by_display: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Published By Display'
         },
         created_at: {
             type: 'string',

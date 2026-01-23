@@ -372,8 +372,11 @@
       "aboutHint": "快速信息，帮助你判断这个链接是否适合。",
       "typeLabel": "类型",
       "domain": "URL",
+      "publishedBy": "发布者",
       "added": "收录时间",
-      "updated": "更新时间"
+      "updated": "更新时间",
+      "likesCount": "点赞",
+      "favoritesCount": "收藏"
     }
   },
   "items": {

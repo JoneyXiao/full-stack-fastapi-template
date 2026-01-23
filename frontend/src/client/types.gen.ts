@@ -144,6 +144,8 @@ export type ResourceDetailPublic = {
     type: string;
     id: string;
     is_published: boolean;
+    published_by_id?: (string | null);
+    published_by_display?: (string | null);
     created_at: string;
     updated_at: string;
     likes_count?: number;
@@ -169,6 +171,8 @@ export type ResourcePublic = {
     type: string;
     id: string;
     is_published: boolean;
+    published_by_id?: (string | null);
+    published_by_display?: (string | null);
     created_at: string;
     updated_at: string;
 };

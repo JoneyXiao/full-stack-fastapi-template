@@ -123,12 +123,19 @@ def get_resource(session: SessionDep, current_user: OptionalUser, id: uuid.UUID)
             is not None
         )
 
+    published_by_display = None
+    if resource.published_by_id is not None:
+        publisher = session.get(User, resource.published_by_id)
+        if publisher is not None:
+            published_by_display = publisher.full_name or publisher.email
+
     return ResourceDetailPublic(
         **resource.model_dump(),
         likes_count=likes_count,
         favorites_count=favorites_count,
         liked_by_me=liked_by_me,
         favorited_by_me=favorited_by_me,
+        published_by_display=published_by_display,
     )
 
 
@@ -157,7 +164,10 @@ def create_resource(
             detail="A resource with this destination URL already exists",
         )
 
-    resource = Resource.model_validate(resource_in, update={"is_published": True})
+    resource = Resource.model_validate(
+        resource_in,
+        update={"is_published": True, "published_by_id": current_user.id},
+    )
     session.add(resource)
     session.commit()
     session.refresh(resource)

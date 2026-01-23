@@ -272,6 +272,7 @@ def approve_submission(
         destination_url=submission.destination_url,
         type=submission.type,
         is_published=True,
+        published_by_id=current_user.id,
     )
     session.add(resource)
 
