@@ -32,7 +32,8 @@
     "currentLanguage": "当前语言：{{language}}",
     "found": "找到 {{count}} 个资源",
     "user": "用户",
-    "edited": "已编辑"
+    "edited": "已编辑",
+    "charCount": "{{current}} / {{max}}"
   },
   "nav": {
     "home": "首页",
@@ -432,6 +433,8 @@
         "type": "选择类型",
         "description": "简单描述该资源的内容..."
       },
+      "markdownSupported": "支持 Markdown 格式。请使用工具栏或直接输入 Markdown 语法。",
+      "descriptionTooLong": "描述不能超过 {{max}} 个字符",
       "submitting": "提交中...",
       "createSuccessPending": "您的资源提交已提交，正在等待审核",
       "createFailed": "创建提交失败"

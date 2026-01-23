@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { LayoutGrid, List as ListIcon } from "lucide-react"
-import { Suspense, type ReactElement, useMemo, useState } from "react"
+import { type ReactElement, Suspense, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { FaGlobe, FaWrench } from "react-icons/fa"
 import { MdClear } from "react-icons/md"

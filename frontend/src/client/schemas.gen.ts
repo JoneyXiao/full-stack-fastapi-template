@@ -526,7 +526,7 @@ export const ResourceCreateSchema = {
             anyOf: [
                 {
                     type: 'string',
-                    maxLength: 1024
+                    maxLength: 10000
                 },
                 {
                     type: 'null'
@@ -562,7 +562,7 @@ export const ResourceDetailPublicSchema = {
             anyOf: [
                 {
                     type: 'string',
-                    maxLength: 1024
+                    maxLength: 10000
                 },
                 {
                     type: 'null'
@@ -670,7 +670,7 @@ export const ResourcePublicSchema = {
             anyOf: [
                 {
                     type: 'string',
-                    maxLength: 1024
+                    maxLength: 10000
                 },
                 {
                     type: 'null'
@@ -725,7 +725,7 @@ export const ResourceSubmissionCreateSchema = {
             anyOf: [
                 {
                     type: 'string',
-                    maxLength: 1024
+                    maxLength: 10000
                 },
                 {
                     type: 'null'
@@ -761,7 +761,7 @@ export const ResourceSubmissionPublicSchema = {
             anyOf: [
                 {
                     type: 'string',
-                    maxLength: 1024
+                    maxLength: 10000
                 },
                 {
                     type: 'null'
@@ -828,7 +828,7 @@ export const ResourceSubmissionUpdateSchema = {
             anyOf: [
                 {
                     type: 'string',
-                    maxLength: 1024
+                    maxLength: 10000
                 },
                 {
                     type: 'null'
@@ -903,7 +903,7 @@ export const ResourceUpdateSchema = {
             anyOf: [
                 {
                     type: 'string',
-                    maxLength: 1024
+                    maxLength: 10000
                 },
                 {
                     type: 'null'

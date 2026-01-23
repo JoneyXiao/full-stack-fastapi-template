@@ -4,7 +4,7 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { Suspense, type ReactElement, useState } from "react"
+import { type ReactElement, Suspense, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { FaGlobe } from "react-icons/fa"
 import { LiaComments } from "react-icons/lia"

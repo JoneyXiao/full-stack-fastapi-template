@@ -5,6 +5,7 @@ import { useState } from "react"
 import { useTranslation } from "react-i18next"
 
 import { SubmissionsService } from "@/client"
+import { MarkdownEditor } from "@/components/markdown"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -22,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
 import useCustomToast from "@/hooks/useCustomToast"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
 
@@ -41,6 +41,8 @@ const RESOURCE_TYPES = [
   "video",
   "other",
 ] as const
+
+const MAX_DESCRIPTION_LENGTH = 10000
 
 function NewSubmissionPage() {
   const { t } = useTranslation()
@@ -84,7 +86,10 @@ function NewSubmissionPage() {
   }
 
   const isValid =
-    formData.title.trim() && formData.destination_url.trim() && formData.type
+    formData.title.trim() &&
+    formData.destination_url.trim() &&
+    formData.type &&
+    formData.description.length <= MAX_DESCRIPTION_LENGTH
 
   return (
     <div className="flex flex-col gap-6 max-w-2xl mx-auto">
@@ -161,15 +166,30 @@ function NewSubmissionPage() {
               <Label htmlFor="description">
                 {t("submissions.new.fields.description")}
               </Label>
-              <Textarea
+              <p className="text-xs text-muted-foreground">
+                {t("submissions.new.markdownSupported", {
+                  defaultValue:
+                    "Markdown formatting is supported. Use the toolbar or type Markdown syntax.",
+                })}
+              </p>
+              <MarkdownEditor
                 id="description"
-                placeholder={t("submissions.new.placeholders.description")}
                 value={formData.description}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  setFormData({ ...formData, description: e.target.value })
+                onChange={(value) =>
+                  setFormData({ ...formData, description: value })
                 }
-                rows={4}
+                placeholder={t("submissions.new.placeholders.description")}
+                maxLength={MAX_DESCRIPTION_LENGTH}
+                aria-label={t("submissions.new.fields.description")}
               />
+              {formData.description.length > MAX_DESCRIPTION_LENGTH && (
+                <p className="text-sm text-destructive">
+                  {t("submissions.new.descriptionTooLong", {
+                    max: MAX_DESCRIPTION_LENGTH,
+                    defaultValue: `Description must be ${MAX_DESCRIPTION_LENGTH} characters or less`,
+                  })}
+                </p>
+              )}
             </div>
 
             <Button

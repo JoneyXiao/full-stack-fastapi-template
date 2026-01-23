@@ -17,6 +17,7 @@ import { Suspense, useState } from "react"
 import { useTranslation } from "react-i18next"
 
 import { SubmissionsService } from "@/client"
+import { Markdown } from "@/components/markdown"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -188,9 +189,11 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
             </a>
           </div>
           {submission.description && (
-            <p className="text-muted-foreground mt-4">
-              {submission.description}
-            </p>
+            <div className="mt-4">
+              <Markdown className="text-muted-foreground">
+                {submission.description}
+              </Markdown>
+            </div>
           )}
           <p className="text-sm text-muted-foreground mt-2">
             {t("submissions.submitted", {
