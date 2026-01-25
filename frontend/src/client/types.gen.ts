@@ -9,6 +9,10 @@ export type Body_login_login_access_token = {
     client_secret?: (string | null);
 };
 
+export type Body_users_upload_avatar = {
+    file: (Blob | File);
+};
+
 /**
  * Schema for a single chat message in a transcript.
  */
@@ -146,6 +150,7 @@ export type ResourceDetailPublic = {
     is_published: boolean;
     published_by_id?: (string | null);
     published_by_display?: (string | null);
+    published_by_avatar_url?: (string | null);
     created_at: string;
     updated_at: string;
     likes_count?: number;
@@ -173,6 +178,7 @@ export type ResourcePublic = {
     is_published: boolean;
     published_by_id?: (string | null);
     published_by_display?: (string | null);
+    published_by_avatar_url?: (string | null);
     created_at: string;
     updated_at: string;
 };
@@ -261,6 +267,8 @@ export type UserPublic = {
     full_name?: (string | null);
     id: string;
     locale?: ('en' | 'zh' | null);
+    avatar_url?: (string | null);
+    avatar_version?: number;
 };
 
 export type UserRegister = {
@@ -293,6 +301,23 @@ export type ValidationError = {
     msg: string;
     type: string;
 };
+
+export type AvatarsGetAvatarData = {
+    /**
+     * File extension
+     */
+    ext: string;
+    /**
+     * User ID
+     */
+    userId: string;
+    /**
+     * Avatar version
+     */
+    version: number;
+};
+
+export type AvatarsGetAvatarResponse = (unknown);
 
 export type ChatTranscriptsListMyTranscriptsData = {
     limit?: number;
@@ -591,6 +616,14 @@ export type UsersUpdatePasswordMeData = {
 };
 
 export type UsersUpdatePasswordMeResponse = (Message);
+
+export type UsersUploadAvatarData = {
+    formData: Body_users_upload_avatar;
+};
+
+export type UsersUploadAvatarResponse = (UserPublic);
+
+export type UsersDeleteAvatarResponse = (UserPublic);
 
 export type UsersRegisterUserData = {
     requestBody: UserRegister;

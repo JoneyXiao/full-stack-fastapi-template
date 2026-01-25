@@ -55,6 +55,19 @@ export const Body_login_login_access_tokenSchema = {
     title: 'Body_login-login_access_token'
 } as const;
 
+export const Body_users_upload_avatarSchema = {
+    properties: {
+        file: {
+            type: 'string',
+            format: 'binary',
+            title: 'File'
+        }
+    },
+    type: 'object',
+    required: ['file'],
+    title: 'Body_users-upload_avatar'
+} as const;
+
 export const ChatMessageSchemaSchema = {
     properties: {
         role: {
@@ -612,6 +625,17 @@ export const ResourceDetailPublicSchema = {
             ],
             title: 'Published By Display'
         },
+        published_by_avatar_url: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Published By Avatar Url'
+        },
         created_at: {
             type: 'string',
             format: 'date-time',
@@ -742,6 +766,17 @@ export const ResourcePublicSchema = {
                 }
             ],
             title: 'Published By Display'
+        },
+        published_by_avatar_url: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Published By Avatar Url'
         },
         created_at: {
             type: 'string',
@@ -1208,6 +1243,22 @@ export const UserPublicSchema = {
                 }
             ],
             title: 'Locale'
+        },
+        avatar_url: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Avatar Url'
+        },
+        avatar_version: {
+            type: 'integer',
+            title: 'Avatar Version',
+            default: 0
         }
     },
     type: 'object',

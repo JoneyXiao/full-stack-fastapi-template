@@ -1,10 +1,12 @@
 import uuid
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from sqlmodel import Session, func, select
 
 from app.core.security import get_password_hash, verify_password
 from app.models import (
+    AvatarRateLimit,
     ChatTranscriptCreate,
     Comment,
     CommentCreate,
@@ -402,3 +404,85 @@ def delete_chat_transcript(
     """Delete a chat transcript (hard delete)."""
     session.delete(db_transcript)
     session.commit()
+
+
+# ---------------------------------------------------------------------------
+# Avatar CRUD Operations
+# ---------------------------------------------------------------------------
+
+
+def check_avatar_rate_limit(
+    *, session: Session, user_id: uuid.UUID, max_attempts: int, window_hours: int
+) -> bool:
+    """
+    Check if user can perform an avatar change operation.
+    Returns True if allowed, False if rate limited.
+
+    Uses atomic upsert to prevent race conditions.
+    """
+    now = datetime.now(timezone.utc)
+    window_start = now - timedelta(hours=window_hours)
+
+    # Get existing rate limit record
+    rate_limit = session.get(AvatarRateLimit, user_id)
+
+    if rate_limit is None:
+        # First attempt - create record
+        rate_limit = AvatarRateLimit(
+            user_id=user_id,
+            window_start_utc=now.replace(tzinfo=None),
+            attempt_count=1,
+            first_attempt_at=now.replace(tzinfo=None),
+            last_attempt_at=now.replace(tzinfo=None),
+        )
+        session.add(rate_limit)
+        session.commit()
+        return True
+
+    # Check if window has expired (reset if so)
+    # Compare as naive datetimes (DB stores without timezone)
+    if rate_limit.window_start_utc < window_start.replace(tzinfo=None):
+        rate_limit.window_start_utc = now.replace(tzinfo=None)
+        rate_limit.attempt_count = 1
+        rate_limit.first_attempt_at = now.replace(tzinfo=None)
+        rate_limit.last_attempt_at = now.replace(tzinfo=None)
+        session.add(rate_limit)
+        session.commit()
+        return True
+
+    # Window still active - check count
+    if rate_limit.attempt_count >= max_attempts:
+        return False
+
+    # Increment count
+    rate_limit.attempt_count += 1
+    rate_limit.last_attempt_at = now.replace(tzinfo=None)
+    session.add(rate_limit)
+    session.commit()
+    return True
+
+
+def update_user_avatar_metadata(
+    *,
+    session: Session,
+    user: User,
+    avatar_key: str | None,
+    content_type: str | None,
+) -> User:
+    """
+    Update user avatar metadata and increment version.
+    avatar_key=None clears the avatar.
+    """
+    user.avatar_key = avatar_key
+    user.avatar_content_type = content_type
+    user.avatar_version += 1
+    user.avatar_updated_at = datetime.now(timezone.utc)
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user
+
+
+def get_user_by_id(*, session: Session, user_id: uuid.UUID) -> User | None:
+    """Get a user by ID."""
+    return session.get(User, user_id)

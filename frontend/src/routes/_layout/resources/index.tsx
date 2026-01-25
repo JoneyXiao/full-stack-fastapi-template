@@ -684,7 +684,7 @@ function ResourcesPage() {
     activeQuery || searchQuery || activeType !== "all" || sort !== "newest"
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 -mx-6 px-3 sm:mx-0 sm:px-0">
       <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-background to-background p-6 md:p-8">
         <div className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl" />
         <div className="pointer-events-none absolute -left-24 -bottom-24 size-72 rounded-full bg-primary/5 blur-3xl" />

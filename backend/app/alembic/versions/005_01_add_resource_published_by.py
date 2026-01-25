@@ -45,4 +45,3 @@ def downgrade() -> None:
         type_="foreignkey",
     )
     op.drop_column("resource", "published_by_id")
-

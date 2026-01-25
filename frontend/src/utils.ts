@@ -1,5 +1,5 @@
 import { AxiosError } from "axios"
-import type { ApiError } from "./client"
+import { type ApiError, OpenAPI } from "./client"
 import { localizeError } from "./i18n/errors"
 
 function extractErrorMessage(err: ApiError): string {
@@ -14,15 +14,12 @@ function extractErrorMessage(err: ApiError): string {
   return localizeError(errDetail || "Something went wrong.")
 }
 
-export const handleError = function (
-  this: (msg: string) => void,
-  err: ApiError,
-) {
+export function handleError(this: (msg: string) => void, err: ApiError): void {
   const errorMessage = extractErrorMessage(err)
   this(errorMessage)
 }
 
-export const getInitials = (name: string): string => {
+export function getInitials(name: string): string {
   return name
     .split(" ")
     .slice(0, 2)
@@ -30,3 +27,18 @@ export const getInitials = (name: string): string => {
     .join("")
     .toUpperCase()
 }
+
+export function resolveApiUrl(
+  path: string | null | undefined,
+): string | undefined {
+  if (!path) return undefined
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path
+  }
+  const base = OpenAPI.BASE?.replace(/\/$/, "")
+  if (!base) return path
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`
+  return `${base}${normalizedPath}`
+}
+
+export const DEFAULT_AVATAR = "/assets/images/default_avatar.webp"

@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.api.routes import (
+    avatars,
     chat_transcripts,
     comments,
     items,
@@ -24,6 +25,7 @@ api_router.include_router(submissions.router)
 api_router.include_router(comments.router)
 api_router.include_router(landing_chat.router)
 api_router.include_router(chat_transcripts.router)
+api_router.include_router(avatars.router, prefix="/avatars", tags=["avatars"])
 
 
 if settings.ENVIRONMENT == "local":

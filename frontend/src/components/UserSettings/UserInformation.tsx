@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
 import { UsersService, type UserUpdateMe } from "@/client"
+import AvatarSettings from "@/components/UserSettings/AvatarSettings"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -84,6 +85,11 @@ const UserInformation = () => {
 
   return (
     <div className="max-w-md">
+      {/* Avatar settings section */}
+      <AvatarSettings />
+
+      <hr className="my-6" />
+
       <h3 className="text-lg font-semibold py-4">
         {t("settings.userInformation")}
       </h3>

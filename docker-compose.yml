@@ -74,6 +74,9 @@ services:
       - POSTGRES_USER=${POSTGRES_USER?Variable not set}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - SENTRY_DSN=${SENTRY_DSN}
+      - AVATAR_STORAGE_PATH=${AVATAR_STORAGE_PATH:-/app/data/avatars}
+    volumes:
+      - app-avatar-data:/app/data/avatars
 
   backend:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
@@ -107,6 +110,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER?Variable not set}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - SENTRY_DSN=${SENTRY_DSN}
+      - AVATAR_STORAGE_PATH=${AVATAR_STORAGE_PATH:-/app/data/avatars}
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/utils/health-check/"]
@@ -133,6 +137,8 @@ services:
 
       # Enable redirection for HTTP and HTTPS
       - traefik.http.routers.${STACK_NAME?Variable not set}-backend-http.middlewares=https-redirect
+    volumes:
+      - app-avatar-data:/app/data/avatars
 
   frontend:
     image: '${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}'
@@ -164,6 +170,7 @@ services:
       - traefik.http.routers.${STACK_NAME?Variable not set}-frontend-http.middlewares=https-redirect
 volumes:
   app-db-data:
+  app-avatar-data:
 
 networks:
   traefik-public:

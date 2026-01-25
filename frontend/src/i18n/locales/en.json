@@ -150,7 +150,27 @@
     "userUpdatedSuccess": "User updated successfully",
     "passwordUpdatedSuccess": "Password updated successfully",
     "deleteAccountDescription": "Permanently delete your account and all associated data.",
-    "updatePassword": "Update Password"
+    "updatePassword": "Update Password",
+    "avatar": {
+      "title": "Profile Picture",
+      "description": "Upload a profile picture. Images will be cropped to a square.",
+      "uploadButton": "Upload image",
+      "changeButton": "Change image",
+      "removeButton": "Remove",
+      "dragDropHint": "or drag and drop",
+      "supportedFormats": "JPEG, PNG, GIF, or WebP (max 5MB)",
+      "uploading": "Uploading...",
+      "processing": "Processing...",
+      "uploadSuccess": "Profile picture updated",
+      "removeSuccess": "Profile picture removed",
+      "errors": {
+        "fileTooLarge": "File is too large. Maximum size is 5MB.",
+        "unsupportedFormat": "Unsupported file type. Please use JPEG, PNG, GIF, or WebP.",
+        "uploadFailed": "Failed to upload image. Please try again.",
+        "rateLimited": "Too many attempts. Please try again later.",
+        "processingFailed": "Failed to process image. Please try a different file."
+      }
+    }
   },
   "landing": {
     "logo": {
