@@ -1,8 +1,8 @@
+import { ImageOff } from "lucide-react"
 import { useState } from "react"
 import ReactMarkdown, { type Components, type ExtraProps } from "react-markdown"
 import remarkBreaks from "remark-breaks"
 import remarkGfm from "remark-gfm"
-import { ImageOff } from "lucide-react"
 
 /**
  * List of allowed URL protocols.

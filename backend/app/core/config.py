@@ -104,6 +104,20 @@ class Settings(BaseSettings):
     def chat_enabled(self) -> bool:
         return bool(self.OPENAI_API_KEY)
 
+    # Avatar storage settings
+    AVATAR_STORAGE_PATH: str = "/app/data/avatars"
+    AVATAR_MAX_SIZE_BYTES: int = 5 * 1024 * 1024  # 5MB
+    AVATAR_MAX_DIMENSION: int = 4096  # max input dimension
+    AVATAR_OUTPUT_SIZE: int = 512  # output dimension after processing
+    AVATAR_SUPPORTED_CONTENT_TYPES: list[str] = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+    ]
+    AVATAR_RATE_LIMIT_MAX_ATTEMPTS: int = 10
+    AVATAR_RATE_LIMIT_WINDOW_HOURS: int = 1
+
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "changethis":
             message = (

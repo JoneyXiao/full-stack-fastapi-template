@@ -3,7 +3,7 @@ import { LogOut, Settings, User } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import type { UserPublic } from "@/client"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -13,27 +13,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import useAuth from "@/hooks/useAuth"
+import { DEFAULT_AVATAR, getInitials, resolveApiUrl } from "@/utils"
 
 interface AccountMenuProps {
   user: UserPublic
 }
 
-function getInitials(user: UserPublic): string {
-  if (user.full_name) {
-    return user.full_name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2)
-  }
-  return user.email.slice(0, 2).toUpperCase()
-}
-
 export function AccountMenu({ user }: AccountMenuProps) {
   const { t } = useTranslation()
   const { logout } = useAuth()
-  const initials = getInitials(user)
+  const initials = getInitials(user.full_name || user.email)
+  const avatarUrl = resolveApiUrl(user.avatar_url) ?? DEFAULT_AVATAR
 
   return (
     <DropdownMenu modal={false}>
@@ -46,6 +36,7 @@ export function AccountMenu({ user }: AccountMenuProps) {
           className="relative h-8 w-8 rounded-full"
         >
           <Avatar className="h-8 w-8">
+            <AvatarImage src={avatarUrl} alt={user.full_name || user.email} />
             <AvatarFallback className="text-sm">{initials}</AvatarFallback>
           </Avatar>
         </Button>
@@ -53,6 +44,7 @@ export function AccountMenu({ user }: AccountMenuProps) {
       <DropdownMenuContent align="end" className="w-56">
         <div className="flex items-center gap-2 p-2">
           <Avatar className="h-8 w-8">
+            <AvatarImage src={avatarUrl} alt={user.full_name || user.email} />
             <AvatarFallback className="text-sm">{initials}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col space-y-0.5">
@@ -69,12 +61,12 @@ export function AccountMenu({ user }: AccountMenuProps) {
             {t("settings.title")}
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
+        {/* <DropdownMenuItem asChild>
           <Link to="/settings" className="flex items-center gap-2">
             <User className="h-4 w-4" />
             {t("settings.myProfile")}
           </Link>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => logout()}

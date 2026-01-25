@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import col, func, or_, select
 
 from app.api.deps import CurrentUser, OptionalUser, SessionDep
+from app.api.routes.avatars import get_avatar_url
 from app.models import (
     Comment,
     CommentCreate,
@@ -124,10 +125,12 @@ def get_resource(session: SessionDep, current_user: OptionalUser, id: uuid.UUID)
         )
 
     published_by_display = None
+    published_by_avatar_url = None
     if resource.published_by_id is not None:
         publisher = session.get(User, resource.published_by_id)
         if publisher is not None:
             published_by_display = publisher.full_name or publisher.email
+            published_by_avatar_url = get_avatar_url(publisher)
 
     return ResourceDetailPublic(
         **resource.model_dump(),
@@ -136,6 +139,7 @@ def get_resource(session: SessionDep, current_user: OptionalUser, id: uuid.UUID)
         liked_by_me=liked_by_me,
         favorited_by_me=favorited_by_me,
         published_by_display=published_by_display,
+        published_by_avatar_url=published_by_avatar_url,
     )
 
 

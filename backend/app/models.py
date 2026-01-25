@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from typing import Literal
 
 from pydantic import EmailStr
@@ -49,6 +50,11 @@ class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     hashed_password: str
     locale: str | None = Field(default=None, max_length=10)
+    # Avatar metadata fields (bytes stored on filesystem, not in DB)
+    avatar_key: str | None = Field(default=None, max_length=255)
+    avatar_version: int = Field(default=0)
+    avatar_content_type: str | None = Field(default=None, max_length=50)
+    avatar_updated_at: datetime | None = Field(default=None)
     items: list["Item"] = Relationship(back_populates="owner", cascade_delete=True)
 
 
@@ -56,6 +62,8 @@ class User(UserBase, table=True):
 class UserPublic(UserBase):
     id: uuid.UUID
     locale: SupportedLocale | None = None
+    avatar_url: str | None = None
+    avatar_version: int = 0
 
 
 class UsersPublic(SQLModel):
@@ -121,11 +129,27 @@ class NewPassword(SQLModel):
 
 
 # ---------------------------------------------------------------------------
-# AI Resource Hub Models
+# Avatar Rate Limit Model
 # ---------------------------------------------------------------------------
 
 
-from datetime import datetime  # noqa: E402
+class AvatarRateLimit(SQLModel, table=True):
+    """Track avatar change attempts for rate limiting (max 10/hour/user)."""
+
+    __tablename__ = "avatarratelimit"
+
+    user_id: uuid.UUID = Field(
+        primary_key=True, foreign_key="user.id", ondelete="CASCADE"
+    )
+    window_start_utc: datetime
+    attempt_count: int = Field(default=1)
+    first_attempt_at: datetime
+    last_attempt_at: datetime
+
+
+# ---------------------------------------------------------------------------
+# AI Resource Hub Models
+# ---------------------------------------------------------------------------
 
 
 # Resource base properties
@@ -179,6 +203,7 @@ class ResourcePublic(ResourceBase):
     is_published: bool
     published_by_id: uuid.UUID | None = None
     published_by_display: str | None = None
+    published_by_avatar_url: str | None = None
     created_at: datetime
     updated_at: datetime
 

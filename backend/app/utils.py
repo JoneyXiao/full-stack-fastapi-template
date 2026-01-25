@@ -1,4 +1,6 @@
+import io
 import logging
+import uuid as uuid_module
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -9,6 +11,7 @@ import httpx
 import jwt
 from jinja2 import Template
 from jwt.exceptions import InvalidTokenError
+from PIL import Image
 from sqlmodel import Session, col, or_, select
 
 from app.core import security
@@ -229,3 +232,203 @@ def get_chat_recommendations(
         assistant_message=assistant_message,
         recommendations=recommendations,
     )
+
+
+# ---------------------------------------------------------------------------
+# Avatar Processing Utilities
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class ProcessedAvatar:
+    """Result of avatar processing."""
+
+    data: bytes
+    content_type: str  # "image/webp" or "image/jpeg"
+    extension: str  # "webp" or "jpg"
+
+
+class AvatarValidationError(Exception):
+    """Raised when avatar validation fails."""
+
+    pass
+
+
+def validate_and_process_avatar(
+    file_data: bytes,
+    content_type: str,
+    *,
+    max_size_bytes: int | None = None,
+    max_dimension: int | None = None,
+    output_size: int | None = None,
+) -> ProcessedAvatar:
+    """
+    Validate and process an avatar image.
+
+    - Validates file size and dimensions
+    - Center-crops to square
+    - Downscales to output_size x output_size
+    - Flattens transparency to white background
+    - Re-encodes as WebP (with JPEG fallback)
+
+    Args:
+        file_data: Raw image bytes
+        content_type: MIME type from upload
+        max_size_bytes: Maximum allowed file size (default from settings)
+        max_dimension: Maximum allowed input dimension (default from settings)
+        output_size: Output dimension (square, default from settings)
+
+    Returns:
+        ProcessedAvatar with processed bytes and content type
+
+    Raises:
+        AvatarValidationError: If validation fails
+    """
+    max_size = max_size_bytes or settings.AVATAR_MAX_SIZE_BYTES
+    max_dim = max_dimension or settings.AVATAR_MAX_DIMENSION
+    out_size = output_size or settings.AVATAR_OUTPUT_SIZE
+
+    # Check file size
+    if len(file_data) > max_size:
+        raise AvatarValidationError(
+            f"File size exceeds maximum of {max_size // (1024 * 1024)}MB"
+        )
+
+    # Check content type
+    if content_type not in settings.AVATAR_SUPPORTED_CONTENT_TYPES:
+        raise AvatarValidationError(
+            f"Unsupported image type: {content_type}. "
+            f"Supported types: {', '.join(settings.AVATAR_SUPPORTED_CONTENT_TYPES)}"
+        )
+
+    # Try to open and validate image
+    img: Image.Image
+    try:
+        img = Image.open(io.BytesIO(file_data))
+        img.verify()  # Verify it's a valid image
+        # Re-open after verify (verify consumes the file)
+        img = Image.open(io.BytesIO(file_data))
+    except Exception as e:
+        raise AvatarValidationError(f"Invalid or corrupted image file: {e}")
+
+    # Check dimensions
+    width, height = img.size
+    if width > max_dim or height > max_dim:
+        raise AvatarValidationError(
+            f"Image dimensions exceed maximum of {max_dim}x{max_dim} pixels"
+        )
+
+    # Minimum size check (at least 32x32)
+    if width < 32 or height < 32:
+        raise AvatarValidationError("Image must be at least 32x32 pixels")
+
+    # Center-crop to square
+    img = _center_crop_square(img)
+
+    # Downscale to output size
+    if img.width > out_size or img.height > out_size:
+        img = img.resize((out_size, out_size), Image.Resampling.LANCZOS)
+
+    # Flatten transparency to white background
+    img = _flatten_transparency(img)
+
+    # Encode as WebP, fallback to JPEG if needed
+    output_data, output_content_type, output_ext = _encode_avatar(img)
+
+    return ProcessedAvatar(
+        data=output_data,
+        content_type=output_content_type,
+        extension=output_ext,
+    )
+
+
+def _center_crop_square(img: Image.Image) -> Image.Image:
+    """Center-crop image to a square."""
+    width, height = img.size
+    size = min(width, height)
+
+    left = (width - size) // 2
+    top = (height - size) // 2
+    right = left + size
+    bottom = top + size
+
+    return img.crop((left, top, right, bottom))
+
+
+def _flatten_transparency(img: Image.Image) -> Image.Image:
+    """Convert RGBA/P images to RGB with white background."""
+    if img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info):
+        # Create white background
+        background = Image.new("RGB", img.size, (255, 255, 255))
+        if img.mode == "P":
+            img = img.convert("RGBA")
+        background.paste(img, mask=img.split()[-1])  # Use alpha as mask
+        return background
+    elif img.mode != "RGB":
+        return img.convert("RGB")
+    return img
+
+
+def _encode_avatar(img: Image.Image) -> tuple[bytes, str, str]:
+    """
+    Encode image as WebP, fallback to JPEG.
+
+    Returns: (data, content_type, extension)
+    """
+    # Try WebP first
+    try:
+        buffer = io.BytesIO()
+        img.save(buffer, format="WEBP", quality=85, method=4)
+        return buffer.getvalue(), "image/webp", "webp"
+    except Exception:
+        pass
+
+    # Fallback to JPEG
+    buffer = io.BytesIO()
+    img.save(buffer, format="JPEG", quality=85, optimize=True)
+    return buffer.getvalue(), "image/jpeg", "jpg"
+
+
+def save_avatar_file(
+    user_id: uuid_module.UUID,
+    avatar_data: bytes,
+    extension: str,
+) -> str:
+    """
+    Save avatar file to storage and return the avatar_key.
+
+    The key is: {user_id}.{extension}
+    """
+    storage_path = Path(settings.AVATAR_STORAGE_PATH)
+    storage_path.mkdir(parents=True, exist_ok=True)
+
+    avatar_key = f"{user_id}.{extension}"
+    file_path = storage_path / avatar_key
+
+    # Atomic write using temp file
+    temp_path = file_path.with_suffix(".tmp")
+    try:
+        temp_path.write_bytes(avatar_data)
+        temp_path.rename(file_path)
+    except Exception:
+        if temp_path.exists():
+            temp_path.unlink()
+        raise
+
+    return avatar_key
+
+
+def delete_avatar_file(avatar_key: str) -> None:
+    """
+    Delete avatar file from storage (best-effort, no error on missing).
+    """
+    if not avatar_key:
+        return
+
+    file_path = Path(settings.AVATAR_STORAGE_PATH) / avatar_key
+    try:
+        if file_path.exists():
+            file_path.unlink()
+    except Exception:
+        # Best-effort deletion
+        pass

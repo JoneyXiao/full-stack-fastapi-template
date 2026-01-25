@@ -1,0 +1,170 @@
+openapi: 3.0.3
+info:
+  title: User Avatar Upload (Contract)
+  version: 0.1.0
+
+paths:
+  /api/v1/users/me/avatar:
+    post:
+      summary: Upload or replace the current user's avatar
+      security:
+        - OAuth2PasswordBearer: []
+      description: |
+        Upload a new avatar image for the authenticated user.
+
+        Limits:
+        - Max upload size: 5 MB
+        - Max input dimensions: 4096 × 4096
+        - Supported types: JPEG, PNG, WebP
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Avatar updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserPublic"
+        "400":
+          description: Invalid upload
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Not authenticated
+        "413":
+          description: Payload too large
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      summary: Remove the current user's avatar
+      security:
+        - OAuth2PasswordBearer: []
+      responses:
+        "200":
+          description: Avatar removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserPublic"
+        "401":
+          description: Not authenticated
+        "429":
+          description: Rate limit exceeded
+
+  /api/v1/avatars/{user_id}/{version}.{ext}:
+    get:
+      summary: Public avatar image (versioned)
+      description: |
+        Publicly fetch a user's avatar image. The URL is versioned for cache-busting.
+        If the avatar is missing or the version/ext do not match the current avatar, the server returns 404.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+        - name: ext
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [webp, jpg]
+      responses:
+        "200":
+          description: Avatar image
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              description: public, max-age=31536000, immutable
+            X-Content-Type-Options:
+              schema:
+                type: string
+              description: nosniff
+          content:
+            image/webp:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Not found
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [detail]
+      properties:
+        detail:
+          description: Human-readable error detail.
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: object
+
+    UserPublic:
+      type: object
+      required: [id, email, is_active, is_superuser]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        is_active:
+          type: boolean
+        is_superuser:
+          type: boolean
+        full_name:
+          type: string
+          nullable: true
+        locale:
+          type: string
+          nullable: true
+        avatar_url:
+          type: string
+          nullable: true
+          description: Public, versioned URL to the user's avatar.
+        avatar_version:
+          type: integer
+          default: 0
+          description: Current avatar version (used for cache-busting).
+
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

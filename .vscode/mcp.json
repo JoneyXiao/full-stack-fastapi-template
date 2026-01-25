@@ -1,19 +1,25 @@
 {
-  "inputs": [],
-  "servers": {
-    "chakra-ui": {
-      "command": "/bin/sh",
-      "args": [
-        "-c",
-        "source $HOME/.nvm/nvm.sh && npx -y @chakra-ui/react-mcp"
-      ]
-    },
-    "shadcn": {
-      "command": "npx",
-      "args": [
-        "shadcn@latest",
-        "mcp"
-      ]
-    }
-  }
+	"servers": {
+		// "chakra-ui": {
+		// 	"command": "/bin/sh",
+		// 	"args": [
+		// 		"-c",
+		// 		"source $HOME/.nvm/nvm.sh && npx -y @chakra-ui/react-mcp"
+		// 	],
+		// 	"type": "stdio"
+		// },
+		"shadcn": {
+			"command": "npx",
+			"args": [
+				"shadcn@latest",
+				"mcp"
+			],
+			"type": "stdio"
+		},
+		"Ref": {
+			"url": "https://api.ref.tools/mcp?apiKey=ref-d200629bbbcf0d23616b",
+			"type": "http"
+		}
+	},
+	"inputs": []
 }

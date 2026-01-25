@@ -149,7 +149,27 @@
     "userUpdatedSuccess": "用户信息更新成功",
     "passwordUpdatedSuccess": "密码更新成功",
     "deleteAccountDescription": "永久删除您的账户及所有相关数据。",
-    "updatePassword": "更新密码"
+    "updatePassword": "更新密码",
+    "avatar": {
+      "title": "头像",
+      "description": "上传头像。图片将被裁剪为正方形。",
+      "uploadButton": "上传图片",
+      "changeButton": "更换图片",
+      "removeButton": "移除",
+      "dragDropHint": "或拖放文件",
+      "supportedFormats": "支持 JPEG、PNG、GIF 或 WebP（最大 5MB）",
+      "uploading": "上传中...",
+      "processing": "处理中...",
+      "uploadSuccess": "头像更新成功",
+      "removeSuccess": "头像已移除",
+      "errors": {
+        "fileTooLarge": "文件过大，最大支持 5MB。",
+        "unsupportedFormat": "不支持的文件类型，请使用 JPEG、PNG、GIF 或 WebP。",
+        "uploadFailed": "上传失败，请重试。",
+        "rateLimited": "操作过于频繁，请稍后再试。",
+        "processingFailed": "图片处理失败，请尝试其他文件。"
+      }
+    }
   },
   "landing": {
     "logo": {

@@ -23,7 +23,7 @@ import {
 
 import { type ResourceDetailPublic, ResourcesService } from "@/client"
 import { Markdown, MarkdownEditor } from "@/components/markdown"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -51,6 +51,7 @@ import useAuth from "@/hooks/useAuth"
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard"
 import useCustomToast from "@/hooks/useCustomToast"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
+import { DEFAULT_AVATAR, resolveApiUrl } from "@/utils"
 
 function getResourceQueryOptions(resourceId: string) {
   return {
@@ -233,7 +234,9 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
   const queryClient = useQueryClient()
   const [newComment, setNewComment] = useState("")
   const [isEditingDescription, setIsEditingDescription] = useState(false)
-  const [descriptionDraft, setDescriptionDraft] = useState(resource.description ?? "")
+  const [descriptionDraft, setDescriptionDraft] = useState(
+    resource.description ?? "",
+  )
 
   const isAdmin = user?.is_superuser
   const DESCRIPTION_MAX_LENGTH = 10000
@@ -350,7 +353,9 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
   const handleSaveDescription = () => {
     if (descriptionDraft.length > DESCRIPTION_MAX_LENGTH) {
       showErrorToast(
-        t("submissions.new.descriptionTooLong", { max: DESCRIPTION_MAX_LENGTH }),
+        t("submissions.new.descriptionTooLong", {
+          max: DESCRIPTION_MAX_LENGTH,
+        }),
       )
       return
     }
@@ -404,13 +409,22 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                 <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                   <div className="flex items-center gap-2 text-foreground">
                     <Avatar className="size-8">
+                      <AvatarImage
+                        src={
+                          resolveApiUrl(resource.published_by_avatar_url) ??
+                          DEFAULT_AVATAR
+                        }
+                        alt={resource.published_by_display ?? t("common.user")}
+                      />
                       <AvatarFallback className="text-[9px] font-semibold">
                         {initialsFromText(
                           resource.published_by_display ?? t("common.user"),
                         )}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="sr-only">{t("resources.detail.publishedBy")}</span>
+                    <span className="sr-only">
+                      {t("resources.detail.publishedBy")}
+                    </span>
                   </div>
                   <span>
                     {t("resources.detail.added")}:{" "}
@@ -476,7 +490,9 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                             : "resources.detail.like",
                         )}
                       >
-                        <LikeIcon className={`h-5 w-5 ${liked ? "text-primary" : ""}`} />
+                        <LikeIcon
+                          className={`h-5 w-5 ${liked ? "text-primary" : ""}`}
+                        />
                         <span className="text-xs">
                           {formatStarCount(resource.likes_count)}
                         </span>
@@ -529,8 +545,14 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                         onClick={() => likeMutation.mutate()}
                         disabled={likeMutation.isPending}
                       >
-                        <LikeIcon className={`h-3 w-3 mr-1 ${liked ? "text-primary" : ""}`} />
-                        {t(liked ? "resources.detail.liked" : "resources.detail.like")}
+                        <LikeIcon
+                          className={`h-3 w-3 mr-1 ${liked ? "text-primary" : ""}`}
+                        />
+                        {t(
+                          liked
+                            ? "resources.detail.liked"
+                            : "resources.detail.like",
+                        )}
                       </Button>
                       <div className="flex h-9 items-center justify-center rounded-r-md border bg-background px-3 text-sm font-medium tabular-nums">
                         {formatStarCount(resource.likes_count)}
@@ -650,7 +672,9 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                       <Button
                         type="submit"
                         size="sm"
-                        disabled={!newComment.trim() || commentMutation.isPending}
+                        disabled={
+                          !newComment.trim() || commentMutation.isPending
+                        }
                       >
                         <PiPaperPlaneTiltBold className="h-4 w-4 mr-1" />
                         {t("resources.detail.postComment")}
@@ -712,7 +736,9 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                 </div>
               </div>
               <Badge variant={resource.is_published ? "secondary" : "outline"}>
-                {resource.is_published ? t("admin.resources.published") : t("admin.resources.draft")}
+                {resource.is_published
+                  ? t("admin.resources.published")
+                  : t("admin.resources.draft")}
               </Badge>
             </div>
 
@@ -783,41 +809,55 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
 const COMMENT_SKELETON_ITEMS = 3
 
 function ResourceDetailSkeleton(): ReactElement {
+  const commentSkeletons = Array.from(
+    { length: COMMENT_SKELETON_ITEMS },
+    (_, index) => (
+      <div key={`comment-skeleton-${index}`} className="flex gap-3">
+        <Skeleton className="h-8 w-8 rounded-full" />
+        <div className="w-full space-y-2">
+          <Skeleton className="h-10 w-full rounded-lg" />
+          <Skeleton className="h-16 w-full rounded-lg" />
+        </div>
+      </div>
+    ),
+  )
+
   return (
     <div className="flex flex-col gap-6 -mx-6 px-3 sm:mx-0 sm:px-0">
-      <Skeleton className="h-4 w-32" />
-      <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-background to-background p-6 md:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl" />
-        <div className="pointer-events-none absolute -left-24 -bottom-24 size-72 rounded-full bg-primary/5 blur-3xl" />
-        <div className="relative flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-3">
-              <Skeleton className="h-8 w-2/3" />
-              <Skeleton className="h-6 w-20" />
+      <div className="flex flex-col gap-4">
+        <Skeleton className="h-4 w-32" />
+        <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-background to-background p-4 md:p-6">
+          <div className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl" />
+          <div className="pointer-events-none absolute -left-24 -bottom-24 size-72 rounded-full bg-primary/5 blur-3xl" />
+          <div className="relative flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-8 w-2/3" />
+                <Skeleton className="h-6 w-20" />
+              </div>
+              <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <Skeleton className="h-3 w-16" />
+                </div>
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+              <div className="mt-2 flex items-center gap-2 lg:hidden">
+                <Skeleton className="h-8 w-8 rounded-full" />
+                <Skeleton className="h-8 w-8 rounded-full" />
+                <Skeleton className="h-8 w-10" />
+                <Skeleton className="h-8 w-12" />
+              </div>
             </div>
-            <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1">
-              <Skeleton className="h-4 w-28" />
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-4 w-24" />
-            </div>
-            <div className="mt-2 flex items-center gap-2 lg:hidden">
-              <Skeleton className="h-8 w-8 rounded-full" />
-              <Skeleton className="h-8 w-8 rounded-full" />
-              <Skeleton className="h-8 w-20" />
-              <Skeleton className="h-8 w-20" />
-            </div>
-            <div className="mt-6 space-y-2">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-5/6" />
-            </div>
-          </div>
-          <div className="hidden lg:flex lg:flex-wrap lg:gap-2">
-            <Skeleton className="h-9 w-32" />
-            <Skeleton className="h-9 w-28" />
-            <Skeleton className="h-9 w-28" />
-            <div className="flex items-center -space-x-px">
-              <Skeleton className="h-9 w-28 rounded-r-none" />
-              <Skeleton className="h-9 w-16 rounded-l-none" />
+            <div className="hidden lg:flex lg:flex-wrap lg:gap-2">
+              <Skeleton className="h-9 w-32" />
+              <Skeleton className="h-9 w-24" />
+              <Skeleton className="h-9 w-28" />
+              <div className="flex items-center -space-x-px">
+                <Skeleton className="h-9 w-28 rounded-r-none" />
+                <Skeleton className="h-9 w-14 rounded-l-none" />
+              </div>
             </div>
           </div>
         </div>
@@ -825,7 +865,7 @@ function ResourceDetailSkeleton(): ReactElement {
       <div className="grid w-full min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         <div className="min-w-0 space-y-6">
           <Card>
-            <CardContent className="p-4 sm:p-6">
+            <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0 lg:p-8 lg:pt-0">
               <div className="space-y-3">
                 <Skeleton className="h-5 w-40" />
                 <Skeleton className="h-4 w-full" />
@@ -856,14 +896,7 @@ function ResourceDetailSkeleton(): ReactElement {
                 </div>
               </div>
               <Separator />
-              <div className="space-y-4">
-                {Array.from({ length: COMMENT_SKELETON_ITEMS }, (_, index) => (
-                  <div key={`comment-skeleton-${index}`} className="flex gap-3">
-                    <Skeleton className="h-8 w-8 rounded-full" />
-                    <Skeleton className="h-24 w-full" />
-                  </div>
-                ))}
-              </div>
+              <div className="space-y-4">{commentSkeletons}</div>
             </CardContent>
           </Card>
         </div>

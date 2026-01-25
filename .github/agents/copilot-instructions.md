@@ -10,6 +10,7 @@ Auto-generated from all feature plans. Last updated: 2026-01-05
 - Backend Python >=3.10; Frontend TypeScript (React 19) + FastAPI + SQLModel + Alembic; React + Vite + TanStack Router/Query + shadcn/ui (004-localization)
 - PostgreSQL (Docker Compose) (005-rich-text-editor)
 - Backend Python `>=3.10,<4.0` (ruff target-version `py310`); Frontend TypeScript `^5.9.3` + React `^19.x` + Backend FastAPI + SQLModel + Alembic; Frontend React + TanStack Router/Query + shadcn/ui (Radix) + Vite + Tailwind; Proposed (new) `@uiw/react-md-editor`, `react-markdown`, `remark-gfm` (005-rich-text-editor)
+- Backend Python `>=3.10`; Frontend TypeScript (React) on Node `24` (006-user-avatar)
 
 ## Project Structure
 
@@ -40,8 +41,8 @@ Frontend:
 Python >=3.10,<4.0 (backend), TypeScript (frontend): Follow standard conventions
 
 ## Recent Changes
+- 006-user-avatar: Added Backend Python `>=3.10`; Frontend TypeScript (React) on Node `24`
 - 005-rich-text-editor: Added Backend Python `>=3.10,<4.0` (ruff target-version `py310`); Frontend TypeScript `^5.9.3` + React `^19.x` + Backend FastAPI + SQLModel + Alembic; Frontend React + TanStack Router/Query + shadcn/ui (Radix) + Vite + Tailwind; Proposed (new) `@uiw/react-md-editor`, `react-markdown`, `remark-gfm`
-- 005-rich-text-editor: Added PostgreSQL (Docker Compose)
 - 005-rich-text-editor: Added PostgreSQL (Docker Compose)
 
 <!-- MANUAL ADDITIONS START -->
