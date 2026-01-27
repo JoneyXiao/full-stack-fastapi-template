@@ -685,7 +685,7 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
               ) : (
                 <p className="text-sm text-muted-foreground">
                   <Link to="/login" className="text-primary hover:underline">
-                    {t("auth.signIn")}
+                    {t("auth.login")}
                   </Link>{" "}
                   {t("resources.detail.toLeaveComment")}
                 </p>

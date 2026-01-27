@@ -203,8 +203,10 @@ class TestAvatarUpload:
         headers, _ = create_test_user_with_auth(client, db)
         image_data = create_test_image()
 
-        with patch.object(settings, "AVATAR_STORAGE_PATH", str(tmp_path)), \
-             patch.object(settings, "AVATAR_RATE_LIMIT_MAX_ATTEMPTS", 3):
+        with (
+            patch.object(settings, "AVATAR_STORAGE_PATH", str(tmp_path)),
+            patch.object(settings, "AVATAR_RATE_LIMIT_MAX_ATTEMPTS", 3),
+        ):
             # Make max_attempts requests
             for i in range(3):
                 r = client.post(

@@ -1,5 +1,11 @@
 import { ImageOff } from "lucide-react"
-import { useState } from "react"
+import {
+  type AnchorHTMLAttributes,
+  type ImgHTMLAttributes,
+  type ReactElement,
+  type ReactNode,
+  useState,
+} from "react"
 import ReactMarkdown, { type Components, type ExtraProps } from "react-markdown"
 import remarkBreaks from "remark-breaks"
 import remarkGfm from "remark-gfm"
@@ -26,6 +32,18 @@ function getSafeUrl(href: string | undefined): string | undefined {
   }
 }
 
+function extractText(node: ReactNode): string {
+  if (node === null || node === undefined || typeof node === "boolean")
+    return ""
+  if (typeof node === "string" || typeof node === "number") return String(node)
+  if (Array.isArray(node)) return node.map(extractText).join("")
+  if (typeof node === "object" && "props" in node) {
+    const props = (node as { props?: { children?: ReactNode } }).props
+    return extractText(props?.children)
+  }
+  return ""
+}
+
 /**
  * Custom link renderer that:
  * - Opens links in new tab/window with rel="noopener noreferrer"
@@ -36,8 +54,10 @@ function LinkRenderer({
   href,
   children,
   ...props
-}: React.AnchorHTMLAttributes<HTMLAnchorElement> & ExtraProps) {
+}: AnchorHTMLAttributes<HTMLAnchorElement> & ExtraProps): ReactElement {
   const safeHref = getSafeUrl(href)
+  const linkText = extractText(children).trim()
+  const isCitation = /^\d{1,3}$/.test(linkText)
 
   if (!safeHref) {
     return <span className="text-muted-foreground">{children}</span>
@@ -48,7 +68,13 @@ function LinkRenderer({
       href={safeHref}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-primary underline hover:text-primary/80"
+      className={
+        isCitation
+          ? "markdown-link markdown-link--citation"
+          : "markdown-link markdown-link--default"
+      }
+      title={safeHref}
+      aria-label={isCitation ? `Open citation link: ${safeHref}` : undefined}
       {...props}
     >
       {children}
@@ -66,7 +92,7 @@ function ImageRenderer({
   src,
   alt,
   ...props
-}: React.ImgHTMLAttributes<HTMLImageElement> & ExtraProps) {
+}: ImgHTMLAttributes<HTMLImageElement> & ExtraProps): ReactElement {
   const [hasError, setHasError] = useState(false)
   const safeSrc = getSafeUrl(src)
 
@@ -127,7 +153,10 @@ export interface MarkdownProps {
  * <Markdown>{"**Bold** and *italic* text with [links](https://example.com)"}</Markdown>
  * ```
  */
-export function Markdown({ children, className = "" }: MarkdownProps) {
+export function Markdown({
+  children,
+  className = "",
+}: MarkdownProps): ReactElement | null {
   if (!children) {
     return null
   }

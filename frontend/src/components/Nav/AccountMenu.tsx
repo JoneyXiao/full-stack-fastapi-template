@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router"
-import { LogOut, Settings, User } from "lucide-react"
+import { LogOut, Settings } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import type { UserPublic } from "@/client"
