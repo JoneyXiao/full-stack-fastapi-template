@@ -118,6 +118,21 @@ class Settings(BaseSettings):
     AVATAR_RATE_LIMIT_MAX_ATTEMPTS: int = 10
     AVATAR_RATE_LIMIT_WINDOW_HOURS: int = 1
 
+    # WeChat Login (Open Platform "Website Application")
+    WECHAT_LOGIN_ENABLED: bool = False
+    WECHAT_APP_ID: str | None = None
+    WECHAT_APP_SECRET: str | None = None
+    # State token TTL for anti-replay (minutes)
+    WECHAT_STATE_TTL_MINUTES: int = 10
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def wechat_login_enabled(self) -> bool:
+        """WeChat login requires both enabled flag and valid credentials."""
+        return bool(
+            self.WECHAT_LOGIN_ENABLED and self.WECHAT_APP_ID and self.WECHAT_APP_SECRET
+        )
+
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "changethis":
             message = (

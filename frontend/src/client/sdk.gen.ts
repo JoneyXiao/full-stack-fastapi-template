@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { AvatarsGetAvatarData, AvatarsGetAvatarResponse, ChatTranscriptsListMyTranscriptsData, ChatTranscriptsListMyTranscriptsResponse, ChatTranscriptsSaveTranscriptData, ChatTranscriptsSaveTranscriptResponse, ChatTranscriptsGetMyTranscriptData, ChatTranscriptsGetMyTranscriptResponse, ChatTranscriptsDeleteMyTranscriptData, ChatTranscriptsDeleteMyTranscriptResponse, CommentsUpdateCommentData, CommentsUpdateCommentResponse, CommentsDeleteCommentData, CommentsDeleteCommentResponse, CommentsUpdateSubmissionCommentData, CommentsUpdateSubmissionCommentResponse, CommentsDeleteSubmissionCommentData, CommentsDeleteSubmissionCommentResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LandingChatRecommendResourcesData, LandingChatRecommendResourcesResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, ResourcesListResourcesData, ResourcesListResourcesResponse, ResourcesCreateResourceData, ResourcesCreateResourceResponse, ResourcesGetResourceData, ResourcesGetResourceResponse, ResourcesUpdateResourceData, ResourcesUpdateResourceResponse, ResourcesDeleteResourceData, ResourcesDeleteResourceResponse, ResourcesLikeResourceData, ResourcesLikeResourceResponse, ResourcesUnlikeResourceData, ResourcesUnlikeResourceResponse, ResourcesFavoriteResourceData, ResourcesFavoriteResourceResponse, ResourcesUnfavoriteResourceData, ResourcesUnfavoriteResourceResponse, ResourcesListMyFavoritesData, ResourcesListMyFavoritesResponse, ResourcesListResourceCommentsData, ResourcesListResourceCommentsResponse, ResourcesCreateResourceCommentData, ResourcesCreateResourceCommentResponse, SubmissionsListMySubmissionsData, SubmissionsListMySubmissionsResponse, SubmissionsCreateSubmissionData, SubmissionsCreateSubmissionResponse, SubmissionsListPendingSubmissionsData, SubmissionsListPendingSubmissionsResponse, SubmissionsGetSubmissionData, SubmissionsGetSubmissionResponse, SubmissionsUpdateSubmissionData, SubmissionsUpdateSubmissionResponse, SubmissionsDeleteSubmissionData, SubmissionsDeleteSubmissionResponse, SubmissionsApproveSubmissionData, SubmissionsApproveSubmissionResponse, SubmissionsRejectSubmissionData, SubmissionsRejectSubmissionResponse, SubmissionsListSubmissionCommentsData, SubmissionsListSubmissionCommentsResponse, SubmissionsCreateSubmissionCommentData, SubmissionsCreateSubmissionCommentResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersUploadAvatarData, UsersUploadAvatarResponse, UsersDeleteAvatarResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+import type { AvatarsGetAvatarData, AvatarsGetAvatarResponse, ChatTranscriptsListMyTranscriptsData, ChatTranscriptsListMyTranscriptsResponse, ChatTranscriptsSaveTranscriptData, ChatTranscriptsSaveTranscriptResponse, ChatTranscriptsGetMyTranscriptData, ChatTranscriptsGetMyTranscriptResponse, ChatTranscriptsDeleteMyTranscriptData, ChatTranscriptsDeleteMyTranscriptResponse, CommentsUpdateCommentData, CommentsUpdateCommentResponse, CommentsDeleteCommentData, CommentsDeleteCommentResponse, CommentsUpdateSubmissionCommentData, CommentsUpdateSubmissionCommentResponse, CommentsDeleteSubmissionCommentData, CommentsDeleteSubmissionCommentResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LandingChatRecommendResourcesData, LandingChatRecommendResourcesResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, ResourcesListResourcesData, ResourcesListResourcesResponse, ResourcesCreateResourceData, ResourcesCreateResourceResponse, ResourcesGetResourceData, ResourcesGetResourceResponse, ResourcesUpdateResourceData, ResourcesUpdateResourceResponse, ResourcesDeleteResourceData, ResourcesDeleteResourceResponse, ResourcesLikeResourceData, ResourcesLikeResourceResponse, ResourcesUnlikeResourceData, ResourcesUnlikeResourceResponse, ResourcesFavoriteResourceData, ResourcesFavoriteResourceResponse, ResourcesUnfavoriteResourceData, ResourcesUnfavoriteResourceResponse, ResourcesListMyFavoritesData, ResourcesListMyFavoritesResponse, ResourcesListResourceCommentsData, ResourcesListResourceCommentsResponse, ResourcesCreateResourceCommentData, ResourcesCreateResourceCommentResponse, SubmissionsListMySubmissionsData, SubmissionsListMySubmissionsResponse, SubmissionsCreateSubmissionData, SubmissionsCreateSubmissionResponse, SubmissionsListPendingSubmissionsData, SubmissionsListPendingSubmissionsResponse, SubmissionsGetSubmissionData, SubmissionsGetSubmissionResponse, SubmissionsUpdateSubmissionData, SubmissionsUpdateSubmissionResponse, SubmissionsDeleteSubmissionData, SubmissionsDeleteSubmissionResponse, SubmissionsApproveSubmissionData, SubmissionsApproveSubmissionResponse, SubmissionsRejectSubmissionData, SubmissionsRejectSubmissionResponse, SubmissionsListSubmissionCommentsData, SubmissionsListSubmissionCommentsResponse, SubmissionsCreateSubmissionCommentData, SubmissionsCreateSubmissionCommentResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersUploadAvatarData, UsersUploadAvatarResponse, UsersDeleteAvatarResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse, WechatLoginWechatLoginStartData, WechatLoginWechatLoginStartResponse, WechatLoginWechatLoginCompleteData, WechatLoginWechatLoginCompleteResponse, WechatLoginWechatLinkStatusResponse, WechatLoginWechatLinkData, WechatLoginWechatLinkResponse, WechatLoginWechatUnlinkResponse } from './types.gen';
 
 export class AvatarsService {
     /**
@@ -1249,6 +1249,121 @@ export class UtilsService {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/v1/utils/health-check/'
+        });
+    }
+}
+
+export class WechatLoginService {
+    /**
+     * Wechat Login Start
+     * Start WeChat login flow.
+     *
+     * Returns parameters needed to render the embedded WeChat QR code.
+     * Creates a state token for anti-replay/CSRF protection (TTL=10 minutes).
+     *
+     * The response MUST NOT include any secrets (AppSecret).
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns WeChatLoginStartResponse Successful Response
+     * @throws ApiError
+     */
+    public static wechatLoginStart(data: WechatLoginWechatLoginStartData = {}): CancelablePromise<WechatLoginWechatLoginStartResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/login/wechat/start',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Wechat Login Complete
+     * Complete WeChat login flow.
+     *
+     * Validates the state token (anti-replay), exchanges the code for tokens,
+     * fetches user profile, and issues an access token.
+     *
+     * For already-linked users: returns access token for the linked account.
+     * For new users: creates account + link and returns access token.
+     *
+     * SECURITY: State token is consumed (one-time use) on successful completion.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns Token Successful Response
+     * @throws ApiError
+     */
+    public static wechatLoginComplete(data: WechatLoginWechatLoginCompleteData): CancelablePromise<WechatLoginWechatLoginCompleteResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/login/wechat/complete',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Wechat Link Status
+     * Get current user's WeChat link status.
+     *
+     * Returns the WeChat link details if linked, or null if not linked.
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static wechatLinkStatus(): CancelablePromise<WechatLoginWechatLinkStatusResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/users/me/wechat'
+        });
+    }
+    
+    /**
+     * Wechat Link
+     * Link WeChat to current authenticated user.
+     *
+     * Requires:
+     * - User must be authenticated
+     * - Valid state token (from a previous /login/wechat/start call)
+     * - WeChat identity must not be linked to another user
+     *
+     * This is an explicit user action (FR-003: no automatic merges).
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static wechatLink(data: WechatLoginWechatLinkData): CancelablePromise<WechatLoginWechatLinkResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/users/me/wechat/link',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Wechat Unlink
+     * Unlink WeChat from current authenticated user.
+     *
+     * Safety rules (FR-015, spec safety notes):
+     * - Cannot unlink if it would leave user with no sign-in method
+     * - Placeholder-email accounts are treated as WeChat-only until email is updated
+     * - To unlink: user must have non-placeholder email AND password recovery available
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static wechatUnlink(): CancelablePromise<WechatLoginWechatUnlinkResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/users/me/wechat/link'
         });
     }
 }

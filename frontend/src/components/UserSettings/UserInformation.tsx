@@ -7,6 +7,7 @@ import { z } from "zod"
 
 import { UsersService, type UserUpdateMe } from "@/client"
 import AvatarSettings from "@/components/UserSettings/AvatarSettings"
+import WeChatConnection from "@/components/UserSettings/WeChatConnection"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -174,6 +175,11 @@ const UserInformation = () => {
           </div>
         </form>
       </Form>
+
+      <hr className="my-6" />
+
+      {/* WeChat Connection Section */}
+      <WeChatConnection />
     </div>
   )
 }

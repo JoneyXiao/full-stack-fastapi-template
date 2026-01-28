@@ -33,7 +33,9 @@
     "found": "找到 {{count}} 个资源",
     "user": "用户",
     "edited": "已编辑",
-    "charCount": "{{current}} / {{max}}"
+    "charCount": "{{current}} / {{max}}",
+    "tryAgain": "重试",
+    "goHome": "返回首页"
   },
   "nav": {
     "home": "首页",
@@ -97,7 +99,35 @@
       "fullName": "用户",
       "email": "user@example.com"
     },
-    "accountCreated": "账户创建成功"
+    "accountCreated": "账户创建成功",
+    "wechat": {
+      "continueWithWechat": "使用微信登录",
+      "scanQrCode": "请使用微信扫描二维码",
+      "loginLoading": "正在准备微信登录...",
+      "loginError": "微信登录失败，请重试。",
+      "loginCanceled": "微信登录已取消。",
+      "loginExpired": "微信登录已过期，请重试。",
+      "loginStateMismatch": "安全验证失败，请重试。",
+      "providerUnavailable": "微信登录暂时不可用。",
+      "featureDisabled": "微信登录功能未启用。",
+      "linkSuccess": "微信账号绑定成功。",
+      "unlinkSuccess": "微信账号解绑成功。",
+      "alreadyLinkedOther": "此微信账号已绑定其他用户，请使用其他微信账号或联系客服。",
+      "alreadyLinkedSelf": "您的账户已绑定微信。如需更换，请先解除绑定。",
+      "unlinkBlocked": "无法解绑微信。请先设置密码或添加其他登录方式。",
+      "linkConflict": "此微信账号已绑定其他用户。",
+      "signinThenLink": "请先登录，然后在设置中绑定微信账号。",
+      "linkingAccount": "正在绑定微信账号",
+      "loggingIn": "正在使用微信登录",
+      "pleaseWait": "请稍候，正在完成您的请求...",
+      "loginSuccess": "登录成功！",
+      "loginFailed": "登录失败",
+      "redirecting": "正在跳转...",
+      "stateError": "会话已过期或无效，请重试。",
+      "codeError": "授权码已过期或无效，请重试。",
+      "networkError": "网络错误，请检查您的网络连接后重试。",
+      "linkConflictGuidance": "如果您想使用此微信账号，请先登录到另一个账户并解除绑定。"
+    }
   },
   "errors": {
     "notFound": "页面未找到",
@@ -169,6 +199,18 @@
         "rateLimited": "操作过于频繁，请稍后再试。",
         "processingFailed": "图片处理失败，请尝试其他文件。"
       }
+    },
+    "connectedAccounts": {
+      "title": "绑定的账号",
+      "description": "管理与您账户关联的第三方账号。",
+      "wechat": "微信",
+      "wechatConnected": "您的微信账号已绑定到此账户。",
+      "wechatNotConnected": "绑定微信账号以便快速登录。",
+      "linked": "已绑定",
+      "linkWechat": "绑定微信",
+      "unlink": "解除绑定",
+      "unlinkConfirm": "确定要解除微信绑定吗？解除后您需要重新绑定才能使用微信登录。",
+      "wechatOnlyAccount": "此账户是通过微信创建的。如需解除绑定，请先更新您的邮箱地址并设置密码找回方式。"
     }
   },
   "landing": {

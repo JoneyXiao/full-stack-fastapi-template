@@ -25,6 +25,9 @@ from app.models import (
     User,
     UserCreate,
     UserUpdate,
+    WeChatAccountLink,
+    WeChatAccountLinkBase,
+    WeChatLoginAttempt,
 )
 
 
@@ -486,3 +489,152 @@ def update_user_avatar_metadata(
 def get_user_by_id(*, session: Session, user_id: uuid.UUID) -> User | None:
     """Get a user by ID."""
     return session.get(User, user_id)
+
+
+# ---------------------------------------------------------------------------
+# WeChat Login CRUD Operations
+# ---------------------------------------------------------------------------
+
+
+def get_wechat_link_by_openid(
+    *, session: Session, openid: str
+) -> WeChatAccountLink | None:
+    """Get WeChat account link by openid."""
+    statement = select(WeChatAccountLink).where(WeChatAccountLink.openid == openid)
+    return session.exec(statement).first()
+
+
+def get_wechat_link_by_unionid(
+    *, session: Session, unionid: str
+) -> WeChatAccountLink | None:
+    """Get WeChat account link by unionid."""
+    statement = select(WeChatAccountLink).where(WeChatAccountLink.unionid == unionid)
+    return session.exec(statement).first()
+
+
+def get_wechat_link_by_primary_subject(
+    *, session: Session, primary_subject_type: str, primary_subject: str
+) -> WeChatAccountLink | None:
+    """Get WeChat account link by primary subject (unionid or openid)."""
+    statement = select(WeChatAccountLink).where(
+        WeChatAccountLink.primary_subject_type == primary_subject_type,
+        WeChatAccountLink.primary_subject == primary_subject,
+    )
+    return session.exec(statement).first()
+
+
+def get_wechat_link_by_user_id(
+    *, session: Session, user_id: uuid.UUID
+) -> WeChatAccountLink | None:
+    """Get WeChat account link for a specific user."""
+    statement = select(WeChatAccountLink).where(WeChatAccountLink.user_id == user_id)
+    return session.exec(statement).first()
+
+
+def create_wechat_link(
+    *,
+    session: Session,
+    user_id: uuid.UUID,
+    link_data: WeChatAccountLinkBase,
+) -> WeChatAccountLink:
+    """Create a new WeChat account link."""
+    db_link = WeChatAccountLink.model_validate(
+        link_data,
+        update={
+            "user_id": user_id,
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
+        },
+    )
+    session.add(db_link)
+    session.commit()
+    session.refresh(db_link)
+    return db_link
+
+
+def delete_wechat_link(*, session: Session, link: WeChatAccountLink) -> None:
+    """Delete a WeChat account link."""
+    session.delete(link)
+    session.commit()
+
+
+def create_wechat_login_attempt(
+    *,
+    session: Session,
+    state: str,
+    expires_at: datetime,
+    user_id: uuid.UUID | None = None,
+) -> WeChatLoginAttempt:
+    """Create a new WeChat login attempt for state anti-replay."""
+    attempt = WeChatLoginAttempt(
+        state=state,
+        created_at=datetime.now(timezone.utc),
+        expires_at=expires_at,
+        status="started",
+        user_id=user_id,
+    )
+    session.add(attempt)
+    session.commit()
+    session.refresh(attempt)
+    return attempt
+
+
+def get_wechat_login_attempt_by_state(
+    *, session: Session, state: str
+) -> WeChatLoginAttempt | None:
+    """Get WeChat login attempt by state token."""
+    statement = select(WeChatLoginAttempt).where(WeChatLoginAttempt.state == state)
+    return session.exec(statement).first()
+
+
+def consume_wechat_login_attempt(
+    *,
+    session: Session,
+    attempt: WeChatLoginAttempt,
+    success: bool,
+    failure_category: str | None = None,
+) -> WeChatLoginAttempt:
+    """
+    Consume a WeChat login attempt (mark as succeeded or failed).
+    Once consumed, the state token cannot be reused.
+    """
+    attempt.completed_at = datetime.now(timezone.utc)
+    attempt.status = "succeeded" if success else "failed"
+    attempt.failure_category = failure_category
+    session.add(attempt)
+    session.commit()
+    session.refresh(attempt)
+    return attempt
+
+
+def is_wechat_state_valid(
+    *, session: Session, state: str, now: datetime | None = None
+) -> tuple[bool, WeChatLoginAttempt | None, str | None]:
+    """
+    Validate a WeChat state token for anti-replay.
+
+    Returns:
+        (is_valid, attempt, error_reason)
+        - is_valid: True if state is valid and can be consumed
+        - attempt: The attempt record if found
+        - error_reason: One of: "not_found", "expired", "already_used", None if valid
+    """
+    if now is None:
+        now = datetime.now(timezone.utc)
+
+    attempt = get_wechat_login_attempt_by_state(session=session, state=state)
+    if attempt is None:
+        return (False, None, "not_found")
+
+    # Check expiration
+    expires_at = attempt.expires_at
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if now > expires_at:
+        return (False, attempt, "expired")
+
+    # Check if already used (one-time use)
+    if attempt.completed_at is not None:
+        return (False, attempt, "already_used")
+
+    return (True, attempt, None)

@@ -1,0 +1,1 @@
+export { WeChatQrLogin } from "./WeChatQrLogin"

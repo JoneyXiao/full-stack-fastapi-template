@@ -148,6 +148,118 @@ class AvatarRateLimit(SQLModel, table=True):
 
 
 # ---------------------------------------------------------------------------
+# WeChat Login Models
+# ---------------------------------------------------------------------------
+
+# Primary subject type for WeChat identity matching
+WeChatPrimarySubjectType = Literal["unionid", "openid"]
+
+
+class WeChatAccountLinkBase(SQLModel):
+    """Base fields for WeChat account link."""
+
+    openid: str = Field(max_length=64, index=True)
+    unionid: str | None = Field(default=None, max_length=64, index=True)
+    # Use str for DB compatibility; validation happens at API layer
+    primary_subject_type: str = Field(max_length=20)
+    primary_subject: str = Field(max_length=64)
+    nickname: str | None = Field(default=None, max_length=255)
+    avatar_url: str | None = Field(default=None, max_length=2048)
+
+
+class WeChatAccountLink(WeChatAccountLinkBase, table=True):
+    """WeChat identity linked to an application user."""
+
+    __tablename__ = "wechataccountlink"
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(
+        foreign_key="user.id", nullable=False, ondelete="CASCADE", index=True
+    )
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(tz=__import__("datetime").timezone.utc)
+    )
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(tz=__import__("datetime").timezone.utc)
+    )
+
+    user: User | None = Relationship()
+
+
+class WeChatAccountLinkPublic(SQLModel):
+    """Public representation of WeChat account link."""
+
+    id: uuid.UUID
+    openid: str
+    unionid: str | None
+    nickname: str | None
+    avatar_url: str | None
+    created_at: datetime
+
+
+# WeChat Login Attempt status
+WeChatLoginAttemptStatus = Literal["started", "succeeded", "failed"]
+
+
+class WeChatLoginAttempt(SQLModel, table=True):
+    """Short-lived record for WeChat login attempts (anti-replay + audit)."""
+
+    __tablename__ = "wechatloginattempt"
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    state: str = Field(max_length=64, unique=True, index=True)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(tz=__import__("datetime").timezone.utc)
+    )
+    expires_at: datetime
+    completed_at: datetime | None = None
+    # Use str for DB compatibility; Literal type for validation in API schemas
+    status: str = Field(default="started", max_length=20)
+    failure_category: str | None = Field(default=None, max_length=50)
+    # Optional: track user_id if available (for linking flows)
+    user_id: uuid.UUID | None = Field(
+        default=None, foreign_key="user.id", nullable=True, ondelete="SET NULL"
+    )
+
+
+# ---------------------------------------------------------------------------
+# WeChat Login API Schemas
+# ---------------------------------------------------------------------------
+
+
+class WeChatLoginStartRequest(SQLModel):
+    """Request body for starting WeChat login."""
+
+    return_to: str | None = Field(default=None, max_length=2048)
+
+
+class WeChatLoginStartResponse(SQLModel):
+    """Response with parameters to render embedded WeChat QR."""
+
+    appid: str
+    scope: str
+    redirect_uri: str
+    state: str
+    wx_login_js_url: str = (
+        "https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"
+    )
+
+
+class WeChatLoginCompleteRequest(SQLModel):
+    """Request body for completing WeChat login."""
+
+    code: str = Field(min_length=1, max_length=512)
+    state: str = Field(min_length=1, max_length=64)
+
+
+class WeChatLinkRequest(SQLModel):
+    """Request body for linking WeChat to current user."""
+
+    code: str = Field(min_length=1, max_length=512)
+    state: str = Field(min_length=1, max_length=64)
+
+
+# ---------------------------------------------------------------------------
 # AI Resource Hub Models
 # ---------------------------------------------------------------------------
 

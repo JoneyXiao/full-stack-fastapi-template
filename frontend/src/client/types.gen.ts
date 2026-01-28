@@ -302,6 +302,52 @@ export type ValidationError = {
     type: string;
 };
 
+/**
+ * Public representation of WeChat account link.
+ */
+export type WeChatAccountLinkPublic = {
+    id: string;
+    openid: string;
+    unionid: (string | null);
+    nickname: (string | null);
+    avatar_url: (string | null);
+    created_at: string;
+};
+
+/**
+ * Request body for linking WeChat to current user.
+ */
+export type WeChatLinkRequest = {
+    code: string;
+    state: string;
+};
+
+/**
+ * Request body for completing WeChat login.
+ */
+export type WeChatLoginCompleteRequest = {
+    code: string;
+    state: string;
+};
+
+/**
+ * Request body for starting WeChat login.
+ */
+export type WeChatLoginStartRequest = {
+    return_to?: (string | null);
+};
+
+/**
+ * Response with parameters to render embedded WeChat QR.
+ */
+export type WeChatLoginStartResponse = {
+    appid: string;
+    scope: string;
+    redirect_uri: string;
+    state: string;
+    wx_login_js_url?: string;
+};
+
 export type AvatarsGetAvatarData = {
     /**
      * File extension
@@ -657,3 +703,25 @@ export type UtilsTestEmailData = {
 export type UtilsTestEmailResponse = (Message);
 
 export type UtilsHealthCheckResponse = (boolean);
+
+export type WechatLoginWechatLoginStartData = {
+    requestBody?: (WeChatLoginStartRequest | null);
+};
+
+export type WechatLoginWechatLoginStartResponse = (WeChatLoginStartResponse);
+
+export type WechatLoginWechatLoginCompleteData = {
+    requestBody: WeChatLoginCompleteRequest;
+};
+
+export type WechatLoginWechatLoginCompleteResponse = (Token);
+
+export type WechatLoginWechatLinkStatusResponse = ((WeChatAccountLinkPublic | null));
+
+export type WechatLoginWechatLinkData = {
+    requestBody: WeChatLinkRequest;
+};
+
+export type WechatLoginWechatLinkResponse = (Message);
+
+export type WechatLoginWechatUnlinkResponse = (Message);

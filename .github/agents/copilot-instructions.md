@@ -11,6 +11,7 @@ Auto-generated from all feature plans. Last updated: 2026-01-05
 - PostgreSQL (Docker Compose) (005-rich-text-editor)
 - Backend Python `>=3.10,<4.0` (ruff target-version `py310`); Frontend TypeScript `^5.9.3` + React `^19.x` + Backend FastAPI + SQLModel + Alembic; Frontend React + TanStack Router/Query + shadcn/ui (Radix) + Vite + Tailwind; Proposed (new) `@uiw/react-md-editor`, `react-markdown`, `remark-gfm` (005-rich-text-editor)
 - Backend Python `>=3.10`; Frontend TypeScript (React) on Node `24` (006-user-avatar)
+- Python >=3.10 (backend), TypeScript 5.9 (frontend), Node 24 (frontend) + FastAPI, SQLModel, Alembic, httpx, PostgreSQL; React, TanStack Router/Query, Vite, Playwrigh (007-wechat-login)
 
 ## Project Structure
 
@@ -41,9 +42,9 @@ Frontend:
 Python >=3.10,<4.0 (backend), TypeScript (frontend): Follow standard conventions
 
 ## Recent Changes
+- 007-wechat-login: Added Python >=3.10 (backend), TypeScript 5.9 (frontend), Node 24 (frontend) + FastAPI, SQLModel, Alembic, httpx, PostgreSQL; React, TanStack Router/Query, Vite, Playwrigh
+- 007-wechat-login: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 - 006-user-avatar: Added Backend Python `>=3.10`; Frontend TypeScript (React) on Node `24`
-- 005-rich-text-editor: Added Backend Python `>=3.10,<4.0` (ruff target-version `py310`); Frontend TypeScript `^5.9.3` + React `^19.x` + Backend FastAPI + SQLModel + Alembic; Frontend React + TanStack Router/Query + shadcn/ui (Radix) + Vite + Tailwind; Proposed (new) `@uiw/react-md-editor`, `react-markdown`, `remark-gfm`
-- 005-rich-text-editor: Added PostgreSQL (Docker Compose)
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
