@@ -34,7 +34,9 @@
     "found_other": "Found {{count}} resources",
     "user": "User",
     "edited": "edited",
-    "charCount": "{{current}} / {{max}}"
+    "charCount": "{{current}} / {{max}}",
+    "tryAgain": "Try Again",
+    "goHome": "Go Home"
   },
   "nav": {
     "home": "Home",
@@ -98,7 +100,35 @@
       "fullName": "User",
       "email": "user@example.com"
     },
-    "accountCreated": "Account created successfully"
+    "accountCreated": "Account created successfully",
+    "wechat": {
+      "continueWithWechat": "Continue with WeChat",
+      "scanQrCode": "Scan QR code with WeChat",
+      "loginLoading": "Preparing WeChat login...",
+      "loginError": "WeChat login failed. Please try again.",
+      "loginCanceled": "WeChat login was canceled.",
+      "loginExpired": "WeChat login expired. Please try again.",
+      "loginStateMismatch": "Security verification failed. Please try again.",
+      "providerUnavailable": "WeChat login is temporarily unavailable.",
+      "featureDisabled": "WeChat login is not available.",
+      "linkSuccess": "WeChat account linked successfully.",
+      "unlinkSuccess": "WeChat account unlinked successfully.",
+      "alreadyLinkedOther": "This WeChat account is already linked to another user. Please use a different WeChat account or contact support.",
+      "alreadyLinkedSelf": "Your account already has a WeChat link. Unlink it first to change.",
+      "unlinkBlocked": "Cannot unlink WeChat. Please set a password or add another sign-in method first.",
+      "linkConflict": "This WeChat account is already linked to another user.",
+      "signinThenLink": "Please sign in first, then link your WeChat account in settings.",
+      "linkingAccount": "Linking WeChat Account",
+      "loggingIn": "Logging in with WeChat",
+      "pleaseWait": "Please wait while we complete your request...",
+      "loginSuccess": "Login successful!",
+      "loginFailed": "Login failed",
+      "redirecting": "Redirecting you now...",
+      "stateError": "Session expired or invalid. Please try again.",
+      "codeError": "Authorization code expired or invalid. Please try again.",
+      "networkError": "Network error. Please check your connection and try again.",
+      "linkConflictGuidance": "If you want to use this WeChat account, please sign in to the other account and unlink it first."
+    }
   },
   "errors": {
     "notFound": "Page not found",
@@ -170,6 +200,18 @@
         "rateLimited": "Too many attempts. Please try again later.",
         "processingFailed": "Failed to process image. Please try a different file."
       }
+    },
+    "connectedAccounts": {
+      "title": "Connected Accounts",
+      "description": "Manage third-party accounts linked to your profile.",
+      "wechat": "WeChat",
+      "wechatConnected": "Your WeChat account is linked to this account.",
+      "wechatNotConnected": "Link your WeChat account for quick sign-in.",
+      "linked": "Connected",
+      "linkWechat": "Link WeChat",
+      "unlink": "Unlink",
+      "unlinkConfirm": "Are you sure you want to unlink your WeChat account? You will need to link it again to sign in with WeChat.",
+      "wechatOnlyAccount": "This account was created with WeChat. To unlink, please update your email address first and set up password recovery."
     }
   },
   "landing": {

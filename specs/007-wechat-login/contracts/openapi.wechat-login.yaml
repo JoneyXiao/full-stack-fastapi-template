@@ -1,0 +1,172 @@
+openapi: 3.1.0
+info:
+  title: WeChat Login (Feature Contract)
+  version: 0.1.0
+  description: |
+    Contract sketch for integrating WeChat login into the existing API.
+    This is a feature-level contract to drive implementation and OpenAPI updates.
+
+paths:
+  /api/v1/login/wechat/start:
+    post:
+      tags: [login]
+      summary: Start WeChat login
+      description: |
+        Creates a WeChat login attempt and returns parameters needed to render the embedded QR.
+        The response MUST NOT include any secrets.
+      operationId: wechat-start
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeChatLoginStartRequest'
+      responses:
+        '200':
+          description: Start parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeChatLoginStartResponse'
+
+  /api/v1/login/wechat/complete:
+    post:
+      tags: [login]
+      summary: Complete WeChat login
+      description: |
+        Exchanges the WeChat authorization code server-side, fetches minimal user profile,
+        creates or finds the linked user, and returns the normal API access token.
+      operationId: wechat-complete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeChatLoginCompleteRequest'
+      responses:
+        '200':
+          description: Access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+
+  /api/v1/users/me/wechat/link:
+    post:
+      tags: [users]
+      summary: Link WeChat to current user
+      description: |
+        Links the current authenticated user to the provided WeChat identity.
+        The user MUST already be authenticated and this must be an explicit user action.
+      operationId: wechat-link
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeChatLinkRequest'
+      responses:
+        '200':
+          description: Link result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
+    delete:
+      tags: [users]
+      summary: Unlink WeChat from current user
+      description: |
+        Removes the WeChat link from the current user if allowed.
+        Must be prevented if it would leave the user with no remaining sign-in method.
+      operationId: wechat-unlink
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Unlink result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    WeChatLoginStartRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        returnTo:
+          type: string
+          description: Optional in-app path to return to after login.
+          examples: ['/']
+
+    WeChatLoginStartResponse:
+      type: object
+      required: [appid, scope, redirectUri, state]
+      additionalProperties: false
+      properties:
+        appid:
+          type: string
+        scope:
+          type: string
+          description: Authorization scope used for WeChat login.
+          examples: ['snsapi_userinfo']
+        redirectUri:
+          type: string
+          description: URL-encoded redirect URI to the frontend callback route.
+        state:
+          type: string
+          description: Opaque CSRF state value.
+        wxLoginJsUrl:
+          type: string
+          description: URL to the official WeChat QR embed script.
+        recommendedOptions:
+          type: object
+          additionalProperties: true
+          description: Optional UI defaults for embedded QR rendering.
+
+    WeChatLoginCompleteRequest:
+      type: object
+      required: [code, state]
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        state:
+          type: string
+
+    WeChatLinkRequest:
+      type: object
+      required: [code, state]
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        state:
+          type: string
+
+    Token:
+      type: object
+      required: [access_token, token_type]
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+          examples: ['bearer']
+
+    Message:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string

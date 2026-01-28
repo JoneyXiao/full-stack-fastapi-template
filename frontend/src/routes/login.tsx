@@ -4,11 +4,13 @@ import {
   Link as RouterLink,
   redirect,
 } from "@tanstack/react-router"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
 import type { Body_login_login_access_token as AccessToken } from "@/client"
+import { WeChatQrLogin } from "@/components/Auth"
 import { AuthLayout } from "@/components/Common/AuthLayout"
 import {
   Form,
@@ -21,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { PasswordInput } from "@/components/ui/password-input"
+import { Separator } from "@/components/ui/separator"
 import useAuth, { isLoggedIn } from "@/hooks/useAuth"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
 
@@ -49,6 +52,7 @@ function Login() {
   const { t } = useTranslation()
   const { loginMutation } = useAuth()
   useDocumentTitle("auth.loginTitle")
+  const [wechatDisabled, setWechatDisabled] = useState(false)
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -126,6 +130,29 @@ function Login() {
               {t("auth.login")}
             </LoadingButton>
           </div>
+
+          {/* WeChat Login Section */}
+          {!wechatDisabled && (
+            <>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <Separator className="w-full" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    {t("auth.or")}
+                  </span>
+                </div>
+              </div>
+
+              <WeChatQrLogin
+                onDisabled={() => setWechatDisabled(true)}
+                onError={(error) => {
+                  console.error("WeChat login error:", error)
+                }}
+              />
+            </>
+          )}
 
           <div className="text-center text-sm">
             {t("auth.dontHaveAccount")}{" "}

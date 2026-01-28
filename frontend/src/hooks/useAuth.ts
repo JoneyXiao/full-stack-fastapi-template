@@ -82,11 +82,35 @@ const useAuth = () => {
     navigate({ to: "/" })
   }
 
+  /**
+   * Store access token in localStorage.
+   * Used by WeChat login callback to persist the token.
+   */
+  const storeToken = (token: string) => {
+    localStorage.setItem("access_token", token)
+  }
+
+  /**
+   * Invalidate the current user query to force a refetch.
+   * Used after external login flows (e.g., WeChat) to sync user data.
+   */
+  const invalidateCurrentUser = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["currentUser"] })
+    // Fetch user and sync locale from their profile
+    const user = await queryClient.fetchQuery({
+      queryKey: ["currentUser"],
+      queryFn: UsersService.readUserMe,
+    })
+    syncLocaleFromUser(user)
+  }
+
   return {
     signUpMutation,
     loginMutation,
     logout,
     user,
+    storeToken,
+    invalidateCurrentUser,
   }
 }
 

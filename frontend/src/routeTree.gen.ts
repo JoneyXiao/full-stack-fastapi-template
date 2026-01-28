@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WechatCallbackRouteImport } from './routes/wechat-callback'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
@@ -26,6 +27,11 @@ import { Route as LayoutSubmissionsNewRouteImport } from './routes/_layout/submi
 import { Route as LayoutSubmissionsSubmissionIdRouteImport } from './routes/_layout/submissions/$submissionId'
 import { Route as LayoutResourcesResourceIdRouteImport } from './routes/_layout/resources/$resourceId'
 
+const WechatCallbackRoute = WechatCallbackRouteImport.update({
+  id: '/wechat-callback',
+  path: '/wechat-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/wechat-callback': typeof WechatCallbackRoute
   '/admin': typeof LayoutAdminRoute
   '/dashboard': typeof LayoutDashboardRoute
   '/favorites': typeof LayoutFavoritesRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/wechat-callback': typeof WechatCallbackRoute
   '/admin': typeof LayoutAdminRoute
   '/dashboard': typeof LayoutDashboardRoute
   '/favorites': typeof LayoutFavoritesRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/wechat-callback': typeof WechatCallbackRoute
   '/_layout/admin': typeof LayoutAdminRoute
   '/_layout/dashboard': typeof LayoutDashboardRoute
   '/_layout/favorites': typeof LayoutFavoritesRoute
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/recover-password'
     | '/reset-password'
     | '/signup'
+    | '/wechat-callback'
     | '/admin'
     | '/dashboard'
     | '/favorites'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/recover-password'
     | '/reset-password'
     | '/signup'
+    | '/wechat-callback'
     | '/admin'
     | '/dashboard'
     | '/favorites'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/recover-password'
     | '/reset-password'
     | '/signup'
+    | '/wechat-callback'
     | '/_layout/admin'
     | '/_layout/dashboard'
     | '/_layout/favorites'
@@ -223,10 +235,18 @@ export interface RootRouteChildren {
   RecoverPasswordRoute: typeof RecoverPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
+  WechatCallbackRoute: typeof WechatCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wechat-callback': {
+      id: '/wechat-callback'
+      path: '/wechat-callback'
+      fullPath: '/wechat-callback'
+      preLoaderRoute: typeof WechatCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -378,6 +398,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecoverPasswordRoute: RecoverPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
+  WechatCallbackRoute: WechatCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

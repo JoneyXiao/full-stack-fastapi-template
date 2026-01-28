@@ -1445,3 +1445,151 @@ export const ValidationErrorSchema = {
     required: ['loc', 'msg', 'type'],
     title: 'ValidationError'
 } as const;
+
+export const WeChatAccountLinkPublicSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        openid: {
+            type: 'string',
+            title: 'Openid'
+        },
+        unionid: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Unionid'
+        },
+        nickname: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Nickname'
+        },
+        avatar_url: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Avatar Url'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        }
+    },
+    type: 'object',
+    required: ['id', 'openid', 'unionid', 'nickname', 'avatar_url', 'created_at'],
+    title: 'WeChatAccountLinkPublic',
+    description: 'Public representation of WeChat account link.'
+} as const;
+
+export const WeChatLinkRequestSchema = {
+    properties: {
+        code: {
+            type: 'string',
+            maxLength: 512,
+            minLength: 1,
+            title: 'Code'
+        },
+        state: {
+            type: 'string',
+            maxLength: 64,
+            minLength: 1,
+            title: 'State'
+        }
+    },
+    type: 'object',
+    required: ['code', 'state'],
+    title: 'WeChatLinkRequest',
+    description: 'Request body for linking WeChat to current user.'
+} as const;
+
+export const WeChatLoginCompleteRequestSchema = {
+    properties: {
+        code: {
+            type: 'string',
+            maxLength: 512,
+            minLength: 1,
+            title: 'Code'
+        },
+        state: {
+            type: 'string',
+            maxLength: 64,
+            minLength: 1,
+            title: 'State'
+        }
+    },
+    type: 'object',
+    required: ['code', 'state'],
+    title: 'WeChatLoginCompleteRequest',
+    description: 'Request body for completing WeChat login.'
+} as const;
+
+export const WeChatLoginStartRequestSchema = {
+    properties: {
+        return_to: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 2048
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Return To'
+        }
+    },
+    type: 'object',
+    title: 'WeChatLoginStartRequest',
+    description: 'Request body for starting WeChat login.'
+} as const;
+
+export const WeChatLoginStartResponseSchema = {
+    properties: {
+        appid: {
+            type: 'string',
+            title: 'Appid'
+        },
+        scope: {
+            type: 'string',
+            title: 'Scope'
+        },
+        redirect_uri: {
+            type: 'string',
+            title: 'Redirect Uri'
+        },
+        state: {
+            type: 'string',
+            title: 'State'
+        },
+        wx_login_js_url: {
+            type: 'string',
+            title: 'Wx Login Js Url',
+            default: 'https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js'
+        }
+    },
+    type: 'object',
+    required: ['appid', 'scope', 'redirect_uri', 'state'],
+    title: 'WeChatLoginStartResponse',
+    description: 'Response with parameters to render embedded WeChat QR.'
+} as const;
