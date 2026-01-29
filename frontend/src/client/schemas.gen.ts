@@ -1546,6 +1546,12 @@ export const WeChatLoginCompleteRequestSchema = {
 
 export const WeChatLoginStartRequestSchema = {
     properties: {
+        action: {
+            type: 'string',
+            enum: ['login', 'link'],
+            title: 'Action',
+            default: 'login'
+        },
         return_to: {
             anyOf: [
                 {
@@ -1561,7 +1567,14 @@ export const WeChatLoginStartRequestSchema = {
     },
     type: 'object',
     title: 'WeChatLoginStartRequest',
-    description: 'Request body for starting WeChat login.'
+    description: `Request body for starting WeChat login.
+
+Attributes:
+    action: Intent for this login flow. "login" for standalone login,
+            "link" for linking WeChat to existing account. Defaults to "login".
+    return_to: Optional relative path (same-origin) to redirect after callback
+               completes. Must be a safe relative path starting with "/".
+               Full URLs are rejected for security.`
 } as const;
 
 export const WeChatLoginStartResponseSchema = {

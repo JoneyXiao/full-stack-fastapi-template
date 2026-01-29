@@ -227,9 +227,22 @@ class WeChatLoginAttempt(SQLModel, table=True):
 # ---------------------------------------------------------------------------
 
 
-class WeChatLoginStartRequest(SQLModel):
-    """Request body for starting WeChat login."""
+# Supported WeChat login actions
+WeChatLoginAction = Literal["login", "link"]
 
+
+class WeChatLoginStartRequest(SQLModel):
+    """Request body for starting WeChat login.
+
+    Attributes:
+        action: Intent for this login flow. "login" for standalone login,
+                "link" for linking WeChat to existing account. Defaults to "login".
+        return_to: Optional relative path (same-origin) to redirect after callback
+                   completes. Must be a safe relative path starting with "/".
+                   Full URLs are rejected for security.
+    """
+
+    action: WeChatLoginAction = Field(default="login")
     return_to: str | None = Field(default=None, max_length=2048)
 
 

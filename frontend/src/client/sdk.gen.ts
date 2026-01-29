@@ -1262,6 +1262,14 @@ export class WechatLoginService {
      * Creates a state token for anti-replay/CSRF protection (TTL=10 minutes).
      *
      * The response MUST NOT include any secrets (AppSecret).
+     *
+     * The redirect_uri embeds optional parameters:
+     * - action: "login" or "link" (intent for the flow)
+     * - from (return_to): Safe relative path for post-callback redirect
+     *
+     * If WECHAT_LOGIN_INTERMEDIARY_URL is configured, the redirect_uri points to
+     * the intermediary with ?from=<final_callback>. Otherwise, redirects directly
+     * to the frontend callback route.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns WeChatLoginStartResponse Successful Response

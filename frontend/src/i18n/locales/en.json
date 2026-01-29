@@ -124,6 +124,8 @@
       "loginSuccess": "Login successful!",
       "loginFailed": "Login failed",
       "redirecting": "Redirecting you now...",
+      "missingCode": "Authorization code is missing. Please scan the QR code again.",
+      "missingState": "Session token is missing. Please try again from the beginning.",
       "stateError": "Session expired or invalid. Please try again.",
       "codeError": "Authorization code expired or invalid. Please try again.",
       "networkError": "Network error. Please check your connection and try again.",

@@ -3,6 +3,12 @@
  *
  * Handles the callback from WeChat OAuth authorization.
  * Receives code and state parameters, completes the login/link flow.
+ *
+ * Query params:
+ * - code: OAuth authorization code from WeChat
+ * - state: CSRF protection token
+ * - action: "login" (default) or "link" to indicate intent
+ * - from: Safe relative path for post-callback redirect (validated via allowlist)
  */
 
 import { useQueryClient } from "@tanstack/react-query"
@@ -22,8 +28,11 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import useAuth from "@/hooks/useAuth"
+import { getSafeRedirectPath } from "@/utils"
 
 type ErrorCategory =
+  | "missing_code"
+  | "missing_state"
   | "state_error"
   | "code_error"
   | "provider_unavailable"
@@ -36,6 +45,7 @@ interface CallbackSearchParams {
   code?: string
   state?: string
   action?: "link" | "login"
+  from?: string
 }
 
 export const Route = createFileRoute("/wechat-callback")({
@@ -44,6 +54,7 @@ export const Route = createFileRoute("/wechat-callback")({
     code: search.code as string | undefined,
     state: search.state as string | undefined,
     action: search.action as "link" | "login" | undefined,
+    from: search.from as string | undefined,
   }),
 })
 
@@ -70,6 +81,8 @@ function categorizeError(error: unknown): ErrorCategory {
 }
 
 const ERROR_MESSAGE_MAP: Record<ErrorCategory, string> = {
+  missing_code: "auth.wechat.missingCode",
+  missing_state: "auth.wechat.missingState",
   state_error: "auth.wechat.stateError",
   code_error: "auth.wechat.codeError",
   provider_unavailable: "auth.wechat.providerUnavailable",
@@ -85,8 +98,12 @@ function WeChatCallbackPage() {
   const queryClient = useQueryClient()
   const { storeToken, invalidateCurrentUser } = useAuth()
 
-  const { code, state, action } = Route.useSearch()
+  const { code, state, action, from } = Route.useSearch()
   const isLinkFlow = action === "link"
+
+  // Determine safe redirect destinations based on action and from param
+  const linkSuccessRedirect = getSafeRedirectPath(from, "/settings")
+  const loginSuccessRedirect = getSafeRedirectPath(from, "/")
 
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading",
@@ -119,28 +136,46 @@ function WeChatCallbackPage() {
           await WechatLoginService.wechatLink({
             requestBody: { code: authCode, state: authState },
           })
-          await handleSuccess("/settings")
+          await handleSuccess(linkSuccessRedirect)
         } else {
           const response = await WechatLoginService.wechatLoginComplete({
             requestBody: { code: authCode, state: authState },
           })
           storeToken(response.access_token)
-          await handleSuccess("/resources")
+          await handleSuccess(loginSuccessRedirect)
         }
       } catch (error) {
         handleError(error)
       }
     },
-    [isLinkFlow, storeToken, handleSuccess, handleError],
+    [
+      isLinkFlow,
+      storeToken,
+      handleSuccess,
+      handleError,
+      linkSuccessRedirect,
+      loginSuccessRedirect,
+    ],
   )
 
   useEffect(() => {
     if (processedRef.current) return
     processedRef.current = true
 
-    if (!code || !state) {
+    // Distinguish between missing code and missing state for clearer error messages
+    if (!code && !state) {
       setStatus("error")
-      setErrorCategory("state_error")
+      setErrorCategory("missing_code") // Both missing - show code error as primary
+      return
+    }
+    if (!code) {
+      setStatus("error")
+      setErrorCategory("missing_code")
+      return
+    }
+    if (!state) {
+      setStatus("error")
+      setErrorCategory("missing_state")
       return
     }
 
@@ -152,11 +187,16 @@ function WeChatCallbackPage() {
   }
 
   function getStatusDescription(): string {
-    if (status === "loading") return t("auth.wechat.pleaseWait")
-    if (status === "error") return t("auth.wechat.loginFailed")
-    return isLinkFlow
-      ? t("auth.wechat.linkSuccess")
-      : t("auth.wechat.loginSuccess")
+    if (status === "loading") {
+      return t("auth.wechat.pleaseWait")
+    }
+    if (status === "error") {
+      return t("auth.wechat.loginFailed")
+    }
+    if (isLinkFlow) {
+      return t("auth.wechat.linkSuccess")
+    }
+    return t("auth.wechat.loginSuccess")
   }
 
   return (

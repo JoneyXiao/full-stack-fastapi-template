@@ -124,6 +124,10 @@ class Settings(BaseSettings):
     WECHAT_APP_SECRET: str | None = None
     # State token TTL for anti-replay (minutes)
     WECHAT_STATE_TTL_MINUTES: int = 10
+    # Optional intermediary URL for redirect chain (e.g., h5.yunxi668.com/passport/wxLogin)
+    # If set, WeChat redirects here first, which then forwards to ${FRONTEND_HOST}/wechat-callback
+    # If unset, WeChat redirects directly to ${FRONTEND_HOST}/wechat-callback
+    WECHAT_LOGIN_INTERMEDIARY_URL: str | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property

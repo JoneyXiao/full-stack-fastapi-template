@@ -102,6 +102,121 @@ def test_wechat_login_start_returns_params(
     assert len(data["state"]) > 20  # Should be a secure token
 
 
+# ---------------------------------------------------------------------------
+# Redirect URL Builder Tests (T005/T007)
+# ---------------------------------------------------------------------------
+
+
+def test_wechat_login_start_fallback_redirect_uri(
+    client: TestClient, _db: Session, _wechat_enabled
+) -> None:
+    """Test that when WECHAT_LOGIN_INTERMEDIARY_URL is unset, redirect_uri goes directly to frontend callback.
+
+    This is the fallback behavior: WeChat redirects directly to ${FRONTEND_HOST}/wechat-callback
+    instead of going through an intermediary.
+    """
+    # Ensure intermediary is not set (default)
+    with patch.object(settings, "WECHAT_LOGIN_INTERMEDIARY_URL", None):
+        r = client.post(f"{settings.API_V1_STR}/login/wechat/start")
+        assert r.status_code == 200
+
+        data = r.json()
+        redirect_uri = data["redirect_uri"]
+
+        # Should point directly to frontend callback without intermediary
+        assert redirect_uri.startswith(settings.FRONTEND_HOST)
+        assert "/wechat-callback" in redirect_uri
+        # Should NOT contain h5.yunxi668.com or any intermediary
+        assert "h5.yunxi668.com" not in redirect_uri
+
+
+def test_wechat_login_start_intermediary_redirect_uri(
+    client: TestClient, _db: Session, _wechat_enabled
+) -> None:
+    """Test that when WECHAT_LOGIN_INTERMEDIARY_URL is set, redirect_uri wraps the callback.
+
+    The intermediary pattern: intermediary?from=<final_callback>
+    where final_callback = ${FRONTEND_HOST}/wechat-callback?action=...&from=...
+    """
+    intermediary_url = "https://h5.yunxi668.com/passport/wxLogin"
+    with patch.object(settings, "WECHAT_LOGIN_INTERMEDIARY_URL", intermediary_url):
+        r = client.post(
+            f"{settings.API_V1_STR}/login/wechat/start",
+            json={"action": "login", "return_to": "/dashboard"},
+        )
+        assert r.status_code == 200
+
+        data = r.json()
+        redirect_uri = data["redirect_uri"]
+
+        # Should start with the intermediary URL
+        assert redirect_uri.startswith(intermediary_url)
+        # Should have ?from= parameter
+        assert "?from=" in redirect_uri
+
+        # The embedded callback should contain the frontend host
+        from urllib.parse import parse_qs, urlparse
+
+        parsed = urlparse(redirect_uri)
+        query_params = parse_qs(parsed.query)
+        assert "from" in query_params
+        embedded_callback = query_params["from"][0]
+
+        # The embedded callback should be the frontend callback with action and from params
+        assert embedded_callback.startswith(settings.FRONTEND_HOST)
+        assert "/wechat-callback" in embedded_callback
+        assert "action=login" in embedded_callback
+        # from= in the nested URL should be URL-encoded in the parent
+        assert "dashboard" in embedded_callback
+
+
+def test_wechat_login_start_with_action_link(
+    client: TestClient, _db: Session, _wechat_enabled
+) -> None:
+    """Test that action=link is embedded into the redirect callback URL."""
+    with patch.object(settings, "WECHAT_LOGIN_INTERMEDIARY_URL", None):
+        r = client.post(
+            f"{settings.API_V1_STR}/login/wechat/start",
+            json={"action": "link"},
+        )
+        assert r.status_code == 200
+
+        data = r.json()
+        redirect_uri = data["redirect_uri"]
+
+        # Should contain action=link in the callback URL
+        assert "action=link" in redirect_uri
+
+
+def test_wechat_login_start_rejects_full_url_return_to(
+    client: TestClient, _db: Session, _wechat_enabled
+) -> None:
+    """Test that return_to with full URLs is rejected (only relative paths allowed).
+
+    Security: Full URLs like https://evil.com should be silently ignored,
+    not cause an error. The endpoint should succeed but omit the `from` param.
+    """
+    with patch.object(settings, "WECHAT_LOGIN_INTERMEDIARY_URL", None):
+        r = client.post(
+            f"{settings.API_V1_STR}/login/wechat/start",
+            json={"return_to": "https://evil.com/steal"},
+        )
+        # Endpoint should succeed (not error on invalid return_to)
+        assert r.status_code == 200
+
+        data = r.json()
+        # Response should contain required fields
+        assert "redirect_uri" in data
+        assert "state" in data
+        assert "appid" in data
+
+        redirect_uri = data["redirect_uri"]
+
+        # Full URL should NOT be included (security: only relative paths allowed)
+        assert "evil.com" not in redirect_uri
+        assert "from=" not in redirect_uri  # from param should not be set when invalid
+
+
 def test_wechat_login_complete_existing_user(
     client: TestClient,
     _db: Session,
@@ -392,7 +507,7 @@ def test_wechat_login_disabled_complete(
 # ---------------------------------------------------------------------------
 
 
-def test_password_login_still_works_with_wechat_enabled(
+def test_password_login_still_works_withwechat_enabled(
     client: TestClient, _wechat_enabled
 ) -> None:
     """Test that standard password login still works when WeChat is enabled."""

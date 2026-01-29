@@ -80,7 +80,13 @@ function WeChatConnection() {
     refetch: refetchStart,
   } = useQuery({
     queryKey: ["wechat-link-start"],
-    queryFn: () => WechatLoginService.wechatLoginStart(),
+    queryFn: () =>
+      WechatLoginService.wechatLoginStart({
+        requestBody: {
+          action: "link",
+          return_to: "/settings",
+        },
+      }),
     enabled: isLinking,
     retry: false,
     staleTime: 5 * 60 * 1000,
@@ -130,23 +136,30 @@ function WeChatConnection() {
       return
     }
 
-    const redirectUri = `${window.location.origin}/wechat-callback?action=link`
+    // Use the redirect_uri provided by the backend (already contains action=link and from params)
+    const redirectUri = startData.redirect_uri
 
     new window.WxLogin({
-      self_redirect: false,
       id: "wechat-link-qr-container",
       appid: startData.appid,
       scope: startData.scope,
       redirect_uri: encodeURIComponent(redirectUri),
       state: startData.state,
+      self_redirect: false,
       style: "black",
+      onReady: (isReady: boolean) => {
+        if (!isReady) {
+          setLinkError(t("auth.wechat.providerUnavailable"))
+          setIsLinking(false)
+        }
+      },
     })
 
     setTimeout(
       () => setIframeHeight(qrContainerRef.current, QR_IFRAME_HEIGHT),
       0,
     )
-  }, [isLinking, scriptLoaded, startData])
+  }, [isLinking, scriptLoaded, startData, t])
 
   function handleStartLink() {
     setLinkError(null)

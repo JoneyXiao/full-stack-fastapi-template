@@ -123,6 +123,8 @@
       "loginSuccess": "登录成功！",
       "loginFailed": "登录失败",
       "redirecting": "正在跳转...",
+      "missingCode": "缺少授权码，请重新扫描二维码。",
+      "missingState": "缺少会话令牌，请从头开始重试。",
       "stateError": "会话已过期或无效，请重试。",
       "codeError": "授权码已过期或无效，请重试。",
       "networkError": "网络错误，请检查您的网络连接后重试。",

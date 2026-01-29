@@ -77,6 +77,59 @@ def is_wechat_placeholder_email(email: str) -> bool:
     return email.startswith("wechat_") and email.endswith("@placeholder.local")
 
 
+def build_wechat_redirect_uri(
+    action: str | None = None,
+    return_to: str | None = None,
+) -> str:
+    """
+    Build the redirect_uri for WeChat OAuth.
+
+    If WECHAT_LOGIN_INTERMEDIARY_URL is configured, constructs a nested redirect:
+      intermediary?from=<final_callback_with_params>
+
+    If not configured, returns the direct callback URL:
+      ${FRONTEND_HOST}/wechat-callback?action=...&from=...
+
+    Args:
+        action: The login action ("login" or "link"). Embedded in callback params.
+        return_to: Optional relative path for post-callback redirect.
+                   Must start with "/" for safety (full URLs rejected).
+
+    Returns:
+        The redirect_uri to pass to WeChat OAuth.
+    """
+    from urllib.parse import urlencode
+
+    # Build the final callback URL with embedded params
+    callback_base = f"{settings.FRONTEND_HOST}/wechat-callback"
+
+    # Build query params for the callback
+    callback_params: dict[str, str] = {}
+    if action:
+        callback_params["action"] = action
+    if return_to and return_to.startswith("/"):
+        # Only allow relative paths starting with "/" for security
+        callback_params["from"] = return_to
+
+    if callback_params:
+        callback_url = f"{callback_base}?{urlencode(callback_params)}"
+    else:
+        callback_url = callback_base
+
+    # If intermediary is configured, wrap the callback URL
+    if settings.WECHAT_LOGIN_INTERMEDIARY_URL:
+        # The intermediary expects ?from=<final_callback>
+        intermediary_params = {"from": callback_url}
+        redirect_uri = (
+            f"{settings.WECHAT_LOGIN_INTERMEDIARY_URL}?{urlencode(intermediary_params)}"
+        )
+    else:
+        # Direct redirect to callback
+        redirect_uri = callback_url
+
+    return redirect_uri
+
+
 # ---------------------------------------------------------------------------
 # Error Mapping
 # ---------------------------------------------------------------------------
@@ -131,7 +184,7 @@ def map_state_error(reason: str) -> tuple[str, int]:
 )
 def wechat_login_start(
     session: SessionDep,
-    body: WeChatLoginStartRequest | None = None,  # noqa: ARG001
+    body: WeChatLoginStartRequest | None = None,
 ) -> WeChatLoginStartResponse:
     """
     Start WeChat login flow.
@@ -140,9 +193,18 @@ def wechat_login_start(
     Creates a state token for anti-replay/CSRF protection (TTL=10 minutes).
 
     The response MUST NOT include any secrets (AppSecret).
+
+    The redirect_uri embeds optional parameters:
+    - action: "login" or "link" (intent for the flow)
+    - from (return_to): Safe relative path for post-callback redirect
+
+    If WECHAT_LOGIN_INTERMEDIARY_URL is configured, the redirect_uri points to
+    the intermediary with ?from=<final_callback>. Otherwise, redirects directly
+    to the frontend callback route.
     """
-    # Note: body.return_to could be used to store intended redirect path
-    # For now we don't use it, but keep the parameter for API consistency
+    # Extract action and return_to from request body
+    action = body.action if body else "login"
+    return_to = body.return_to if body else None
 
     # Generate state token
     state = secrets.token_urlsafe(32)
@@ -160,9 +222,8 @@ def wechat_login_start(
         user_id=None,  # Not logged in yet
     )
 
-    # Build redirect URI (frontend callback route)
-    # The redirect_uri must match what's registered in WeChat Open Platform
-    redirect_uri = f"{settings.FRONTEND_HOST}/wechat-callback"
+    # Build redirect URI using the helper (supports intermediary chain)
+    redirect_uri = build_wechat_redirect_uri(action=action, return_to=return_to)
 
     logger.info(
         "WeChat login started",
@@ -229,14 +290,13 @@ async def wechat_login_complete(
         token_response, userinfo = await get_wechat_user_profile(body.code)
     except WeChatError as e:
         # Record failure
-        category, _ = map_wechat_error(e)
+        category, status_code = map_wechat_error(e)
         crud.consume_wechat_login_attempt(
             session=session,
             attempt=valid_attempt,
             success=False,
             failure_category=category,
         )
-        category, status_code = map_wechat_error(e)
         logger.warning(
             "WeChat API error during login",
             extra={"errcode": e.errcode, "category": category},
@@ -467,14 +527,13 @@ async def wechat_link(
     try:
         token_response, userinfo = await get_wechat_user_profile(body.code)
     except WeChatError as e:
-        category, _ = map_wechat_error(e)
+        category, status_code = map_wechat_error(e)
         crud.consume_wechat_login_attempt(
             session=session,
             attempt=valid_attempt,
             success=False,
             failure_category=category,
         )
-        category, status_code = map_wechat_error(e)
         raise HTTPException(
             status_code=status_code,
             detail=f"WeChat linking failed: {category}",

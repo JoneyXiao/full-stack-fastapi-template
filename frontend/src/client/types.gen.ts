@@ -332,10 +332,20 @@ export type WeChatLoginCompleteRequest = {
 
 /**
  * Request body for starting WeChat login.
+ *
+ * Attributes:
+ * action: Intent for this login flow. "login" for standalone login,
+ * "link" for linking WeChat to existing account. Defaults to "login".
+ * return_to: Optional relative path (same-origin) to redirect after callback
+ * completes. Must be a safe relative path starting with "/".
+ * Full URLs are rejected for security.
  */
 export type WeChatLoginStartRequest = {
+    action?: 'login' | 'link';
     return_to?: (string | null);
 };
+
+export type action = 'login' | 'link';
 
 /**
  * Response with parameters to render embedded WeChat QR.

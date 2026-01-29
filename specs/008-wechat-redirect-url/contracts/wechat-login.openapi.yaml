@@ -1,0 +1,111 @@
+openapi: 3.0.3
+info:
+  title: WeChat Login (redirect update)
+  version: 0.0.0
+  description: |
+    Contract notes for feature 008-wechat-redirect-url.
+
+    This is a planning artifact; the source of truth is the backend OpenAPI.
+paths:
+  /login/wechat/start:
+    post:
+      summary: Start WeChat login
+      description: |
+        Returns parameters to render the WeChat QR login iframe.
+
+        `redirect_uri` is constructed so WeChat first redirects to the intermediary
+        `https://h5.yunxi668.com/passport/wxLogin?from=<ai-callback-url>`.
+
+        The AI callback URL is `https://ai.yunxi668.com/wechat-callback` and may include:
+        - `action=link` for linking flows
+        - `from=/relative/path` for post-success navigation (validated on frontend)
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeChatLoginStartRequest'
+      responses:
+        '200':
+          description: QR parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeChatLoginStartResponse'
+        '403':
+          description: WeChat login disabled
+  /login/wechat/complete:
+    post:
+      summary: Complete WeChat login
+      description: Exchange code+state and issue access token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeChatLoginCompleteRequest'
+      responses:
+        '200':
+          description: Access token
+  /users/me/wechat/link:
+    post:
+      summary: Link WeChat identity to current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeChatLinkRequest'
+      responses:
+        '200':
+          description: Linked
+
+components:
+  schemas:
+    WeChatLoginStartRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        return_to:
+          type: string
+          nullable: true
+          description: Post-success destination (relative path only).
+        action:
+          type: string
+          nullable: true
+          enum: [login, link]
+          description: Controls whether callback should run login or link behavior.
+    WeChatLoginStartResponse:
+      type: object
+      required: [appid, scope, redirect_uri, state]
+      properties:
+        appid:
+          type: string
+        scope:
+          type: string
+        redirect_uri:
+          type: string
+          description: |
+            Unencoded URL. Frontend will pass encodeURIComponent(redirect_uri)
+            to wxLogin.js.
+        state:
+          type: string
+        wx_login_js_url:
+          type: string
+          nullable: true
+    WeChatLoginCompleteRequest:
+      type: object
+      required: [code, state]
+      properties:
+        code:
+          type: string
+        state:
+          type: string
+    WeChatLinkRequest:
+      type: object
+      required: [code, state]
+      properties:
+        code:
+          type: string
+        state:
+          type: string

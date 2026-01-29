@@ -347,3 +347,65 @@ def test_wechat_unlink_no_link_exists(
     )
     # Should return 404 or similar when no link to unlink
     assert unlink_r.status_code in [400, 404]
+
+
+# ---------------------------------------------------------------------------
+# T008: Link flow with action=link parameter
+# ---------------------------------------------------------------------------
+
+
+def test_wechat_link_flow_with_action_param(
+    client: TestClient,
+    db: Session,
+    _wechat_enabled,
+    test_user_without_wechat,
+    monkeypatch,
+) -> None:
+    """Test that starting WeChat link flow with action=link embeds the action in redirect_uri.
+
+    When linking WeChat to an existing account, the frontend should request
+    action=link so the callback route knows to complete as a link (not login).
+    """
+    import uuid
+    from unittest.mock import patch
+
+    user, email, password = test_user_without_wechat
+
+    test_openid = f"openid_link_action_{uuid.uuid4().hex[:8]}"
+    test_unionid = f"unionid_link_action_{uuid.uuid4().hex[:8]}"
+
+    mock_wechat = MockWeChatResponses()
+    mock_wechat.set_token_response(openid=test_openid, unionid=test_unionid)
+    mock_wechat.set_userinfo(
+        openid=test_openid, unionid=test_unionid, nickname="Action Link User"
+    )
+    patch_wechat_api(monkeypatch, mock_wechat)
+
+    headers = get_auth_headers(client, email, password)
+
+    # Start WeChat flow with action=link
+    with patch.object(settings, "WECHAT_LOGIN_INTERMEDIARY_URL", None):
+        start_r = client.post(
+            f"{settings.API_V1_STR}/login/wechat/start",
+            json={"action": "link"},
+        )
+        assert start_r.status_code == 200
+        data = start_r.json()
+
+        # Verify action=link is embedded in redirect_uri
+        assert "action=link" in data["redirect_uri"]
+
+        state = data["state"]
+
+    # Link WeChat to account - should still work
+    link_r = client.post(
+        f"{settings.API_V1_STR}/users/me/wechat/link",
+        json={"code": "test_code", "state": state},
+        headers=headers,
+    )
+    assert link_r.status_code == 200
+
+    # Verify link was created
+    link = crud.get_wechat_link_by_user_id(session=db, user_id=user.id)
+    assert link is not None
+    assert link.openid == test_openid
