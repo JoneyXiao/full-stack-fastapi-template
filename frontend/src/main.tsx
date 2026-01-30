@@ -22,6 +22,11 @@ OpenAPI.TOKEN = async () => {
 
 const handleApiError = (error: Error) => {
   if (error instanceof ApiError && [401, 403].includes(error.status)) {
+    // Don't redirect for WeChat login start endpoint - it uses 403 for "disabled" state
+    // which is handled locally by the WeChatQrLogin component
+    if (error.url.includes("/login/wechat/start")) {
+      return
+    }
     localStorage.removeItem("access_token")
     window.location.href = "/login"
   }

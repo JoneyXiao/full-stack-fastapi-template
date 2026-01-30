@@ -370,7 +370,7 @@
   "toast": {
     "success": "成功",
     "error": "错误",
-    "warning": "警告",
+    "warning": "温馨提示",
     "info": "提示"
   },
   "resources": {

@@ -34,15 +34,37 @@ declare global {
   }
 }
 
+/**
+ * WeChat WxLogin configuration parameters.
+ * @see https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Wechat_Login.html
+ */
 interface WxLoginConfig {
-  self_redirect: boolean
+  /** Container element ID for the QR code iframe */
   id: string
+  /** App ID from WeChat Open Platform */
   appid: string
+  /** Authorization scope - must be "snsapi_login" for website apps */
   scope: string
+  /** URL-encoded redirect URI (must match WeChat platform configuration) */
   redirect_uri: string
+  /** CSRF protection token (recommended) */
   state: string
+  /** If true, redirect happens in iframe; if false, in top window. Default: false */
+  self_redirect?: boolean
+  /** Text style: "black" or "white". Default: "black" */
   style?: string
+  /** Custom CSS URL to override default styles (only when stylelite != 1) */
   href?: string
+  /** Set to 1 to use new QR code style */
+  stylelite?: number
+  /** Set to 0 to disable fast login feature */
+  fast_login?: number
+  /** Theme: "light", "dark", or "auto" (follows system) */
+  color_scheme?: "light" | "dark" | "auto"
+  /** Callback when iframe loads. isReady=true means successful */
+  onReady?: (isReady: boolean) => void
+  /** Callback when QR code is ready */
+  onQRcodeReady?: () => void
 }
 
 const QR_IFRAME_HEIGHT = "300px"
@@ -131,16 +153,21 @@ export function WeChatQrLogin({
     // Initialize WeChat QR
     try {
       new window.WxLogin({
-        self_redirect: false,
         id: containerId,
         appid: startData.appid,
         scope: startData.scope,
         redirect_uri: encodeURIComponent(startData.redirect_uri),
         state: startData.state,
+        self_redirect: false,
         style: "black",
-        href: "", // Custom CSS URL if needed
+        onReady: (isReady: boolean) => {
+          if (!isReady) {
+            setScriptError(t("auth.wechat.loginError"))
+            onError?.(new Error("WeChat QR iframe failed to load"))
+          }
+        },
       })
-      window.setTimeout(() => {
+      setTimeout(() => {
         setIframeHeight(containerRef.current, QR_IFRAME_HEIGHT)
       }, 0)
     } catch (err) {
@@ -201,5 +228,3 @@ export function WeChatQrLogin({
     </div>
   )
 }
-
-export default WeChatQrLogin
