@@ -109,7 +109,7 @@
       "loginCanceled": "WeChat login was canceled.",
       "loginExpired": "WeChat login expired. Please try again.",
       "loginStateMismatch": "Security verification failed. Please try again.",
-      "providerUnavailable": "WeChat login is temporarily unavailable.",
+      "providerUnavailable": "WeChat login is currently unavailable.",
       "featureDisabled": "WeChat login is not available.",
       "linkSuccess": "WeChat account linked successfully.",
       "unlinkSuccess": "WeChat account unlinked successfully.",

@@ -133,20 +133,26 @@ function WeChatConnection() {
     const redirectUri = `${window.location.origin}/wechat-callback?action=link`
 
     new window.WxLogin({
-      self_redirect: false,
       id: "wechat-link-qr-container",
       appid: startData.appid,
       scope: startData.scope,
       redirect_uri: encodeURIComponent(redirectUri),
       state: startData.state,
+      self_redirect: false,
       style: "black",
+      onReady: (isReady: boolean) => {
+        if (!isReady) {
+          setLinkError(t("auth.wechat.providerUnavailable"))
+          setIsLinking(false)
+        }
+      },
     })
 
     setTimeout(
       () => setIframeHeight(qrContainerRef.current, QR_IFRAME_HEIGHT),
       0,
     )
-  }, [isLinking, scriptLoaded, startData])
+  }, [isLinking, scriptLoaded, startData, t])
 
   function handleStartLink() {
     setLinkError(null)
