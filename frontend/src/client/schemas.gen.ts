@@ -68,6 +68,125 @@ export const Body_users_upload_avatarSchema = {
     title: 'Body_users-upload_avatar'
 } as const;
 
+export const CategoriesAdminSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/CategoryAdmin'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'CategoriesAdmin'
+} as const;
+
+export const CategoriesPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/CategoryPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'CategoriesPublic'
+} as const;
+
+export const CategoryAdminSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 100,
+            minLength: 1,
+            title: 'Name'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        in_use: {
+            type: 'boolean',
+            title: 'In Use',
+            default: false
+        },
+        resources_count: {
+            type: 'integer',
+            title: 'Resources Count',
+            default: 0
+        },
+        submissions_count: {
+            type: 'integer',
+            title: 'Submissions Count',
+            default: 0
+        }
+    },
+    type: 'object',
+    required: ['name', 'id'],
+    title: 'CategoryAdmin'
+} as const;
+
+export const CategoryCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 100,
+            minLength: 1,
+            title: 'Name'
+        }
+    },
+    type: 'object',
+    required: ['name'],
+    title: 'CategoryCreate'
+} as const;
+
+export const CategoryPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 100,
+            minLength: 1,
+            title: 'Name'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        }
+    },
+    type: 'object',
+    required: ['name', 'id'],
+    title: 'CategoryPublic'
+} as const;
+
+export const CategoryUpdateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            maxLength: 100,
+            minLength: 1,
+            title: 'Name'
+        }
+    },
+    type: 'object',
+    required: ['name'],
+    title: 'CategoryUpdate'
+} as const;
+
 export const ChatMessageSchemaSchema = {
     properties: {
         role: {
@@ -552,30 +671,39 @@ export const ResourceCreateSchema = {
             maxLength: 2048,
             title: 'Destination Url'
         },
-        type: {
-            type: 'string',
-            maxLength: 50,
-            title: 'Type'
+        category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Category Id'
         }
     },
     type: 'object',
-    required: ['title', 'destination_url', 'type'],
+    required: ['title', 'destination_url'],
     title: 'ResourceCreate'
 } as const;
 
 export const ResourceDetailPublicSchema = {
     properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
         title: {
             type: 'string',
-            maxLength: 255,
-            minLength: 1,
             title: 'Title'
         },
         description: {
             anyOf: [
                 {
-                    type: 'string',
-                    maxLength: 10000
+                    type: 'string'
                 },
                 {
                     type: 'null'
@@ -585,18 +713,30 @@ export const ResourceDetailPublicSchema = {
         },
         destination_url: {
             type: 'string',
-            maxLength: 2048,
             title: 'Destination Url'
         },
-        type: {
-            type: 'string',
-            maxLength: 50,
-            title: 'Type'
+        category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Category Id'
         },
-        id: {
-            type: 'string',
-            format: 'uuid',
-            title: 'Id'
+        category_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Category Name'
         },
         is_published: {
             type: 'boolean',
@@ -668,7 +808,7 @@ export const ResourceDetailPublicSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'destination_url', 'type', 'id', 'is_published', 'created_at', 'updated_at'],
+    required: ['id', 'title', 'destination_url', 'is_published', 'created_at', 'updated_at'],
     title: 'ResourceDetailPublic'
 } as const;
 
@@ -694,30 +834,51 @@ export const ResourcePreviewSchema = {
             ],
             title: 'Description'
         },
-        type: {
-            type: 'string',
-            title: 'Type'
+        category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Category Id'
+        },
+        category_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Category Name'
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'type'],
+    required: ['id', 'title', 'description'],
     title: 'ResourcePreview',
     description: 'Compact resource summary for chat recommendations.'
 } as const;
 
 export const ResourcePublicSchema = {
     properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
         title: {
             type: 'string',
-            maxLength: 255,
-            minLength: 1,
             title: 'Title'
         },
         description: {
             anyOf: [
                 {
-                    type: 'string',
-                    maxLength: 10000
+                    type: 'string'
                 },
                 {
                     type: 'null'
@@ -727,18 +888,30 @@ export const ResourcePublicSchema = {
         },
         destination_url: {
             type: 'string',
-            maxLength: 2048,
             title: 'Destination Url'
         },
-        type: {
-            type: 'string',
-            maxLength: 50,
-            title: 'Type'
+        category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Category Id'
         },
-        id: {
-            type: 'string',
-            format: 'uuid',
-            title: 'Id'
+        category_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Category Name'
         },
         is_published: {
             type: 'boolean',
@@ -790,7 +963,7 @@ export const ResourcePublicSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'destination_url', 'type', 'id', 'is_published', 'created_at', 'updated_at'],
+    required: ['id', 'title', 'destination_url', 'is_published', 'created_at', 'updated_at'],
     title: 'ResourcePublic'
 } as const;
 
@@ -819,30 +992,39 @@ export const ResourceSubmissionCreateSchema = {
             maxLength: 2048,
             title: 'Destination Url'
         },
-        type: {
-            type: 'string',
-            maxLength: 50,
-            title: 'Type'
+        category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Category Id'
         }
     },
     type: 'object',
-    required: ['title', 'destination_url', 'type'],
+    required: ['title', 'destination_url'],
     title: 'ResourceSubmissionCreate'
 } as const;
 
 export const ResourceSubmissionPublicSchema = {
     properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
         title: {
             type: 'string',
-            maxLength: 255,
-            minLength: 1,
             title: 'Title'
         },
         description: {
             anyOf: [
                 {
-                    type: 'string',
-                    maxLength: 10000
+                    type: 'string'
                 },
                 {
                     type: 'null'
@@ -852,18 +1034,30 @@ export const ResourceSubmissionPublicSchema = {
         },
         destination_url: {
             type: 'string',
-            maxLength: 2048,
             title: 'Destination Url'
         },
-        type: {
-            type: 'string',
-            maxLength: 50,
-            title: 'Type'
+        category_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Category Id'
         },
-        id: {
-            type: 'string',
-            format: 'uuid',
-            title: 'Id'
+        category_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Category Name'
         },
         status: {
             type: 'string',
@@ -886,7 +1080,7 @@ export const ResourceSubmissionPublicSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'destination_url', 'type', 'id', 'status', 'submitter_id', 'created_at', 'updated_at'],
+    required: ['id', 'title', 'destination_url', 'status', 'submitter_id', 'created_at', 'updated_at'],
     title: 'ResourceSubmissionPublic'
 } as const;
 
@@ -929,17 +1123,17 @@ export const ResourceSubmissionUpdateSchema = {
             ],
             title: 'Destination Url'
         },
-        type: {
+        category_id: {
             anyOf: [
                 {
                     type: 'string',
-                    maxLength: 50
+                    format: 'uuid'
                 },
                 {
                     type: 'null'
                 }
             ],
-            title: 'Type'
+            title: 'Category Id'
         }
     },
     type: 'object',
@@ -1004,17 +1198,17 @@ export const ResourceUpdateSchema = {
             ],
             title: 'Destination Url'
         },
-        type: {
+        category_id: {
             anyOf: [
                 {
                     type: 'string',
-                    maxLength: 50
+                    format: 'uuid'
                 },
                 {
                     type: 'null'
                 }
             ],
-            title: 'Type'
+            title: 'Category Id'
         },
         is_published: {
             anyOf: [

@@ -47,6 +47,7 @@ import {
 } from "@/components/ui/table"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { getCategoriesQueryOptions } from "@/hooks/useCategories"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 type SortOption = "newest" | "oldest" | "titleAsc" | "titleDesc"
@@ -55,29 +56,14 @@ type ViewMode = "grid" | "list"
 const SORT_OPTIONS: SortOption[] = ["newest", "oldest", "titleAsc", "titleDesc"]
 const VIEW_STORAGE_KEY = "resources:viewMode"
 
-const RESOURCE_TYPES = [
-  "all",
-  "website",
-  "github_repo",
-  "tutorial",
-  "tool",
-  "paper",
-  "course",
-  "dataset",
-  "library",
-  "article",
-  "video",
-  "other",
-] as const
-
 function getResourcesQueryOptions({
   q,
-  type,
+  categoryId,
   skip,
   limit,
 }: {
   q?: string
-  type?: string
+  categoryId?: string
   skip: number
   limit: number
 }) {
@@ -87,9 +73,9 @@ function getResourcesQueryOptions({
         skip,
         limit,
         q,
-        type: type && type !== "all" ? type : undefined,
+        categoryId: categoryId && categoryId !== "all" ? categoryId : undefined,
       }),
-    queryKey: ["resources", { q, type, skip, limit }],
+    queryKey: ["resources", { q, categoryId, skip, limit }],
   }
 }
 
@@ -112,13 +98,8 @@ const RESOURCE_TYPE_ICONS: Record<string, typeof FaGlobe> = {
   article: PiNewspaper,
 }
 
-function getResourceTypeIcon(type?: string) {
+function getResourceTypeIcon(type?: string | null) {
   return RESOURCE_TYPE_ICONS[type ?? ""] ?? FaGlobe
-}
-
-function getTypeLabel(t: ReturnType<typeof useTranslation>["t"], type: string) {
-  if (type === "all") return t("resources.list.allTypes")
-  return t(`resources.types.${type}`, { defaultValue: type })
 }
 
 function ViewModeToggle({
@@ -214,7 +195,7 @@ function getPageItems(current: number, total: number) {
 
 function ResourcesListContent({
   q,
-  type,
+  categoryId,
   page,
   pageSize,
   sort,
@@ -222,7 +203,7 @@ function ResourcesListContent({
   onPageChange,
 }: {
   q?: string
-  type?: string
+  categoryId?: string
   page: number
   pageSize: number
   sort: SortOption
@@ -233,7 +214,7 @@ function ResourcesListContent({
   const { data: resources } = useSuspenseQuery(
     getResourcesQueryOptions({
       q,
-      type,
+      categoryId,
       skip: (page - 1) * pageSize,
       limit: pageSize,
     }),
@@ -321,7 +302,7 @@ function ResourcesListContent({
             <TableBody>
               {sortedData.map((resource) => {
                 const host = safeHostname(resource.destination_url)
-                const Icon = getResourceTypeIcon(resource.type)
+                const Icon = getResourceTypeIcon(resource.category_name)
                 return (
                   <TableRow key={resource.id}>
                     <TableCell className="w-[60%]">
@@ -347,7 +328,7 @@ function ResourcesListContent({
                     </TableCell>
                     <TableCell className="w-[1%] whitespace-nowrap px-2 text-center">
                       <Badge variant="secondary" className="whitespace-nowrap">
-                        {getTypeLabel(t, resource.type)}
+                        {resource.category_name ?? "-"}
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden text-muted-foreground text-sm md:table-cell">
@@ -399,7 +380,7 @@ function ResourcesListContent({
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {sortedData.map((resource) => {
             const host = safeHostname(resource.destination_url)
-            const Icon = getResourceTypeIcon(resource.type)
+            const Icon = getResourceTypeIcon(resource.category_name)
             return (
               <Card
                 key={resource.id}
@@ -431,7 +412,7 @@ function ResourcesListContent({
                       </div>
                     </div>
                     <Badge variant="secondary" className="shrink-0">
-                      {getTypeLabel(t, resource.type)}
+                      {resource.category_name ?? "-"}
                     </Badge>
                   </div>
                   {resource.description ? (
@@ -641,8 +622,7 @@ function ResourcesPage() {
   const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState("")
   const [activeQuery, setActiveQuery] = useState("")
-  const [activeType, setActiveType] =
-    useState<(typeof RESOURCE_TYPES)[number]>("all")
+  const [activeCategoryId, setActiveCategoryId] = useState<string>("all")
   const [sort, setSort] = useState<SortOption>("newest")
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     try {
@@ -657,6 +637,9 @@ function ResourcesPage() {
   const pageSize = 24
   useDocumentTitle("resources.pageTitle")
 
+  // Fetch categories for the filter tabs
+  const { data: categoriesData } = useSuspenseQuery(getCategoriesQueryOptions())
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     setActiveQuery(searchQuery)
@@ -666,7 +649,7 @@ function ResourcesPage() {
   const handleClear = () => {
     setSearchQuery("")
     setActiveQuery("")
-    setActiveType("all")
+    setActiveCategoryId("all")
     setSort("newest")
     setPage(1)
   }
@@ -681,7 +664,10 @@ function ResourcesPage() {
   }
 
   const hasActiveFilters =
-    activeQuery || searchQuery || activeType !== "all" || sort !== "newest"
+    activeQuery ||
+    searchQuery ||
+    activeCategoryId !== "all" ||
+    sort !== "newest"
 
   return (
     <div className="flex flex-col gap-6 -mx-6 px-3 sm:mx-0 sm:px-0">
@@ -733,22 +719,28 @@ function ResourcesPage() {
 
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <Tabs
-                value={activeType}
+                value={activeCategoryId}
                 onValueChange={(value) => {
-                  setActiveType(value as (typeof RESOURCE_TYPES)[number])
+                  setActiveCategoryId(value)
                   setPage(1)
                 }}
                 className="relative w-full overflow-hidden md:w-auto"
               >
                 <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
                 <TabsList className="h-auto w-full justify-start gap-0 sm:gap-2 overflow-x-auto bg-transparent p-0 py-1 scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pr-8">
-                  {RESOURCE_TYPES.map((type) => (
+                  <TabsTrigger
+                    value="all"
+                    className="flex-none rounded-full border bg-muted/40 text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-none hover:bg-muted/60"
+                  >
+                    {t("resources.list.allTypes")}
+                  </TabsTrigger>
+                  {categoriesData?.data?.map((cat) => (
                     <TabsTrigger
-                      key={type}
-                      value={type}
+                      key={cat.id}
+                      value={cat.id}
                       className="flex-none rounded-full border bg-muted/40 text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-none hover:bg-muted/60"
                     >
-                      {getTypeLabel(t, type)}
+                      {cat.name}
                     </TabsTrigger>
                   ))}
                 </TabsList>
@@ -774,7 +766,7 @@ function ResourcesPage() {
       <Suspense fallback={<ResourcesListSkeleton viewMode={viewMode} />}>
         <ResourcesListContent
           q={activeQuery || undefined}
-          type={activeType}
+          categoryId={activeCategoryId !== "all" ? activeCategoryId : undefined}
           page={page}
           pageSize={pageSize}
           sort={sort}

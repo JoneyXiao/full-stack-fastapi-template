@@ -2,11 +2,15 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
-from sqlmodel import Session, func, select
+from sqlmodel import Session, col, func, select
 
 from app.core.security import get_password_hash, verify_password
 from app.models import (
     AvatarRateLimit,
+    Category,
+    CategoryAdmin,
+    CategoryCreate,
+    CategoryUpdate,
     ChatTranscriptCreate,
     Comment,
     CommentCreate,
@@ -134,7 +138,7 @@ def create_submission(
         title=submission_in.title,
         description=submission_in.description,
         destination_url=submission_in.destination_url,
-        type=submission_in.type,
+        category_id=submission_in.category_id,
         submitter_id=submitter_id,
         status="pending",
     )
@@ -181,7 +185,7 @@ def approve_submission(
         title=db_submission.title,
         description=db_submission.description,
         destination_url=db_submission.destination_url,
-        type=db_submission.type,
+        category_id=db_submission.category_id,
         is_published=True,
     )
     session.add(resource)
@@ -205,6 +209,160 @@ def reject_submission(
     session.commit()
     session.refresh(db_submission)
     return db_submission
+
+
+# ---------------------------------------------------------------------------
+# Category CRUD Operations
+# ---------------------------------------------------------------------------
+
+
+def create_category(*, session: Session, category_in: CategoryCreate) -> Category:
+    """Create a new category (admin only)."""
+    db_category = Category.model_validate(category_in)
+    session.add(db_category)
+    session.commit()
+    session.refresh(db_category)
+    return db_category
+
+
+def get_category(*, session: Session, category_id: uuid.UUID) -> Category | None:
+    """Get a category by ID."""
+    return session.get(Category, category_id)
+
+
+def get_category_by_name(
+    *, session: Session, name: str, case_insensitive: bool = True
+) -> Category | None:
+    """Get a category by name.
+
+    Args:
+        session: Database session
+        name: Category name to search for
+        case_insensitive: If True, performs case-insensitive search (default)
+    """
+    if case_insensitive:
+        statement = select(Category).where(func.lower(Category.name) == name.lower())
+    else:
+        statement = select(Category).where(Category.name == name)
+    return session.exec(statement).first()
+
+
+def update_category(
+    *, session: Session, db_category: Category, category_in: CategoryUpdate
+) -> Category:
+    """Update/rename a category (admin only)."""
+    update_data = category_in.model_dump(exclude_unset=True)
+    update_data["updated_at"] = datetime.now(timezone.utc)
+    db_category.sqlmodel_update(update_data)
+    session.add(db_category)
+    session.commit()
+    session.refresh(db_category)
+    return db_category
+
+
+def delete_category(*, session: Session, db_category: Category) -> None:
+    """Delete a category (admin only).
+
+    Note: This will fail if the category is in use (FK constraint).
+    Use get_category_usage() first to check if deletion is safe.
+    """
+    session.delete(db_category)
+    session.commit()
+
+
+def get_category_usage(*, session: Session, category_id: uuid.UUID) -> tuple[int, int]:
+    """Get the usage counts for a category.
+
+    Returns:
+        Tuple of (resources_count, submissions_count)
+    """
+    resources_count = session.exec(
+        select(func.count()).where(Resource.category_id == category_id)
+    ).one()
+    submissions_count = session.exec(
+        select(func.count()).where(ResourceSubmission.category_id == category_id)
+    ).one()
+    return resources_count, submissions_count
+
+
+def is_category_in_use(*, session: Session, category_id: uuid.UUID) -> bool:
+    """Check if a category is in use by any resource or submission."""
+    resources_count, submissions_count = get_category_usage(
+        session=session, category_id=category_id
+    )
+    return resources_count > 0 or submissions_count > 0
+
+
+def list_categories(
+    *, session: Session, skip: int = 0, limit: int = 100
+) -> tuple[list[Category], int]:
+    """List all categories with pagination.
+
+    Returns:
+        Tuple of (categories_list, total_count)
+    """
+    count = session.exec(select(func.count()).select_from(Category)).one()
+    statement = select(Category).offset(skip).limit(limit).order_by(Category.name)
+    categories = session.exec(statement).all()
+    return list(categories), count
+
+
+def list_categories_admin(
+    *, session: Session, skip: int = 0, limit: int = 100
+) -> tuple[list[CategoryAdmin], int]:
+    """List all categories with usage info (admin only).
+
+    Uses aggregate queries to avoid N+1 query problem.
+
+    Returns:
+        Tuple of (categories_admin_list, total_count)
+    """
+    count = session.exec(select(func.count()).select_from(Category)).one()
+    statement = select(Category).offset(skip).limit(limit).order_by(Category.name)
+    categories = session.exec(statement).all()
+
+    if not categories:
+        return [], count
+
+    # Get all category IDs for batch query
+    category_ids = [cat.id for cat in categories]
+
+    # Use col() to get the proper column reference for SQLAlchemy operations
+    resource_cat_col = col(Resource.category_id)
+    submission_cat_col = col(ResourceSubmission.category_id)
+
+    # Batch query: count resources per category
+    resources_stmt = (
+        select(resource_cat_col, func.count().label("cnt"))
+        .where(resource_cat_col.in_(category_ids))
+        .group_by(resource_cat_col)
+    )
+    resources_counts = {row[0]: row[1] for row in session.exec(resources_stmt).all()}
+
+    # Batch query: count submissions per category
+    submissions_stmt = (
+        select(submission_cat_col, func.count().label("cnt"))
+        .where(submission_cat_col.in_(category_ids))
+        .group_by(submission_cat_col)
+    )
+    submissions_counts = {
+        row[0]: row[1] for row in session.exec(submissions_stmt).all()
+    }
+
+    admin_list: list[CategoryAdmin] = []
+    for cat in categories:
+        resources_count = resources_counts.get(cat.id, 0)
+        submissions_count = submissions_counts.get(cat.id, 0)
+        admin_list.append(
+            CategoryAdmin(
+                id=cat.id,
+                name=cat.name,
+                in_use=resources_count > 0 or submissions_count > 0,
+                resources_count=resources_count,
+                submissions_count=submissions_count,
+            )
+        )
+    return admin_list, count
 
 
 # Comment CRUD

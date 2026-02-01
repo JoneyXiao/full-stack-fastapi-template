@@ -170,9 +170,7 @@ function SubmissionDetailContent({ submissionId }: { submissionId: string }) {
               </h1>
               <div className="flex items-center gap-2 mt-2">
                 <Badge variant="secondary">
-                  {t(`submissions.types.${submission.type}`, {
-                    defaultValue: submission.type,
-                  })}
+                  {submission.category_name ?? "-"}
                 </Badge>
                 <StatusBadge status={submission.status} />
               </div>

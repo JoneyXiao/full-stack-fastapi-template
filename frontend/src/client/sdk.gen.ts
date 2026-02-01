@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { AvatarsGetAvatarData, AvatarsGetAvatarResponse, ChatTranscriptsListMyTranscriptsData, ChatTranscriptsListMyTranscriptsResponse, ChatTranscriptsSaveTranscriptData, ChatTranscriptsSaveTranscriptResponse, ChatTranscriptsGetMyTranscriptData, ChatTranscriptsGetMyTranscriptResponse, ChatTranscriptsDeleteMyTranscriptData, ChatTranscriptsDeleteMyTranscriptResponse, CommentsUpdateCommentData, CommentsUpdateCommentResponse, CommentsDeleteCommentData, CommentsDeleteCommentResponse, CommentsUpdateSubmissionCommentData, CommentsUpdateSubmissionCommentResponse, CommentsDeleteSubmissionCommentData, CommentsDeleteSubmissionCommentResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LandingChatRecommendResourcesData, LandingChatRecommendResourcesResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, ResourcesListResourcesData, ResourcesListResourcesResponse, ResourcesCreateResourceData, ResourcesCreateResourceResponse, ResourcesGetResourceData, ResourcesGetResourceResponse, ResourcesUpdateResourceData, ResourcesUpdateResourceResponse, ResourcesDeleteResourceData, ResourcesDeleteResourceResponse, ResourcesLikeResourceData, ResourcesLikeResourceResponse, ResourcesUnlikeResourceData, ResourcesUnlikeResourceResponse, ResourcesFavoriteResourceData, ResourcesFavoriteResourceResponse, ResourcesUnfavoriteResourceData, ResourcesUnfavoriteResourceResponse, ResourcesListMyFavoritesData, ResourcesListMyFavoritesResponse, ResourcesListResourceCommentsData, ResourcesListResourceCommentsResponse, ResourcesCreateResourceCommentData, ResourcesCreateResourceCommentResponse, SubmissionsListMySubmissionsData, SubmissionsListMySubmissionsResponse, SubmissionsCreateSubmissionData, SubmissionsCreateSubmissionResponse, SubmissionsListPendingSubmissionsData, SubmissionsListPendingSubmissionsResponse, SubmissionsGetSubmissionData, SubmissionsGetSubmissionResponse, SubmissionsUpdateSubmissionData, SubmissionsUpdateSubmissionResponse, SubmissionsDeleteSubmissionData, SubmissionsDeleteSubmissionResponse, SubmissionsApproveSubmissionData, SubmissionsApproveSubmissionResponse, SubmissionsRejectSubmissionData, SubmissionsRejectSubmissionResponse, SubmissionsListSubmissionCommentsData, SubmissionsListSubmissionCommentsResponse, SubmissionsCreateSubmissionCommentData, SubmissionsCreateSubmissionCommentResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersUploadAvatarData, UsersUploadAvatarResponse, UsersDeleteAvatarResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse, WechatLoginWechatLoginStartData, WechatLoginWechatLoginStartResponse, WechatLoginWechatLoginCompleteData, WechatLoginWechatLoginCompleteResponse, WechatLoginWechatLinkStatusResponse, WechatLoginWechatLinkData, WechatLoginWechatLinkResponse, WechatLoginWechatUnlinkResponse } from './types.gen';
+import type { AvatarsGetAvatarData, AvatarsGetAvatarResponse, CategoriesListCategoriesData, CategoriesListCategoriesResponse, CategoriesCreateCategoryData, CategoriesCreateCategoryResponse, CategoriesListCategoriesAdminData, CategoriesListCategoriesAdminResponse, CategoriesUpdateCategoryData, CategoriesUpdateCategoryResponse, CategoriesDeleteCategoryData, CategoriesDeleteCategoryResponse, ChatTranscriptsListMyTranscriptsData, ChatTranscriptsListMyTranscriptsResponse, ChatTranscriptsSaveTranscriptData, ChatTranscriptsSaveTranscriptResponse, ChatTranscriptsGetMyTranscriptData, ChatTranscriptsGetMyTranscriptResponse, ChatTranscriptsDeleteMyTranscriptData, ChatTranscriptsDeleteMyTranscriptResponse, CommentsUpdateCommentData, CommentsUpdateCommentResponse, CommentsDeleteCommentData, CommentsDeleteCommentResponse, CommentsUpdateSubmissionCommentData, CommentsUpdateSubmissionCommentResponse, CommentsDeleteSubmissionCommentData, CommentsDeleteSubmissionCommentResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LandingChatRecommendResourcesData, LandingChatRecommendResourcesResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, ResourcesListResourcesData, ResourcesListResourcesResponse, ResourcesCreateResourceData, ResourcesCreateResourceResponse, ResourcesGetResourceData, ResourcesGetResourceResponse, ResourcesUpdateResourceData, ResourcesUpdateResourceResponse, ResourcesDeleteResourceData, ResourcesDeleteResourceResponse, ResourcesLikeResourceData, ResourcesLikeResourceResponse, ResourcesUnlikeResourceData, ResourcesUnlikeResourceResponse, ResourcesFavoriteResourceData, ResourcesFavoriteResourceResponse, ResourcesUnfavoriteResourceData, ResourcesUnfavoriteResourceResponse, ResourcesListMyFavoritesData, ResourcesListMyFavoritesResponse, ResourcesListResourceCommentsData, ResourcesListResourceCommentsResponse, ResourcesCreateResourceCommentData, ResourcesCreateResourceCommentResponse, SubmissionsListMySubmissionsData, SubmissionsListMySubmissionsResponse, SubmissionsCreateSubmissionData, SubmissionsCreateSubmissionResponse, SubmissionsListPendingSubmissionsData, SubmissionsListPendingSubmissionsResponse, SubmissionsGetSubmissionData, SubmissionsGetSubmissionResponse, SubmissionsUpdateSubmissionData, SubmissionsUpdateSubmissionResponse, SubmissionsDeleteSubmissionData, SubmissionsDeleteSubmissionResponse, SubmissionsApproveSubmissionData, SubmissionsApproveSubmissionResponse, SubmissionsRejectSubmissionData, SubmissionsRejectSubmissionResponse, SubmissionsListSubmissionCommentsData, SubmissionsListSubmissionCommentsResponse, SubmissionsCreateSubmissionCommentData, SubmissionsCreateSubmissionCommentResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersUploadAvatarData, UsersUploadAvatarResponse, UsersDeleteAvatarResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse, WechatLoginWechatLoginStartData, WechatLoginWechatLoginStartResponse, WechatLoginWechatLoginCompleteData, WechatLoginWechatLoginCompleteResponse, WechatLoginWechatLinkStatusResponse, WechatLoginWechatLinkData, WechatLoginWechatLinkResponse, WechatLoginWechatUnlinkResponse } from './types.gen';
 
 export class AvatarsService {
     /**
@@ -30,6 +30,125 @@ export class AvatarsService {
             },
             errors: {
                 404: 'Avatar not found',
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class CategoriesService {
+    /**
+     * List Categories
+     * List all categories (public, for filtering and selection).
+     * Returns {data, count} where data is a list of id+name.
+     * @param data The data for the request.
+     * @param data.skip
+     * @param data.limit
+     * @returns CategoriesPublic Successful Response
+     * @throws ApiError
+     */
+    public static listCategories(data: CategoriesListCategoriesData = {}): CancelablePromise<CategoriesListCategoriesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/categories/',
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Category
+     * Create a new category (admin-only).
+     * Returns 409 if a category with the same name already exists (case-insensitive).
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns CategoryPublic Successful Response
+     * @throws ApiError
+     */
+    public static createCategory(data: CategoriesCreateCategoryData): CancelablePromise<CategoriesCreateCategoryResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/categories/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * List Categories Admin
+     * List all categories with usage information (admin-only).
+     * Returns {data, count} where data includes in_use and usage counts.
+     * @param data The data for the request.
+     * @param data.skip
+     * @param data.limit
+     * @returns CategoriesAdmin Successful Response
+     * @throws ApiError
+     */
+    public static listCategoriesAdmin(data: CategoriesListCategoriesAdminData = {}): CancelablePromise<CategoriesListCategoriesAdminResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/categories/admin',
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Category
+     * Rename a category (admin-only).
+     * Returns 409 if a category with the new name already exists (case-insensitive).
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.requestBody
+     * @returns CategoryPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateCategory(data: CategoriesUpdateCategoryData): CancelablePromise<CategoriesUpdateCategoryResponse> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/v1/categories/{id}',
+            path: {
+                id: data.id
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Category
+     * Delete a category (admin-only).
+     * Returns 409 if category is in use by any resource or submission.
+     * Uses FK constraint as final guard against race conditions.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteCategory(data: CategoriesDeleteCategoryData): CancelablePromise<CategoriesDeleteCategoryResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/categories/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
                 422: 'Validation Error'
             }
         });
@@ -472,10 +591,15 @@ export class ResourcesService {
     /**
      * List Resources
      * List published resources. Admins can filter by is_published; others always see published.
+     *
+     * Filtering by category:
+     * - `category_id`: Primary filter (preferred)
+     * - `type`: Deprecated alias; resolves via case-insensitive match on category name
      * @param data The data for the request.
      * @param data.skip
      * @param data.limit
      * @param data.q
+     * @param data.categoryId
      * @param data.type
      * @param data.isPublished
      * @returns ResourcesPublic Successful Response
@@ -489,6 +613,7 @@ export class ResourcesService {
                 skip: data.skip,
                 limit: data.limit,
                 q: data.q,
+                category_id: data.categoryId,
                 type: data.type,
                 is_published: data.isPublished
             },
@@ -770,6 +895,7 @@ export class SubmissionsService {
     /**
      * Create Submission
      * Create a new resource submission.
+     *
      * Rejects with 409 if a Resource with the same destination_url already exists.
      * @param data The data for the request.
      * @param data.requestBody
@@ -840,6 +966,10 @@ export class SubmissionsService {
      * Update Submission
      * Update a pending submission.
      * Only the owner can update, and only if status is pending.
+     *
+     * Accepts `category_id` (preferred) or legacy `type` (deprecated).
+     * If `type` is provided without `category_id`, it is resolved via case-insensitive
+     * match on category name. Unknown types return 400.
      * @param data The data for the request.
      * @param data.id
      * @param data.requestBody

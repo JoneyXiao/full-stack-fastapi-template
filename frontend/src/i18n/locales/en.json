@@ -6,8 +6,12 @@
     "notAvailable": "N/A",
     "cancel": "Cancel",
     "save": "Save",
+    "saving": "Saving...",
     "delete": "Delete",
+    "deleting": "Deleting...",
     "edit": "Edit",
+    "create": "Create",
+    "creating": "Creating...",
     "close": "Close",
     "back": "Back",
     "next": "Next",
@@ -490,15 +494,16 @@
       "fields": {
         "title": "Title",
         "url": "URL",
-        "type": "Resource Type",
+        "category": "Category",
         "description": "Description"
       },
       "placeholders": {
         "title": "e.g., Introduction to Machine Learning",
         "url": "https://example.com/resource",
-        "type": "Select a type",
+        "category": "Select a category",
         "description": "Briefly describe what this resource is about..."
       },
+      "loadingCategories": "Loading categories...",
       "markdownSupported": "Markdown formatting is supported. Use the toolbar or type Markdown syntax.",
       "descriptionTooLong": "Description must be {{max}} characters or less",
       "submitting": "Submitting...",
@@ -533,7 +538,8 @@
     "tabs": {
       "users": "Users",
       "resources": "Resources",
-      "submissions": "Pending Submissions"
+      "submissions": "Pending Submissions",
+      "categories": "Categories"
     },
     "users": {
       "title": "Users",
@@ -577,6 +583,33 @@
       "reject": "Reject",
       "approveSuccess": "Submission approved and published",
       "rejectSuccess": "Submission rejected"
+    },
+    "categories": {
+      "title": "Categories",
+      "description": "Manage resource categories",
+      "noCategories": "No categories yet",
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g., Tutorial",
+      "resourcesCount": "Resources",
+      "submissionsCount": "Submissions",
+      "status": "Status",
+      "actions": "Actions",
+      "inUse": "In Use",
+      "unused": "Unused",
+      "create": "Create Category",
+      "createTitle": "Create Category",
+      "createDescription": "Enter a name for the new category",
+      "createSuccess": "Category created successfully",
+      "createFailed": "Failed to create category",
+      "renameTitle": "Rename Category",
+      "renameDescription": "Enter a new name for this category",
+      "renameSuccess": "Category renamed successfully",
+      "renameFailed": "Failed to rename category",
+      "deleteTitle": "Delete Category",
+      "deleteDescription": "Are you sure you want to delete the category '{{name}}'? This action cannot be undone.",
+      "deleteSuccess": "Category deleted successfully",
+      "deleteFailed": "Failed to delete category",
+      "cannotDeleteInUse": "Cannot delete category that is in use"
     }
   },
   "search": {

@@ -223,7 +223,7 @@ def get_chat_recommendations(
             id=r.id,
             title=r.title,
             description=r.description,
-            type=r.type,
+            category_id=r.category_id,
         )
         for r in resources
     ]

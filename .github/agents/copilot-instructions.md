@@ -14,6 +14,7 @@ Auto-generated from all feature plans. Last updated: 2026-01-05
 - Python >=3.10 (backend), TypeScript 5.9 (frontend), Node 24 (frontend) + FastAPI, SQLModel, Alembic, httpx, PostgreSQL; React, TanStack Router/Query, Vite, Playwrigh (007-wechat-login)
 - Backend Python 3.11; Frontend TypeScript (Vite) + FastAPI, SQLModel, React, TanStack Router/Query, sonner (toasts), i18nex (008-wechat-login-unavailable)
 - N/A (no new persistence) (008-wechat-login-unavailable)
+- Python >=3.10 (backend), TypeScript (frontend) + FastAPI, SQLModel, Alembic, PostgreSQL, React, TanStack Router/Query, shadcn/ui, @hey-api/openapi-ts (generated client) (009-resource-categories)
 
 ## Project Structure
 
@@ -44,9 +45,9 @@ Frontend:
 Python >=3.10,<4.0 (backend), TypeScript (frontend): Follow standard conventions
 
 ## Recent Changes
-- 008-wechat-login-unavailable: Added Backend Python 3.11; Frontend TypeScript (Vite) + FastAPI, SQLModel, React, TanStack Router/Query, sonner (toasts), i18nex
-- 007-wechat-login: Added Python >=3.10 (backend), TypeScript 5.9 (frontend), Node 24 (frontend) + FastAPI, SQLModel, Alembic, httpx, PostgreSQL; React, TanStack Router/Query, Vite, Playwrigh
-- 007-wechat-login: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
+- 009-resource-categories: Added Python >=3.10 (backend), TypeScript (frontend) + FastAPI, SQLModel, Alembic, PostgreSQL, React, TanStack Router/Query, shadcn/ui, @hey-api/openapi-ts (generated client)
+- 009-resource-categories: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
+- 009-resource-categories: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

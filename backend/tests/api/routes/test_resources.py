@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session
 
 from app.core.config import settings
-from tests.utils.resource import create_random_resource
+from tests.utils.resource import create_random_resource, get_or_create_category
 
 
 def test_list_resources_public(client: TestClient, db: Session) -> None:
@@ -46,17 +46,24 @@ def test_list_resources_with_search(client: TestClient, db: Session) -> None:
     assert str(resource.id) in resource_ids
 
 
-def test_list_resources_with_type_filter(client: TestClient) -> None:
-    """Test filtering resources by type."""
-    unique_type = f"testtype{uuid.uuid4().hex[:8]}"
+def test_list_resources_with_category_id_filter(
+    client: TestClient, db: Session
+) -> None:
+    """Test filtering resources by category_id."""
+    unique_name = f"testcategory{uuid.uuid4().hex[:8]}"
+    category = get_or_create_category(db, name=unique_name)
+    resource = create_random_resource(db, category_id=category.id, is_published=True)
     response = client.get(
-        f"{settings.API_V1_STR}/resources/", params={"type": unique_type}
+        f"{settings.API_V1_STR}/resources/", params={"category_id": str(category.id)}
     )
     assert response.status_code == 200
     content = response.json()
     assert content["count"] >= 1
+    resource_ids = [r["id"] for r in content["data"]]
+    assert str(resource.id) in resource_ids
+    # All returned resources should have this category_id
     for r in content["data"]:
-        assert r["type"] == unique_type
+        assert r["category_id"] == str(category.id)
 
 
 def test_get_resource(client: TestClient, db: Session) -> None:
@@ -85,14 +92,15 @@ def test_get_unpublished_resource_forbidden(client: TestClient, db: Session) -> 
 
 
 def test_create_resource_admin(
-    client: TestClient, superuser_token_headers: dict[str, str]
+    client: TestClient, superuser_token_headers: dict[str, str], db: Session
 ) -> None:
-    """Test creating a resource as admin."""
+    """Test creating a resource as admin with category_id."""
+    category = get_or_create_category(db, name="tutorial")
     data = {
         "title": "Test Resource",
         "description": "A test resource",
         "destination_url": f"https://example.com/{uuid.uuid4().hex}",
-        "type": "tutorial",
+        "category_id": str(category.id),
     }
     response = client.post(
         f"{settings.API_V1_STR}/resources/",
@@ -104,16 +112,19 @@ def test_create_resource_admin(
     assert content["title"] == data["title"]
     assert content["destination_url"] == data["destination_url"]
     assert content["is_published"] is True
+    assert content["category_id"] == str(category.id)
+    assert content["category_name"] == "tutorial"
 
 
 def test_create_resource_forbidden_for_normal_user(
-    client: TestClient, normal_user_token_headers: dict[str, str]
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
 ) -> None:
     """Test that normal users cannot create resources."""
+    category = get_or_create_category(db, name="tutorial")
     data = {
         "title": "Test Resource",
         "destination_url": f"https://example.com/{uuid.uuid4().hex}",
-        "type": "tutorial",
+        "category_id": str(category.id),
     }
     response = client.post(
         f"{settings.API_V1_STR}/resources/",
@@ -128,10 +139,11 @@ def test_create_resource_duplicate_url(
 ) -> None:
     """Test that duplicate destination URLs are rejected."""
     existing = create_random_resource(db, is_published=True)
+    category = get_or_create_category(db, name="tutorial")
     data = {
         "title": "Another Resource",
         "destination_url": existing.destination_url,
-        "type": "tutorial",
+        "category_id": str(category.id),
     }
     response = client.post(
         f"{settings.API_V1_STR}/resources/",

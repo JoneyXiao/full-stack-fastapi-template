@@ -9,6 +9,7 @@ from sqlmodel import col, func, or_, select
 from app.api.deps import CurrentUser, OptionalUser, SessionDep
 from app.api.routes.avatars import get_avatar_url
 from app.models import (
+    Category,
     Comment,
     CommentCreate,
     CommentPublic,
@@ -41,11 +42,16 @@ def list_resources(
     skip: int = 0,
     limit: int = 50,
     q: str | None = None,
-    type: str | None = None,
+    category_id: uuid.UUID | None = None,
+    type: str | None = None,  # Deprecated: use category_id instead
     is_published: bool | None = None,
 ) -> Any:
     """
     List published resources. Admins can filter by is_published; others always see published.
+
+    Filtering by category:
+    - `category_id`: Primary filter (preferred)
+    - `type`: Deprecated alias; resolves via case-insensitive match on category name
     """
     # Base query
     query = select(Resource)
@@ -66,9 +72,19 @@ def list_resources(
             )
         )
 
-    # Filter by type
-    if type:
-        query = query.where(Resource.type == type)
+    # Filter by category (category_id takes precedence over legacy type)
+    if category_id:
+        query = query.where(Resource.category_id == category_id)
+    elif type:
+        # Legacy compatibility: resolve type to category via case-insensitive match
+        category = session.exec(
+            select(Category).where(func.lower(Category.name) == type.lower())
+        ).first()
+        if category:
+            query = query.where(Resource.category_id == category.id)
+        else:
+            # Unknown type: return empty results (no matches)
+            query = query.where(Resource.id == None)  # noqa: E711
 
     # Count before pagination
     count_query = select(func.count()).select_from(query.subquery())
@@ -78,7 +94,30 @@ def list_resources(
     query = query.offset(skip).limit(limit).order_by(Resource.created_at.desc())
     resources = session.exec(query).all()
 
-    return ResourcesPublic(data=resources, count=count)
+    # Build response with category_name denormalized
+    data = []
+    for resource in resources:
+        category_name = None
+        if resource.category_id:
+            cat = session.get(Category, resource.category_id)
+            if cat:
+                category_name = cat.name
+        data.append(
+            ResourcePublic(
+                id=resource.id,
+                title=resource.title,
+                description=resource.description,
+                destination_url=resource.destination_url,
+                is_published=resource.is_published,
+                created_at=resource.created_at,
+                updated_at=resource.updated_at,
+                published_by_id=resource.published_by_id,
+                category_id=resource.category_id,
+                category_name=category_name,
+            )
+        )
+
+    return ResourcesPublic(data=data, count=count)
 
 
 @router.get("/{id}", response_model=ResourceDetailPublic)
@@ -132,14 +171,30 @@ def get_resource(session: SessionDep, current_user: OptionalUser, id: uuid.UUID)
             published_by_display = publisher.full_name or publisher.email
             published_by_avatar_url = get_avatar_url(publisher)
 
+    # Get category name if category is set
+    category_name = None
+    if resource.category_id:
+        category = session.get(Category, resource.category_id)
+        if category:
+            category_name = category.name
+
     return ResourceDetailPublic(
-        **resource.model_dump(),
+        id=resource.id,
+        title=resource.title,
+        description=resource.description,
+        destination_url=resource.destination_url,
+        category_id=resource.category_id,
+        category_name=category_name,
+        is_published=resource.is_published,
+        published_by_id=resource.published_by_id,
+        published_by_display=published_by_display,
+        published_by_avatar_url=published_by_avatar_url,
+        created_at=resource.created_at,
+        updated_at=resource.updated_at,
         likes_count=likes_count,
         favorites_count=favorites_count,
         liked_by_me=liked_by_me,
         favorited_by_me=favorited_by_me,
-        published_by_display=published_by_display,
-        published_by_avatar_url=published_by_avatar_url,
     )
 
 
@@ -168,14 +223,37 @@ def create_resource(
             detail="A resource with this destination URL already exists",
         )
 
-    resource = Resource.model_validate(
-        resource_in,
-        update={"is_published": True, "published_by_id": current_user.id},
+    resource = Resource(
+        title=resource_in.title,
+        description=resource_in.description,
+        destination_url=resource_in.destination_url,
+        category_id=resource_in.category_id,
+        is_published=True,
+        published_by_id=current_user.id,
     )
     session.add(resource)
     session.commit()
     session.refresh(resource)
-    return resource
+
+    # Build response with category_name
+    category_name = None
+    if resource.category_id:
+        cat = session.get(Category, resource.category_id)
+        if cat:
+            category_name = cat.name
+
+    return ResourcePublic(
+        id=resource.id,
+        title=resource.title,
+        description=resource.description,
+        destination_url=resource.destination_url,
+        category_id=resource.category_id,
+        category_name=category_name,
+        is_published=resource.is_published,
+        published_by_id=resource.published_by_id,
+        created_at=resource.created_at,
+        updated_at=resource.updated_at,
+    )
 
 
 @router.put("/{id}", response_model=ResourcePublic)
@@ -217,7 +295,26 @@ def update_resource(
     session.add(resource)
     session.commit()
     session.refresh(resource)
-    return resource
+
+    # Build response with category_name
+    category_name = None
+    if resource.category_id:
+        cat = session.get(Category, resource.category_id)
+        if cat:
+            category_name = cat.name
+
+    return ResourcePublic(
+        id=resource.id,
+        title=resource.title,
+        description=resource.description,
+        destination_url=resource.destination_url,
+        category_id=resource.category_id,
+        category_name=category_name,
+        is_published=resource.is_published,
+        published_by_id=resource.published_by_id,
+        created_at=resource.created_at,
+        updated_at=resource.updated_at,
+    )
 
 
 @router.delete("/{id}", response_model=Message)

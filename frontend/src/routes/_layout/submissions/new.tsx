@@ -23,24 +23,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useCategories } from "@/hooks/useCategories"
 import useCustomToast from "@/hooks/useCustomToast"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 export const Route = createFileRoute("/_layout/submissions/new")({
   component: NewSubmissionPage,
 })
-
-const RESOURCE_TYPES = [
-  "tutorial",
-  "tool",
-  "paper",
-  "course",
-  "dataset",
-  "library",
-  "article",
-  "video",
-  "other",
-] as const
 
 const MAX_DESCRIPTION_LENGTH = 10000
 
@@ -50,11 +39,15 @@ function NewSubmissionPage() {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   useDocumentTitle("submissions.newPageTitle")
 
+  // Fetch categories for the dropdown
+  const { data: categoriesData, isLoading: isCategoriesLoading } =
+    useCategories()
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     destination_url: "",
-    type: "",
+    category_id: "",
   })
 
   const createMutation = useMutation({
@@ -64,7 +57,7 @@ function NewSubmissionPage() {
           title: formData.title,
           description: formData.description || null,
           destination_url: formData.destination_url,
-          type: formData.type,
+          category_id: formData.category_id,
         },
       }),
     onSuccess: (data) => {
@@ -88,7 +81,7 @@ function NewSubmissionPage() {
   const isValid =
     formData.title.trim() &&
     formData.destination_url.trim() &&
-    formData.type &&
+    formData.category_id &&
     formData.description.length <= MAX_DESCRIPTION_LENGTH
 
   return (
@@ -140,22 +133,33 @@ function NewSubmissionPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="type">{t("submissions.new.fields.type")} *</Label>
+              <Label htmlFor="category">
+                {t("submissions.new.fields.category")} *
+              </Label>
               <Select
-                value={formData.type}
+                value={formData.category_id}
                 onValueChange={(value) =>
-                  setFormData({ ...formData, type: value })
+                  setFormData({ ...formData, category_id: value })
                 }
+                disabled={isCategoriesLoading}
               >
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={t("submissions.new.placeholders.type")}
+                    placeholder={
+                      isCategoriesLoading
+                        ? t("submissions.new.loadingCategories", {
+                            defaultValue: "Loading categories...",
+                          })
+                        : t("submissions.new.placeholders.category", {
+                            defaultValue: "Select a category",
+                          })
+                    }
                   />
                 </SelectTrigger>
                 <SelectContent>
-                  {RESOURCE_TYPES.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {t(`submissions.types.${type}`)}
+                  {categoriesData?.data?.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

@@ -8,6 +8,7 @@ from sqlmodel import func, select
 
 from app.api.deps import CurrentUser, SessionDep
 from app.models import (
+    Category,
     CommentCreate,
     Message,
     Resource,
@@ -53,7 +54,30 @@ def list_my_submissions(
     )
     submissions = session.exec(query).all()
 
-    return ResourceSubmissionsPublic(data=submissions, count=count)
+    # Build response with category_name denormalized
+    data = []
+    for submission in submissions:
+        category_name = None
+        if submission.category_id:
+            cat = session.get(Category, submission.category_id)
+            if cat:
+                category_name = cat.name
+        data.append(
+            ResourceSubmissionPublic(
+                id=submission.id,
+                title=submission.title,
+                description=submission.description,
+                destination_url=submission.destination_url,
+                category_id=submission.category_id,
+                category_name=category_name,
+                status=submission.status,
+                submitter_id=submission.submitter_id,
+                created_at=submission.created_at,
+                updated_at=submission.updated_at,
+            )
+        )
+
+    return ResourceSubmissionsPublic(data=data, count=count)
 
 
 @router.post("/", response_model=ResourceSubmissionPublic)
@@ -64,6 +88,7 @@ def create_submission(
 ) -> Any:
     """
     Create a new resource submission.
+
     Rejects with 409 if a Resource with the same destination_url already exists.
     """
     # Check for existing Resource with same URL
@@ -96,14 +121,33 @@ def create_submission(
         title=submission_in.title,
         description=submission_in.description,
         destination_url=submission_in.destination_url,
-        type=submission_in.type,
+        category_id=submission_in.category_id,
         submitter_id=current_user.id,
         status="pending",
     )
     session.add(submission)
     session.commit()
     session.refresh(submission)
-    return submission
+
+    # Build response with category_name
+    category_name = None
+    if submission.category_id:
+        cat = session.get(Category, submission.category_id)
+        if cat:
+            category_name = cat.name
+
+    return ResourceSubmissionPublic(
+        id=submission.id,
+        title=submission.title,
+        description=submission.description,
+        destination_url=submission.destination_url,
+        category_id=submission.category_id,
+        category_name=category_name,
+        status=submission.status,
+        submitter_id=submission.submitter_id,
+        created_at=submission.created_at,
+        updated_at=submission.updated_at,
+    )
 
 
 @router.get("/{id}", response_model=ResourceSubmissionPublic)
@@ -122,7 +166,25 @@ def get_submission(
     if submission.submitter_id != current_user.id and not current_user.is_superuser:
         raise HTTPException(status_code=403, detail="Not enough permissions")
 
-    return submission
+    # Build response with category_name
+    category_name = None
+    if submission.category_id:
+        cat = session.get(Category, submission.category_id)
+        if cat:
+            category_name = cat.name
+
+    return ResourceSubmissionPublic(
+        id=submission.id,
+        title=submission.title,
+        description=submission.description,
+        destination_url=submission.destination_url,
+        category_id=submission.category_id,
+        category_name=category_name,
+        status=submission.status,
+        submitter_id=submission.submitter_id,
+        created_at=submission.created_at,
+        updated_at=submission.updated_at,
+    )
 
 
 @router.put("/{id}", response_model=ResourceSubmissionPublic)
@@ -135,6 +197,10 @@ def update_submission(
     """
     Update a pending submission.
     Only the owner can update, and only if status is pending.
+
+    Accepts `category_id` (preferred) or legacy `type` (deprecated).
+    If `type` is provided without `category_id`, it is resolved via case-insensitive
+    match on category name. Unknown types return 400.
     """
     submission = session.get(ResourceSubmission, id)
     if not submission:
@@ -165,12 +231,46 @@ def update_submission(
                 detail="A resource with this destination URL already exists",
             )
 
+    # Resolve category_id from legacy type if needed
     update_data = submission_in.model_dump(exclude_unset=True)
+    if "type" in update_data and "category_id" not in update_data:
+        type_val = update_data["type"]
+        if type_val:
+            category = session.exec(
+                select(Category).where(func.lower(Category.name) == type_val.lower())
+            ).first()
+            if not category:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Unknown category type: '{type_val}'. "
+                    "Use category_id or provide a valid category name.",
+                )
+            update_data["category_id"] = category.id
+
     submission.sqlmodel_update(update_data)
     session.add(submission)
     session.commit()
     session.refresh(submission)
-    return submission
+
+    # Build response with category_name
+    category_name = None
+    if submission.category_id:
+        cat = session.get(Category, submission.category_id)
+        if cat:
+            category_name = cat.name
+
+    return ResourceSubmissionPublic(
+        id=submission.id,
+        title=submission.title,
+        description=submission.description,
+        destination_url=submission.destination_url,
+        category_id=submission.category_id,
+        category_name=category_name,
+        status=submission.status,
+        submitter_id=submission.submitter_id,
+        created_at=submission.created_at,
+        updated_at=submission.updated_at,
+    )
 
 
 @router.delete("/{id}", response_model=Message)
@@ -232,7 +332,30 @@ def list_pending_submissions(
     )
     submissions = session.exec(query).all()
 
-    return ResourceSubmissionsPublic(data=submissions, count=count)
+    # Build response with category_name denormalized
+    data = []
+    for submission in submissions:
+        category_name = None
+        if submission.category_id:
+            cat = session.get(Category, submission.category_id)
+            if cat:
+                category_name = cat.name
+        data.append(
+            ResourceSubmissionPublic(
+                id=submission.id,
+                title=submission.title,
+                description=submission.description,
+                destination_url=submission.destination_url,
+                category_id=submission.category_id,
+                category_name=category_name,
+                status=submission.status,
+                submitter_id=submission.submitter_id,
+                created_at=submission.created_at,
+                updated_at=submission.updated_at,
+            )
+        )
+
+    return ResourceSubmissionsPublic(data=data, count=count)
 
 
 @router.post("/{id}/approve", response_model=ResourceSubmissionPublic)
@@ -265,12 +388,12 @@ def approve_submission(
             detail="A resource with this destination URL already exists",
         )
 
-    # Create the published resource
+    # Create the published resource (carry over category_id from submission)
     resource = Resource(
         title=submission.title,
         description=submission.description,
         destination_url=submission.destination_url,
-        type=submission.type,
+        category_id=submission.category_id,
         is_published=True,
         published_by_id=current_user.id,
     )
@@ -282,7 +405,26 @@ def approve_submission(
 
     session.commit()
     session.refresh(submission)
-    return submission
+
+    # Build response with category_name
+    category_name = None
+    if submission.category_id:
+        cat = session.get(Category, submission.category_id)
+        if cat:
+            category_name = cat.name
+
+    return ResourceSubmissionPublic(
+        id=submission.id,
+        title=submission.title,
+        description=submission.description,
+        destination_url=submission.destination_url,
+        category_id=submission.category_id,
+        category_name=category_name,
+        status=submission.status,
+        submitter_id=submission.submitter_id,
+        created_at=submission.created_at,
+        updated_at=submission.updated_at,
+    )
 
 
 @router.post("/{id}/reject", response_model=ResourceSubmissionPublic)
@@ -309,7 +451,26 @@ def reject_submission(
     session.add(submission)
     session.commit()
     session.refresh(submission)
-    return submission
+
+    # Build response with category_name
+    category_name = None
+    if submission.category_id:
+        cat = session.get(Category, submission.category_id)
+        if cat:
+            category_name = cat.name
+
+    return ResourceSubmissionPublic(
+        id=submission.id,
+        title=submission.title,
+        description=submission.description,
+        destination_url=submission.destination_url,
+        category_id=submission.category_id,
+        category_name=category_name,
+        status=submission.status,
+        submitter_id=submission.submitter_id,
+        created_at=submission.created_at,
+        updated_at=submission.updated_at,
+    )
 
 
 # ---------------------------------------------------------------------------
