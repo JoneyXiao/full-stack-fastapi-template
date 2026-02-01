@@ -1,0 +1,188 @@
+openapi: 3.0.3
+info:
+  title: Resource Categories (proposed)
+  version: 0.0.0
+
+# NOTE: This is a feature-scoped contract sketch.
+# The authoritative schema remains the backend FastAPI OpenAPI output.
+
+paths:
+  /categories:
+    get:
+      summary: List categories
+      description: Public list of categories for filtering and selection.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriesPublic'
+
+  /categories/admin:
+    get:
+      summary: List categories (admin)
+      description: Admin-only list of categories including usage fields.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriesAdmin'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not enough permissions
+    post:
+      summary: Create category
+      description: Admin-only.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryCreate'
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryPublic'
+        '409':
+          description: Conflict (duplicate name)
+
+  /categories/{id}:
+    put:
+      summary: Rename category
+      description: Admin-only.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryPublic'
+        '404':
+          description: Not found
+        '409':
+          description: Conflict (duplicate name)
+
+    delete:
+      summary: Delete category
+      description: Admin-only. Block if referenced by any resource or submission (including pending).
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: Not found
+        '409':
+          description: Conflict (category in use)
+
+components:
+  schemas:
+    CategoryPublic:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    CategoriesPublic:
+      type: object
+      required: [data, count]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryPublic'
+        count:
+          type: integer
+
+    CategoryAdmin:
+      allOf:
+        - $ref: '#/components/schemas/CategoryPublic'
+        - type: object
+          required: [in_use, resources_count, submissions_count]
+          properties:
+            in_use:
+              type: boolean
+            resources_count:
+              type: integer
+            submissions_count:
+              type: integer
+
+    CategoriesAdmin:
+      type: object
+      required: [data, count]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryAdmin'
+        count:
+          type: integer
+
+    CategoryCreate:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+
+    CategoryUpdate:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+
+    Message:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

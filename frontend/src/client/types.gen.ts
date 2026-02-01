@@ -13,6 +13,37 @@ export type Body_users_upload_avatar = {
     file: (Blob | File);
 };
 
+export type CategoriesAdmin = {
+    data: Array<CategoryAdmin>;
+    count: number;
+};
+
+export type CategoriesPublic = {
+    data: Array<CategoryPublic>;
+    count: number;
+};
+
+export type CategoryAdmin = {
+    name: string;
+    id: string;
+    in_use?: boolean;
+    resources_count?: number;
+    submissions_count?: number;
+};
+
+export type CategoryCreate = {
+    name: string;
+};
+
+export type CategoryPublic = {
+    name: string;
+    id: string;
+};
+
+export type CategoryUpdate = {
+    name: string;
+};
+
 /**
  * Schema for a single chat message in a transcript.
  */
@@ -138,15 +169,16 @@ export type ResourceCreate = {
     title: string;
     description?: (string | null);
     destination_url: string;
-    type: string;
+    category_id?: (string | null);
 };
 
 export type ResourceDetailPublic = {
+    id: string;
     title: string;
     description?: (string | null);
     destination_url: string;
-    type: string;
-    id: string;
+    category_id?: (string | null);
+    category_name?: (string | null);
     is_published: boolean;
     published_by_id?: (string | null);
     published_by_display?: (string | null);
@@ -166,15 +198,17 @@ export type ResourcePreview = {
     id: string;
     title: string;
     description: (string | null);
-    type: string;
+    category_id?: (string | null);
+    category_name?: (string | null);
 };
 
 export type ResourcePublic = {
+    id: string;
     title: string;
     description?: (string | null);
     destination_url: string;
-    type: string;
-    id: string;
+    category_id?: (string | null);
+    category_name?: (string | null);
     is_published: boolean;
     published_by_id?: (string | null);
     published_by_display?: (string | null);
@@ -192,15 +226,16 @@ export type ResourceSubmissionCreate = {
     title: string;
     description?: (string | null);
     destination_url: string;
-    type: string;
+    category_id?: (string | null);
 };
 
 export type ResourceSubmissionPublic = {
+    id: string;
     title: string;
     description?: (string | null);
     destination_url: string;
-    type: string;
-    id: string;
+    category_id?: (string | null);
+    category_name?: (string | null);
     status: string;
     submitter_id: string;
     created_at: string;
@@ -216,14 +251,14 @@ export type ResourceSubmissionUpdate = {
     title?: (string | null);
     description?: (string | null);
     destination_url?: (string | null);
-    type?: (string | null);
+    category_id?: (string | null);
 };
 
 export type ResourceUpdate = {
     title?: (string | null);
     description?: (string | null);
     destination_url?: (string | null);
-    type?: (string | null);
+    category_id?: (string | null);
     is_published?: (boolean | null);
 };
 
@@ -365,6 +400,39 @@ export type AvatarsGetAvatarData = {
 
 export type AvatarsGetAvatarResponse = (unknown);
 
+export type CategoriesListCategoriesData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type CategoriesListCategoriesResponse = (CategoriesPublic);
+
+export type CategoriesCreateCategoryData = {
+    requestBody: CategoryCreate;
+};
+
+export type CategoriesCreateCategoryResponse = (CategoryPublic);
+
+export type CategoriesListCategoriesAdminData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type CategoriesListCategoriesAdminResponse = (CategoriesAdmin);
+
+export type CategoriesUpdateCategoryData = {
+    id: string;
+    requestBody: CategoryUpdate;
+};
+
+export type CategoriesUpdateCategoryResponse = (CategoryPublic);
+
+export type CategoriesDeleteCategoryData = {
+    id: string;
+};
+
+export type CategoriesDeleteCategoryResponse = (Message);
+
 export type ChatTranscriptsListMyTranscriptsData = {
     limit?: number;
     skip?: number;
@@ -487,6 +555,7 @@ export type PrivateCreateUserData = {
 export type PrivateCreateUserResponse = (UserPublic);
 
 export type ResourcesListResourcesData = {
+    categoryId?: (string | null);
     isPublished?: (boolean | null);
     limit?: number;
     q?: (string | null);

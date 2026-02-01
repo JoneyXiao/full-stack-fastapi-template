@@ -1,9 +1,12 @@
 import uuid
 from datetime import datetime
-from typing import Literal
+from typing import TYPE_CHECKING, Literal, Optional
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from app.models import Category
 
 # Supported locale codes
 SupportedLocale = Literal["en", "zh"]
@@ -264,17 +267,78 @@ class WeChatLinkRequest(SQLModel):
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# Category Models (for resource classification)
+# ---------------------------------------------------------------------------
+
+
+# Category base properties
+class CategoryBase(SQLModel):
+    name: str = Field(min_length=1, max_length=100)
+
+
+# Properties to receive on category creation
+class CategoryCreate(CategoryBase):
+    pass
+
+
+# Properties to receive on category update (rename)
+class CategoryUpdate(CategoryBase):
+    pass
+
+
+# Database model for Category
+class Category(CategoryBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    # Relationships
+    resources: list["Resource"] = Relationship(back_populates="category")
+    submissions: list["ResourceSubmission"] = Relationship(back_populates="category")
+
+
+# Properties to return via API (public)
+class CategoryPublic(CategoryBase):
+    id: uuid.UUID
+
+
+# Extended response for admin with usage info
+class CategoryAdmin(CategoryPublic):
+    in_use: bool = False
+    resources_count: int = 0
+    submissions_count: int = 0
+
+
+class CategoriesPublic(SQLModel):
+    data: list[CategoryPublic]
+    count: int
+
+
+class CategoriesAdmin(SQLModel):
+    data: list[CategoryAdmin]
+    count: int
+
+
+# ---------------------------------------------------------------------------
+# Resource Models
+# ---------------------------------------------------------------------------
+
+
 # Resource base properties
 class ResourceBase(SQLModel):
     title: str = Field(min_length=1, max_length=255)
     description: str | None = Field(default=None, max_length=10000)
     destination_url: str = Field(max_length=2048)
-    type: str = Field(max_length=50)  # e.g., "tutorial", "tool", "paper", etc.
+    category_id: uuid.UUID | None = Field(default=None)
 
 
 # Properties to receive on resource creation
-class ResourceCreate(ResourceBase):
-    pass
+class ResourceCreate(SQLModel):
+    title: str = Field(min_length=1, max_length=255)
+    description: str | None = Field(default=None, max_length=10000)
+    destination_url: str = Field(max_length=2048)
+    category_id: uuid.UUID | None = Field(default=None)
 
 
 # Properties to receive on resource update
@@ -282,7 +346,7 @@ class ResourceUpdate(SQLModel):
     title: str | None = Field(default=None, min_length=1, max_length=255)
     description: str | None = Field(default=None, max_length=10000)
     destination_url: str | None = Field(default=None, max_length=2048)
-    type: str | None = Field(default=None, max_length=50)
+    category_id: uuid.UUID | None = Field(default=None)
     is_published: bool | None = None
 
 
@@ -293,6 +357,10 @@ class Resource(ResourceBase, table=True):
     published_by_id: uuid.UUID | None = Field(
         default=None, foreign_key="user.id", nullable=True, ondelete="SET NULL"
     )
+    # Category FK (nullable during migration; FK constraint added via migration)
+    category_id: uuid.UUID | None = Field(
+        default=None, foreign_key="category.id", nullable=True, index=True
+    )
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -300,6 +368,7 @@ class Resource(ResourceBase, table=True):
     destination_url: str = Field(max_length=2048, unique=True, index=True)
 
     # Relationships
+    category: Optional["Category"] = Relationship(back_populates="resources")
     likes: list["Like"] = Relationship(back_populates="resource", cascade_delete=True)
     favorites: list["Favorite"] = Relationship(
         back_populates="resource", cascade_delete=True
@@ -310,8 +379,13 @@ class Resource(ResourceBase, table=True):
 
 
 # Properties to return via API
-class ResourcePublic(ResourceBase):
+class ResourcePublic(SQLModel):
     id: uuid.UUID
+    title: str
+    description: str | None = None
+    destination_url: str
+    category_id: uuid.UUID | None = None
+    category_name: str | None = None  # Denormalized for convenience
     is_published: bool
     published_by_id: uuid.UUID | None = None
     published_by_display: str | None = None
@@ -338,12 +412,15 @@ class ResourceSubmissionBase(SQLModel):
     title: str = Field(min_length=1, max_length=255)
     description: str | None = Field(default=None, max_length=10000)
     destination_url: str = Field(max_length=2048)
-    type: str = Field(max_length=50)
+    category_id: uuid.UUID | None = Field(default=None)
 
 
 # Properties to receive on submission creation
-class ResourceSubmissionCreate(ResourceSubmissionBase):
-    pass
+class ResourceSubmissionCreate(SQLModel):
+    title: str = Field(min_length=1, max_length=255)
+    description: str | None = Field(default=None, max_length=10000)
+    destination_url: str = Field(max_length=2048)
+    category_id: uuid.UUID | None = Field(default=None)
 
 
 # Properties to receive on submission update
@@ -351,7 +428,7 @@ class ResourceSubmissionUpdate(SQLModel):
     title: str | None = Field(default=None, min_length=1, max_length=255)
     description: str | None = Field(default=None, max_length=10000)
     destination_url: str | None = Field(default=None, max_length=2048)
-    type: str | None = Field(default=None, max_length=50)
+    category_id: uuid.UUID | None = Field(default=None)
 
 
 # Database model for ResourceSubmission
@@ -365,16 +442,26 @@ class ResourceSubmission(ResourceSubmissionBase, table=True):
     submitter_id: uuid.UUID = Field(
         foreign_key="user.id", nullable=False, ondelete="CASCADE"
     )
+    # Category FK (nullable during migration; FK constraint added via migration)
+    category_id: uuid.UUID | None = Field(
+        default=None, foreign_key="category.id", nullable=True, index=True
+    )
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
     # Relationships
     submitter: User | None = Relationship()
+    category: Optional["Category"] = Relationship(back_populates="submissions")
 
 
 # Properties to return via API
-class ResourceSubmissionPublic(ResourceSubmissionBase):
+class ResourceSubmissionPublic(SQLModel):
     id: uuid.UUID
+    title: str
+    description: str | None = None
+    destination_url: str
+    category_id: uuid.UUID | None = None
+    category_name: str | None = None  # Denormalized for convenience
     status: str
     submitter_id: uuid.UUID
     created_at: datetime
@@ -574,7 +661,8 @@ class ResourcePreview(SQLModel):
     id: uuid.UUID
     title: str
     description: str | None
-    type: str
+    category_id: uuid.UUID | None = None
+    category_name: str | None = None
 
 
 class LandingChatResponse(SQLModel):

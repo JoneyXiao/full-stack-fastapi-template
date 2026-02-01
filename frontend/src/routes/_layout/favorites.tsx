@@ -65,11 +65,7 @@ function FavoritesListContent() {
                   {resource.title}
                 </Link>
               </CardTitle>
-              <Badge variant="secondary">
-                {t(`resources.types.${resource.type}`, {
-                  defaultValue: resource.type,
-                })}
-              </Badge>
+              <Badge variant="secondary">{resource.category_name ?? "-"}</Badge>
             </div>
             <CardDescription className="line-clamp-3">
               {resource.description}

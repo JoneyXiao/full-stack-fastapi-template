@@ -401,9 +401,7 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                     {resource.title}
                   </h1>
                   <Badge variant="secondary">
-                    {t(`resources.types.${resource.type}`, {
-                      defaultValue: resource.type,
-                    })}
+                    {resource.category_name ?? "-"}
                   </Badge>
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
@@ -648,6 +646,10 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                 <div className="flex gap-3">
                   <div className="pt-0.5">
                     <Avatar className="size-8">
+                      <AvatarImage
+                        src={resolveApiUrl(user.avatar_url) ?? DEFAULT_AVATAR}
+                        alt={user.full_name ?? user.email ?? t("common.user")}
+                      />
                       <AvatarFallback className="text-[11px] font-semibold">
                         {initialsFromText(
                           user.full_name ?? user.email ?? user.id,
@@ -727,12 +729,10 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
             <div className="flex items-center justify-between gap-3 rounded-lg border border-border/40 bg-muted/40 px-3 py-2">
               <div className="space-y-1">
                 <div className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                  {t("resources.detail.typeLabel")}
+                  {t("resources.detail.categoryLabel")}
                 </div>
                 <div className="font-medium text-foreground">
-                  {t(`resources.types.${resource.type}`, {
-                    defaultValue: resource.type,
-                  })}
+                  {resource.category_name ?? "-"}
                 </div>
               </div>
               <Badge variant={resource.is_published ? "secondary" : "outline"}>

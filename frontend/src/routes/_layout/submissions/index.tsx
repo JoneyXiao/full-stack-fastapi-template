@@ -110,11 +110,7 @@ function SubmissionsListContent() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex-grow">
-            <Badge variant="secondary">
-              {t(`resources.types.${submission.type}`, {
-                defaultValue: submission.type,
-              })}
-            </Badge>
+            <Badge variant="secondary">{submission.category_name ?? "-"}</Badge>
           </CardContent>
           <CardFooter className="text-sm text-muted-foreground">
             {t("submissions.submitted", {

@@ -6,20 +6,21 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session
 
 from app.core.config import settings
-from tests.utils.resource import create_random_resource
+from tests.utils.resource import create_random_resource, get_or_create_category
 from tests.utils.submission import create_random_submission
 from tests.utils.user import create_random_user
 
 
-def test_create_submission(
-    client: TestClient, normal_user_token_headers: dict[str, str]
+def test_create_submission_with_category_id(
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
 ) -> None:
-    """Test creating a new submission."""
+    """Test creating a new submission with category_id."""
+    category = get_or_create_category(db, name="tool")
     data = {
         "title": "Great AI Tool",
         "description": "A helpful tool for AI development",
         "destination_url": f"https://example.com/{uuid.uuid4().hex}",
-        "type": "tool",
+        "category_id": str(category.id),
     }
     response = client.post(
         f"{settings.API_V1_STR}/submissions/",
@@ -30,15 +31,18 @@ def test_create_submission(
     content = response.json()
     assert content["title"] == data["title"]
     assert content["status"] == "pending"
+    assert content["category_id"] == str(category.id)
+    assert content["category_name"] == "tool"
     assert "id" in content
 
 
-def test_create_submission_requires_auth(client: TestClient) -> None:
+def test_create_submission_requires_auth(client: TestClient, db: Session) -> None:
     """Test that creating a submission requires authentication."""
+    category = get_or_create_category(db, name="tutorial")
     data = {
         "title": "Test",
         "destination_url": "https://example.com/test",
-        "type": "tutorial",
+        "category_id": str(category.id),
     }
     response = client.post(f"{settings.API_V1_STR}/submissions/", json=data)
     assert response.status_code == 401
@@ -49,10 +53,11 @@ def test_create_submission_duplicate_resource_url(
 ) -> None:
     """Test that submission is rejected if Resource with same URL exists."""
     existing_resource = create_random_resource(db, is_published=True)
+    category = get_or_create_category(db, name="tutorial")
     data = {
         "title": "Duplicate submission",
         "destination_url": existing_resource.destination_url,
-        "type": "tutorial",
+        "category_id": str(category.id),
     }
     response = client.post(
         f"{settings.API_V1_STR}/submissions/",
@@ -87,14 +92,15 @@ def test_list_submissions_requires_auth(client: TestClient) -> None:
 
 
 def test_get_submission_by_owner(
-    client: TestClient, normal_user_token_headers: dict[str, str]
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
 ) -> None:
     """Test getting own submission."""
+    category = get_or_create_category(db, name="tool")
     # Create submission as the logged-in user
     data = {
         "title": "My submission",
         "destination_url": f"https://example.com/{uuid.uuid4().hex}",
-        "type": "tool",
+        "category_id": str(category.id),
     }
     response = client.post(
         f"{settings.API_V1_STR}/submissions/",
@@ -127,14 +133,15 @@ def test_get_submission_not_owner(
 
 
 def test_update_pending_submission(
-    client: TestClient, normal_user_token_headers: dict[str, str]
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
 ) -> None:
     """Test updating a pending submission."""
+    category = get_or_create_category(db, name="tool")
     # Create submission
     data = {
         "title": "Original title",
         "destination_url": f"https://example.com/{uuid.uuid4().hex}",
-        "type": "tool",
+        "category_id": str(category.id),
     }
     response = client.post(
         f"{settings.API_V1_STR}/submissions/",
@@ -155,14 +162,15 @@ def test_update_pending_submission(
 
 
 def test_cannot_update_approved_submission(
-    client: TestClient, normal_user_token_headers: dict[str, str]
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
 ) -> None:
     """Test that approved submissions cannot be updated."""
+    category = get_or_create_category(db, name="tool")
     # Create and manually approve a submission
     data = {
         "title": "To be approved",
         "destination_url": f"https://example.com/{uuid.uuid4().hex}",
-        "type": "tool",
+        "category_id": str(category.id),
     }
     response = client.post(
         f"{settings.API_V1_STR}/submissions/",
@@ -195,15 +203,16 @@ def test_cannot_update_approved_submission(
 
 
 def test_list_my_submissions(
-    client: TestClient, normal_user_token_headers: dict[str, str]
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
 ) -> None:
     """Test listing user's own submissions."""
+    category = get_or_create_category(db, name="tool")
     # Create some submissions
     for _ in range(2):
         data = {
             "title": f"My submission {uuid.uuid4().hex[:8]}",
             "destination_url": f"https://example.com/{uuid.uuid4().hex}",
-            "type": "tool",
+            "category_id": str(category.id),
         }
         client.post(
             f"{settings.API_V1_STR}/submissions/",
@@ -221,14 +230,15 @@ def test_list_my_submissions(
 
 
 def test_delete_pending_submission(
-    client: TestClient, normal_user_token_headers: dict[str, str]
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
 ) -> None:
     """Test deleting a pending submission."""
+    category = get_or_create_category(db, name="tool")
     # Create submission
     data = {
         "title": "To delete",
         "destination_url": f"https://example.com/{uuid.uuid4().hex}",
-        "type": "tool",
+        "category_id": str(category.id),
     }
     response = client.post(
         f"{settings.API_V1_STR}/submissions/",
@@ -246,16 +256,17 @@ def test_delete_pending_submission(
 
 
 def test_create_submission_with_max_description_length(
-    client: TestClient, normal_user_token_headers: dict[str, str]
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
 ) -> None:
     """Test creating a submission with exactly 10,000 character description."""
+    category = get_or_create_category(db, name="tool")
     # Create a description with exactly 10,000 characters
     max_description = "x" * 10000
     data = {
         "title": "Long Description Test",
         "description": max_description,
         "destination_url": f"https://example.com/{uuid.uuid4().hex}",
-        "type": "tool",
+        "category_id": str(category.id),
     }
     response = client.post(
         f"{settings.API_V1_STR}/submissions/",
@@ -268,16 +279,17 @@ def test_create_submission_with_max_description_length(
 
 
 def test_create_submission_with_description_exceeds_max_length(
-    client: TestClient, normal_user_token_headers: dict[str, str]
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
 ) -> None:
     """Test that creating a submission with >10,000 char description fails."""
+    category = get_or_create_category(db, name="tool")
     # Create a description with 10,001 characters
     over_max_description = "x" * 10001
     data = {
         "title": "Too Long Description Test",
         "description": over_max_description,
         "destination_url": f"https://example.com/{uuid.uuid4().hex}",
-        "type": "tool",
+        "category_id": str(category.id),
     }
     response = client.post(
         f"{settings.API_V1_STR}/submissions/",
@@ -288,9 +300,10 @@ def test_create_submission_with_description_exceeds_max_length(
 
 
 def test_create_submission_with_markdown_description(
-    client: TestClient, normal_user_token_headers: dict[str, str]
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
 ) -> None:
     """Test that Markdown content is preserved in description."""
+    category = get_or_create_category(db, name="tutorial")
     markdown_description = """# Header
 
 This is a **bold** and *italic* text.
@@ -310,7 +323,7 @@ def hello():
         "title": "Markdown Description Test",
         "description": markdown_description,
         "destination_url": f"https://example.com/{uuid.uuid4().hex}",
-        "type": "tutorial",
+        "category_id": str(category.id),
     }
     response = client.post(
         f"{settings.API_V1_STR}/submissions/",
