@@ -12,7 +12,7 @@ Fields:
 - `id`: UUID (primary key)
 - `title`: string (required)
 - `description`: string (required, short)
-- `type`: enum (required): `github_repo | tool | website | article | other`
+- `category_id`: UUID (required; FK → Category)
 - `destination_url`: URL string (required, globally unique among Resources)
 - `is_published`: bool (default true for admin-created; true after submission approval)
 - `created_at`: datetime
@@ -35,7 +35,7 @@ Fields:
 - `submitter_id`: UUID (FK → User)
 - `title`: string (required)
 - `description`: string (required)
-- `type`: enum (same as Resource)
+- `category_id`: UUID (required; FK → Category)
 - `destination_url`: URL string (required)
 - `state`: enum (required): `pending | approved | rejected`
 - `reviewed_by_id`: UUID (FK → User, optional)

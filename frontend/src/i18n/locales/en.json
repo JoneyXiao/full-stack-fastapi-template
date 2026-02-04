@@ -389,20 +389,8 @@
     "checkBackLater": "Check back later for new AI resources",
     "viewDetails": "View Details",
     "visit": "Visit",
-    "types": {
-      "github_repo": "GitHub Repo",
-      "tool": "Tool",
-      "website": "Website",
-      "tutorial": "Tutorial",
-      "article": "Article",
-      "paper": "Paper",
-      "course": "Course",
-      "video": "Video",
-      "book": "Book",
-      "other": "Other"
-    },
     "list": {
-      "allTypes": "All",
+      "allCategories": "All",
       "sort": "Sort",
       "view": "View",
       "viewGrid": "Grid",
@@ -437,7 +425,7 @@
       "noComments": "No comments yet. Be the first to share your thoughts!",
       "about": "About this resource",
       "aboutHint": "Quick details to help you evaluate this link.",
-      "typeLabel": "Type",
+      "categoryLabel": "Category",
       "domain": "URL",
       "publishedBy": "Published by",
       "added": "Added",
@@ -476,17 +464,6 @@
       "pending": "Pending",
       "approved": "Approved",
       "rejected": "Rejected"
-    },
-    "types": {
-      "tutorial": "Tutorial",
-      "tool": "Tool",
-      "paper": "Paper",
-      "course": "Course",
-      "dataset": "Dataset",
-      "library": "Library",
-      "article": "Article",
-      "video": "Video",
-      "other": "Other"
     },
     "new": {
       "title": "Submit a New Resource",

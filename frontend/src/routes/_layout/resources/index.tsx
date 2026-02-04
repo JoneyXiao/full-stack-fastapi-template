@@ -3,9 +3,9 @@ import { createFileRoute, Link } from "@tanstack/react-router"
 import { LayoutGrid, List as ListIcon } from "lucide-react"
 import { type ReactElement, Suspense, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { FaGlobe, FaWrench } from "react-icons/fa"
+import { FaGlobe } from "react-icons/fa"
 import { MdClear } from "react-icons/md"
-import { PiGithubLogoDuotone, PiNewspaper } from "react-icons/pi"
+import { PiGithubLogoDuotone } from "react-icons/pi"
 import { TbExternalLink, TbSearch, TbSortDescending } from "react-icons/tb"
 
 import { ResourcesService } from "@/client"
@@ -91,15 +91,11 @@ function safeHostname(url: string) {
   }
 }
 
-const RESOURCE_TYPE_ICONS: Record<string, typeof FaGlobe> = {
-  github_repo: PiGithubLogoDuotone,
-  tool: FaWrench,
-  website: FaGlobe,
-  article: PiNewspaper,
-}
+function getResourceIcon(destinationUrl?: string | null) {
+  const host = destinationUrl ? safeHostname(destinationUrl) : undefined
 
-function getResourceTypeIcon(type?: string | null) {
-  return RESOURCE_TYPE_ICONS[type ?? ""] ?? FaGlobe
+  if (host === "github.com") return PiGithubLogoDuotone
+  return FaGlobe
 }
 
 function ViewModeToggle({
@@ -281,7 +277,7 @@ function ResourcesListContent({
                   {t("common.title")}
                 </TableHead>
                 <TableHead className="w-[1%] whitespace-nowrap px-2 text-center">
-                  {t("resources.detail.typeLabel")}
+                  {t("resources.detail.categoryLabel")}
                 </TableHead>
                 <TableHead className="hidden md:table-cell">
                   {t("resources.detail.domain")}
@@ -302,7 +298,7 @@ function ResourcesListContent({
             <TableBody>
               {sortedData.map((resource) => {
                 const host = safeHostname(resource.destination_url)
-                const Icon = getResourceTypeIcon(resource.category_name)
+                const Icon = getResourceIcon(resource.destination_url)
                 return (
                   <TableRow key={resource.id}>
                     <TableCell className="w-[60%]">
@@ -380,7 +376,7 @@ function ResourcesListContent({
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {sortedData.map((resource) => {
             const host = safeHostname(resource.destination_url)
-            const Icon = getResourceTypeIcon(resource.category_name)
+            const Icon = getResourceIcon(resource.destination_url)
             return (
               <Card
                 key={resource.id}
@@ -732,7 +728,7 @@ function ResourcesPage() {
                     value="all"
                     className="flex-none rounded-full border bg-muted/40 text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-none hover:bg-muted/60"
                   >
-                    {t("resources.list.allTypes")}
+                    {t("resources.list.allCategories")}
                   </TabsTrigger>
                   {categoriesData?.data?.map((cat) => (
                     <TabsTrigger

@@ -43,15 +43,13 @@ def list_resources(
     limit: int = 50,
     q: str | None = None,
     category_id: uuid.UUID | None = None,
-    type: str | None = None,  # Deprecated: use category_id instead
     is_published: bool | None = None,
 ) -> Any:
     """
     List published resources. Admins can filter by is_published; others always see published.
 
     Filtering by category:
-    - `category_id`: Primary filter (preferred)
-    - `type`: Deprecated alias; resolves via case-insensitive match on category name
+    - `category_id`: Filter by category id
     """
     # Base query
     query = select(Resource)
@@ -72,19 +70,9 @@ def list_resources(
             )
         )
 
-    # Filter by category (category_id takes precedence over legacy type)
+    # Filter by category
     if category_id:
         query = query.where(Resource.category_id == category_id)
-    elif type:
-        # Legacy compatibility: resolve type to category via case-insensitive match
-        category = session.exec(
-            select(Category).where(func.lower(Category.name) == type.lower())
-        ).first()
-        if category:
-            query = query.where(Resource.category_id == category.id)
-        else:
-            # Unknown type: return empty results (no matches)
-            query = query.where(Resource.id == None)  # noqa: E711
 
     # Count before pagination
     count_query = select(func.count()).select_from(query.subquery())
