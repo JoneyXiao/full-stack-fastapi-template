@@ -30,9 +30,9 @@ paths:
           schema: { type: string }
           description: Keyword search across title+description
         - in: query
-          name: type
-          schema: { type: string }
-          description: Filter by resource type
+          name: category_id
+          schema: { type: string, format: uuid }
+          description: Filter by category id
         - in: query
           name: is_published
           schema: { type: boolean }
@@ -499,18 +499,19 @@ components:
         message: { type: string }
       required: [message]
 
-    ResourceType:
+    CategoryId:
       type: string
-      enum: [github_repo, tool, website, article, other]
+      format: uuid
+      description: Category id (replaces legacy fixed ResourceType enum)
 
     ResourceBase:
       type: object
       properties:
         title: { type: string }
         description: { type: string }
-        type: { $ref: '#/components/schemas/ResourceType' }
+        category_id: { $ref: '#/components/schemas/CategoryId' }
         destination_url: { type: string, format: uri }
-      required: [title, description, type, destination_url]
+      required: [title, description, category_id, destination_url]
 
     ResourceCreate:
       allOf:
@@ -521,7 +522,7 @@ components:
       properties:
         title: { type: string }
         description: { type: string }
-        type: { $ref: '#/components/schemas/ResourceType' }
+        category_id: { $ref: '#/components/schemas/CategoryId' }
         destination_url: { type: string, format: uri }
 
     ResourcePublic:
@@ -555,9 +556,9 @@ components:
       properties:
         title: { type: string }
         description: { type: string }
-        type: { $ref: '#/components/schemas/ResourceType' }
+        category_id: { $ref: '#/components/schemas/CategoryId' }
         destination_url: { type: string, format: uri }
-      required: [title, description, type, destination_url]
+      required: [title, description, category_id, destination_url]
 
     SubmissionCreate:
       allOf:
@@ -568,7 +569,7 @@ components:
       properties:
         title: { type: string }
         description: { type: string }
-        type: { $ref: '#/components/schemas/ResourceType' }
+        category_id: { $ref: '#/components/schemas/CategoryId' }
         destination_url: { type: string, format: uri }
 
     SubmissionPublic:

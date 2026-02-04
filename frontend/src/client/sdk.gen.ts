@@ -593,14 +593,12 @@ export class ResourcesService {
      * List published resources. Admins can filter by is_published; others always see published.
      *
      * Filtering by category:
-     * - `category_id`: Primary filter (preferred)
-     * - `type`: Deprecated alias; resolves via case-insensitive match on category name
+     * - `category_id`: Filter by category id
      * @param data The data for the request.
      * @param data.skip
      * @param data.limit
      * @param data.q
      * @param data.categoryId
-     * @param data.type
      * @param data.isPublished
      * @returns ResourcesPublic Successful Response
      * @throws ApiError
@@ -614,7 +612,6 @@ export class ResourcesService {
                 limit: data.limit,
                 q: data.q,
                 category_id: data.categoryId,
-                type: data.type,
                 is_published: data.isPublished
             },
             errors: {
@@ -967,9 +964,7 @@ export class SubmissionsService {
      * Update a pending submission.
      * Only the owner can update, and only if status is pending.
      *
-     * Accepts `category_id` (preferred) or legacy `type` (deprecated).
-     * If `type` is provided without `category_id`, it is resolved via case-insensitive
-     * match on category name. Unknown types return 400.
+     * Accepts `category_id`.
      * @param data The data for the request.
      * @param data.id
      * @param data.requestBody

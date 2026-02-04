@@ -198,9 +198,7 @@ def update_submission(
     Update a pending submission.
     Only the owner can update, and only if status is pending.
 
-    Accepts `category_id` (preferred) or legacy `type` (deprecated).
-    If `type` is provided without `category_id`, it is resolved via case-insensitive
-    match on category name. Unknown types return 400.
+    Accepts `category_id`.
     """
     submission = session.get(ResourceSubmission, id)
     if not submission:
@@ -231,21 +229,7 @@ def update_submission(
                 detail="A resource with this destination URL already exists",
             )
 
-    # Resolve category_id from legacy type if needed
     update_data = submission_in.model_dump(exclude_unset=True)
-    if "type" in update_data and "category_id" not in update_data:
-        type_val = update_data["type"]
-        if type_val:
-            category = session.exec(
-                select(Category).where(func.lower(Category.name) == type_val.lower())
-            ).first()
-            if not category:
-                raise HTTPException(
-                    status_code=400,
-                    detail=f"Unknown category type: '{type_val}'. "
-                    "Use category_id or provide a valid category name.",
-                )
-            update_data["category_id"] = category.id
 
     submission.sqlmodel_update(update_data)
     session.add(submission)

@@ -560,7 +560,6 @@ export type ResourcesListResourcesData = {
     limit?: number;
     q?: (string | null);
     skip?: number;
-    type?: (string | null);
 };
 
 export type ResourcesListResourcesResponse = (ResourcesPublic);

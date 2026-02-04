@@ -388,20 +388,8 @@
     "checkBackLater": "稍后再来查看新的AI资源",
     "viewDetails": "查看详情",
     "visit": "访问",
-    "types": {
-      "github_repo": "GitHub 仓库",
-      "tool": "工具",
-      "website": "网站",
-      "tutorial": "教程",
-      "article": "文章",
-      "paper": "论文",
-      "course": "课程",
-      "video": "视频",
-      "book": "书籍",
-      "other": "其他"
-    },
     "list": {
-      "allTypes": "全部",
+      "allCategories": "全部",
       "sort": "排序",
       "view": "视图",
       "viewGrid": "网格",
@@ -436,7 +424,7 @@
       "noComments": "暂无评论。成为第一个分享想法的人！",
       "about": "关于此资源",
       "aboutHint": "快速信息，帮助你判断这个链接是否适合。",
-      "typeLabel": "类型",
+      "categoryLabel": "分类",
       "domain": "URL",
       "publishedBy": "发布者",
       "added": "收录时间",
@@ -475,17 +463,6 @@
       "pending": "待审核",
       "approved": "已通过",
       "rejected": "已拒绝"
-    },
-    "types": {
-      "tutorial": "教程",
-      "tool": "工具",
-      "paper": "论文",
-      "course": "课程",
-      "dataset": "数据集",
-      "library": "库",
-      "article": "文章",
-      "video": "视频",
-      "other": "其他"
     },
     "new": {
       "title": "提交新资源",
