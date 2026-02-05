@@ -1,4 +1,8 @@
 import { AxiosError } from "axios"
+import type { ComponentType } from "react"
+import { GiFox } from "react-icons/gi"
+import { PiGithubLogoDuotone } from "react-icons/pi"
+
 import { type ApiError, OpenAPI } from "./client"
 import { localizeError } from "./i18n/errors"
 
@@ -28,13 +32,15 @@ export function getInitials(name: string): string {
     .toUpperCase()
 }
 
+export function isExternalUrl(url: string | null | undefined): boolean {
+  return Boolean(url?.startsWith("http://") || url?.startsWith("https://"))
+}
+
 export function resolveApiUrl(
   path: string | null | undefined,
 ): string | undefined {
   if (!path) return undefined
-  if (path.startsWith("http://") || path.startsWith("https://")) {
-    return path
-  }
+  if (isExternalUrl(path)) return path
   const base = OpenAPI.BASE?.replace(/\/$/, "")
   if (!base) return path
   const normalizedPath = path.startsWith("/") ? path : `/${path}`
@@ -42,3 +48,37 @@ export function resolveApiUrl(
 }
 
 export const DEFAULT_AVATAR = "/assets/images/default_avatar.webp"
+
+/**
+ * Determines optimal image fit based on aspect ratio.
+ * Very wide/tall images (logos) use "contain", standard images use "cover".
+ */
+export function calculateImageFit(
+  width: number,
+  height: number,
+): "cover" | "contain" {
+  if (!width || !height) return "cover"
+  const ratio = width / height
+  return ratio > 2.3 || ratio < 0.75 ? "contain" : "cover"
+}
+
+/**
+ * Extracts hostname from URL, removing "www." prefix.
+ */
+export function safeHostname(url: string): string | undefined {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "")
+  } catch {
+    return undefined
+  }
+}
+
+/**
+ * Returns appropriate icon component based on resource destination URL.
+ */
+export function getResourceIcon(
+  destinationUrl?: string | null,
+): ComponentType<{ className?: string }> {
+  const host = destinationUrl ? safeHostname(destinationUrl) : undefined
+  return host === "github.com" ? PiGithubLogoDuotone : GiFox
+}

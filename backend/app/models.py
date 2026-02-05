@@ -339,6 +339,7 @@ class ResourceCreate(SQLModel):
     description: str | None = Field(default=None, max_length=10000)
     destination_url: str = Field(max_length=2048)
     category_id: uuid.UUID | None = Field(default=None)
+    image_external_url: str | None = Field(default=None, max_length=2048)
 
 
 # Properties to receive on resource update
@@ -348,6 +349,7 @@ class ResourceUpdate(SQLModel):
     destination_url: str | None = Field(default=None, max_length=2048)
     category_id: uuid.UUID | None = Field(default=None)
     is_published: bool | None = None
+    image_external_url: str | None = Field(default=None, max_length=2048)
 
 
 # Database model for Resource
@@ -366,6 +368,15 @@ class Resource(ResourceBase, table=True):
 
     # Unique constraint on destination_url
     destination_url: str = Field(max_length=2048, unique=True, index=True)
+
+    # Resource image fields (mutually exclusive: external URL OR uploaded image)
+    # External image URL (stored directly, backend does not proxy/fetch)
+    image_external_url: str | None = Field(default=None, max_length=2048)
+    # Uploaded image metadata (bytes stored on filesystem, not in DB)
+    image_key: str | None = Field(default=None, max_length=255)
+    image_version: int = Field(default=0)
+    image_content_type: str | None = Field(default=None, max_length=50)
+    image_updated_at: datetime | None = Field(default=None)
 
     # Relationships
     category: Optional["Category"] = Relationship(back_populates="resources")
@@ -392,6 +403,11 @@ class ResourcePublic(SQLModel):
     published_by_avatar_url: str | None = None
     created_at: datetime
     updated_at: datetime
+    # New fields for resources view redesign
+    likes_count: int = 0  # Likes count for Grid/List display (avoids N+1 fetches)
+    image_url: str | None = (
+        None  # Computed: external URL or versioned uploaded-image URL
+    )
 
 
 # Extended response for resource detail (single resource) with reaction info

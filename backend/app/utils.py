@@ -432,3 +432,172 @@ def delete_avatar_file(avatar_key: str) -> None:
     except Exception:
         # Best-effort deletion
         pass
+
+
+# ---------------------------------------------------------------------------
+# Resource Image Processing Utilities
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class ProcessedResourceImage:
+    """Result of resource image processing."""
+
+    data: bytes
+    content_type: str  # "image/webp" or "image/jpeg"
+    extension: str  # "webp" or "jpg"
+
+
+class ResourceImageValidationError(Exception):
+    """Raised when resource image validation fails."""
+
+    pass
+
+
+def validate_and_process_resource_image(
+    file_data: bytes,
+    content_type: str,
+    *,
+    max_size_bytes: int | None = None,
+    max_dimension: int | None = None,
+    output_size: int | None = None,
+) -> ProcessedResourceImage:
+    """
+    Validate and process a resource image.
+
+    - Validates file size and dimensions
+    - Downscales to fit within output_size x output_size (maintains aspect ratio)
+    - Flattens transparency to white background
+    - Re-encodes as WebP (with JPEG fallback)
+
+    Args:
+        file_data: Raw image bytes
+        content_type: MIME type from upload
+        max_size_bytes: Maximum allowed file size (default from settings)
+        max_dimension: Maximum allowed input dimension (default from settings)
+        output_size: Output max dimension (default from settings)
+
+    Returns:
+        ProcessedResourceImage with processed bytes and content type
+
+    Raises:
+        ResourceImageValidationError: If validation fails
+    """
+    max_size = max_size_bytes or settings.RESOURCE_IMAGE_MAX_SIZE_BYTES
+    max_dim = max_dimension or settings.RESOURCE_IMAGE_MAX_DIMENSION
+    out_size = output_size or settings.RESOURCE_IMAGE_OUTPUT_SIZE
+
+    # Check file size
+    if len(file_data) > max_size:
+        raise ResourceImageValidationError(
+            f"File size exceeds maximum of {max_size // (1024 * 1024)}MB"
+        )
+
+    # Check content type
+    if content_type not in settings.RESOURCE_IMAGE_SUPPORTED_CONTENT_TYPES:
+        raise ResourceImageValidationError(
+            f"Unsupported image type: {content_type}. "
+            f"Supported types: {', '.join(settings.RESOURCE_IMAGE_SUPPORTED_CONTENT_TYPES)}"
+        )
+
+    # Try to open and validate image
+    img: Image.Image
+    try:
+        img = Image.open(io.BytesIO(file_data))
+        img.verify()  # Verify it's a valid image
+        # Re-open after verify (verify consumes the file)
+        img = Image.open(io.BytesIO(file_data))
+    except Exception as e:
+        raise ResourceImageValidationError(f"Invalid or corrupted image file: {e}")
+
+    # Check dimensions
+    width, height = img.size
+    if width > max_dim or height > max_dim:
+        raise ResourceImageValidationError(
+            f"Image dimensions exceed maximum of {max_dim}x{max_dim} pixels"
+        )
+
+    # Minimum size check (at least 32x32)
+    if width < 32 or height < 32:
+        raise ResourceImageValidationError("Image must be at least 32x32 pixels")
+
+    # Downscale to fit within output size (maintain aspect ratio)
+    if img.width > out_size or img.height > out_size:
+        img.thumbnail((out_size, out_size), Image.Resampling.LANCZOS)
+
+    # Flatten transparency to white background
+    img = _flatten_transparency(img)
+
+    # Encode as WebP, fallback to JPEG if needed
+    output_data, output_content_type, output_ext = _encode_resource_image(img)
+
+    return ProcessedResourceImage(
+        data=output_data,
+        content_type=output_content_type,
+        extension=output_ext,
+    )
+
+
+def _encode_resource_image(img: Image.Image) -> tuple[bytes, str, str]:
+    """
+    Encode resource image as WebP, fallback to JPEG.
+
+    Returns: (data, content_type, extension)
+    """
+    # Try WebP first
+    try:
+        buffer = io.BytesIO()
+        img.save(buffer, format="WEBP", quality=85, method=4)
+        return buffer.getvalue(), "image/webp", "webp"
+    except Exception:
+        pass
+
+    # Fallback to JPEG
+    buffer = io.BytesIO()
+    img.save(buffer, format="JPEG", quality=85, optimize=True)
+    return buffer.getvalue(), "image/jpeg", "jpg"
+
+
+def save_resource_image_file(
+    resource_id: uuid_module.UUID,
+    image_data: bytes,
+    extension: str,
+) -> str:
+    """
+    Save resource image file to storage and return the image_key.
+
+    The key is: {resource_id}.{extension}
+    """
+    storage_path = Path(settings.RESOURCE_IMAGE_STORAGE_PATH)
+    storage_path.mkdir(parents=True, exist_ok=True)
+
+    image_key = f"{resource_id}.{extension}"
+    file_path = storage_path / image_key
+
+    # Atomic write using temp file
+    temp_path = file_path.with_suffix(".tmp")
+    try:
+        temp_path.write_bytes(image_data)
+        temp_path.rename(file_path)
+    except Exception:
+        if temp_path.exists():
+            temp_path.unlink()
+        raise
+
+    return image_key
+
+
+def delete_resource_image_file(image_key: str) -> None:
+    """
+    Delete resource image file from storage (best-effort, no error on missing).
+    """
+    if not image_key:
+        return
+
+    file_path = Path(settings.RESOURCE_IMAGE_STORAGE_PATH) / image_key
+    try:
+        if file_path.exists():
+            file_path.unlink()
+    except Exception:
+        # Best-effort deletion
+        pass

@@ -1,24 +1,15 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { createFileRoute, Link } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
 import { LayoutGrid, List as ListIcon } from "lucide-react"
 import { type ReactElement, Suspense, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { FaGlobe } from "react-icons/fa"
 import { MdClear } from "react-icons/md"
-import { PiGithubLogoDuotone } from "react-icons/pi"
-import { TbExternalLink, TbSearch, TbSortDescending } from "react-icons/tb"
+import { TbSearch, TbSortDescending } from "react-icons/tb"
 
 import { ResourcesService } from "@/client"
-import { Badge } from "@/components/ui/badge"
+import { ResourceGridCard, ResourcesTable } from "@/components/Resources"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import {
   Pagination,
@@ -82,21 +73,6 @@ function getResourcesQueryOptions({
 export const Route = createFileRoute("/_layout/resources/")({
   component: ResourcesPage,
 })
-
-function safeHostname(url: string) {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "")
-  } catch {
-    return undefined
-  }
-}
-
-function getResourceIcon(destinationUrl?: string | null) {
-  const host = destinationUrl ? safeHostname(destinationUrl) : undefined
-
-  if (host === "github.com") return PiGithubLogoDuotone
-  return FaGlobe
-}
 
 function ViewModeToggle({
   value,
@@ -269,188 +245,12 @@ function ResourcesListContent({
       </div>
 
       {viewMode === "list" ? (
-        <div className="rounded-md bg-card">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[60%] md:w-[400px]">
-                  {t("common.title")}
-                </TableHead>
-                <TableHead className="w-[1%] whitespace-nowrap px-2 text-center">
-                  {t("resources.detail.categoryLabel")}
-                </TableHead>
-                <TableHead className="hidden md:table-cell">
-                  {t("resources.detail.domain")}
-                </TableHead>
-                <TableHead className="hidden md:table-cell">
-                  {t("resources.detail.added")}
-                </TableHead>
-                <TableHead className="w-[1%] whitespace-nowrap px-2 text-right">
-                  <span className="hidden sm:inline">
-                    {t("common.actions")}
-                  </span>
-                  <span className="sr-only sm:hidden">
-                    {t("common.actions")}
-                  </span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortedData.map((resource) => {
-                const host = safeHostname(resource.destination_url)
-                const Icon = getResourceIcon(resource.destination_url)
-                return (
-                  <TableRow key={resource.id}>
-                    <TableCell className="w-[60%]">
-                      <div className="flex items-start gap-3">
-                        <div className="bg-primary/10 text-primary mt-0.5 hidden size-9 shrink-0 items-center justify-center rounded-lg md:inline-flex">
-                          <Icon className="size-4" />
-                        </div>
-                        <div className="grid gap-1">
-                          <Link
-                            to="/resources/$resourceId"
-                            params={{ resourceId: resource.id }}
-                            className="font-medium hover:underline underline-offset-4 line-clamp-2 md:line-clamp-1"
-                          >
-                            {resource.title}
-                          </Link>
-                          {resource.description ? (
-                            <p className="text-xs text-muted-foreground line-clamp-1">
-                              {resource.description}
-                            </p>
-                          ) : null}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="w-[1%] whitespace-nowrap px-2 text-center">
-                      <Badge variant="secondary" className="whitespace-nowrap">
-                        {resource.category_name ?? "-"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden text-muted-foreground text-sm md:table-cell">
-                      {host || "-"}
-                    </TableCell>
-                    <TableCell className="hidden text-muted-foreground text-sm whitespace-nowrap md:table-cell">
-                      {new Date(resource.created_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="w-[1%] whitespace-nowrap px-2 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        {/* <Link
-                          to="/resources/$resourceId"
-                          params={{ resourceId: resource.id }}
-                        >
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                          >
-                            <span className="sr-only">{t("resources.viewDetails")}</span>
-                            <TbSearch className="h-4 w-4" />
-                          </Button>
-                        </Link> */}
-                        <a
-                          href={resource.destination_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                          >
-                            <span className="sr-only">
-                              {t("resources.visit")}
-                            </span>
-                            <TbExternalLink className="h-4 w-4" />
-                          </Button>
-                        </a>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </div>
+        <ResourcesTable resources={sortedData} />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {sortedData.map((resource) => {
-            const host = safeHostname(resource.destination_url)
-            const Icon = getResourceIcon(resource.destination_url)
-            return (
-              <Card
-                key={resource.id}
-                className="group flex flex-col overflow-hidden transition-shadow hover:shadow-md"
-              >
-                <CardHeader className="space-y-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex min-w-0 items-start gap-3">
-                      <div className="bg-primary/10 text-primary mt-1 inline-flex size-10 shrink-0 items-center justify-center rounded-lg">
-                        <Icon className="size-5" />
-                      </div>
-                      <div className="min-w-0">
-                        <CardTitle className="text-base leading-snug line-clamp-2">
-                          <Link
-                            to="/resources/$resourceId"
-                            params={{ resourceId: resource.id }}
-                            className="hover:underline underline-offset-4"
-                          >
-                            {resource.title}
-                          </Link>
-                        </CardTitle>
-                        <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                          {host ? <span>{host}</span> : null}
-                          <span className="hidden sm:inline">•</span>
-                          <span>
-                            {new Date(resource.created_at).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <Badge variant="secondary" className="shrink-0">
-                      {resource.category_name ?? "-"}
-                    </Badge>
-                  </div>
-                  {resource.description ? (
-                    <CardDescription className="line-clamp-3">
-                      {resource.description}
-                    </CardDescription>
-                  ) : null}
-                </CardHeader>
-
-                <CardContent className="flex-grow" />
-
-                <CardFooter className="flex items-center justify-between gap-2">
-                  <Link
-                    to="/resources/$resourceId"
-                    params={{ resourceId: resource.id }}
-                  >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="cursor-pointer"
-                    >
-                      {t("resources.viewDetails")}
-                    </Button>
-                  </Link>
-                  <a
-                    href={resource.destination_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="cursor-pointer"
-                    >
-                      <TbExternalLink className="h-4 w-4 mr-1" />
-                      {t("resources.visit")}
-                    </Button>
-                  </a>
-                </CardFooter>
-              </Card>
-            )
-          })}
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {sortedData.map((resource) => (
+            <ResourceGridCard key={resource.id} resource={resource} />
+          ))}
         </div>
       )}
 
@@ -510,14 +310,15 @@ function ResourcesListContent({
 
 function SkeletonHeader(): ReactElement {
   return (
-    <div className="flex items-center">
-      <Skeleton className="h-4 w-64" />
+    <div className="flex flex-col gap-2 pl-2 sm:flex-row sm:items-center sm:justify-between">
+      <Skeleton className="h-4 w-44" />
+      <Skeleton className="hidden h-4 w-56 sm:block" />
     </div>
   )
 }
 
 const LIST_SKELETON_ROWS = 5
-const GRID_SKELETON_CARDS = 9
+const GRID_SKELETON_CARDS = 12
 
 function ResourcesListSkeleton({
   viewMode,
@@ -544,8 +345,11 @@ function ResourcesListSkeleton({
                 <TableHead className="hidden md:table-cell">
                   <Skeleton className="h-4 w-20" />
                 </TableHead>
-                <TableHead className="w-[1%] whitespace-nowrap px-2 text-right">
-                  <Skeleton className="ml-auto h-4 w-16" />
+                <TableHead className="w-[1%] whitespace-nowrap px-2 text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <Skeleton className="h-4 w-4" />
+                    <Skeleton className="hidden h-4 w-12 sm:block" />
+                  </div>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -554,7 +358,7 @@ function ResourcesListSkeleton({
                 <TableRow key={i}>
                   <TableCell className="w-[60%]">
                     <div className="flex items-start gap-3">
-                      <Skeleton className="mt-0.5 hidden h-9 w-9 rounded-lg md:inline-flex" />
+                      <Skeleton className="mt-0.5 hidden h-9 w-14 rounded-lg md:inline-flex" />
                       <div className="space-y-1">
                         <Skeleton className="h-4 w-48" />
                         <Skeleton className="h-3 w-32" />
@@ -570,8 +374,11 @@ function ResourcesListSkeleton({
                   <TableCell className="hidden md:table-cell">
                     <Skeleton className="h-4 w-20" />
                   </TableCell>
-                  <TableCell className="w-[1%] whitespace-nowrap px-2 text-right">
-                    <Skeleton className="ml-auto h-8 w-8" />
+                  <TableCell className="w-[1%] whitespace-nowrap px-2 text-center">
+                    <div className="flex items-center justify-center gap-1">
+                      <Skeleton className="h-4 w-4" />
+                      <Skeleton className="h-4 w-6" />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -585,28 +392,29 @@ function ResourcesListSkeleton({
   return (
     <div className="space-y-4">
       <SkeletonHeader />
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: GRID_SKELETON_CARDS }, (_, i) => (
-          <Card key={i} className="flex flex-col">
-            <CardHeader className="space-y-3">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3 w-full">
-                  <Skeleton className="h-10 w-10 rounded-lg" />
-                  <div className="w-full">
-                    <Skeleton className="h-5 w-4/5" />
-                    <Skeleton className="h-4 w-2/5 mt-2" />
-                  </div>
-                </div>
-                <Skeleton className="h-6 w-20" />
+          <Card
+            key={i}
+            className="relative flex flex-col overflow-hidden rounded-2xl border bg-card"
+          >
+            {/* Image skeleton */}
+            <div className="aspect-[16/10] w-full overflow-hidden bg-muted">
+              <Skeleton className="h-full w-full rounded-none" />
+            </div>
+            {/* Content skeleton */}
+            <div className="flex flex-col gap-3 p-4">
+              <div className="space-y-2">
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-11/12" />
+                <Skeleton className="h-3 w-2/3" />
               </div>
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-2/3" />
-            </CardHeader>
-            <CardContent className="flex-grow" />
-            <CardFooter className="flex justify-between">
-              <Skeleton className="h-9 w-24" />
-              <Skeleton className="h-9 w-20" />
-            </CardFooter>
+              <div className="flex items-center justify-between pt-1">
+                <Skeleton className="h-6 w-24 rounded-full" />
+                <Skeleton className="h-6 w-16 rounded-full" />
+              </div>
+            </div>
           </Card>
         ))}
       </div>
@@ -671,14 +479,14 @@ function ResourcesPage() {
         <div className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl" />
         <div className="pointer-events-none absolute -left-24 -bottom-24 size-72 rounded-full bg-primary/5 blur-3xl" />
         <div className="relative">
-          <h1 className="text-xl font-bold tracking-tight">
+          {/* <h1 className="text-xl font-bold tracking-tight">
             {t("resources.title")}
           </h1>
           <p className="mt-2 max-w-2xl text-muted-foreground text-sm">
             {t("resources.description")}
-          </p>
+          </p> */}
 
-          <div className="mt-6 flex flex-col gap-3">
+          <div className="flex flex-col gap-3 -mb-4">
             <form
               onSubmit={handleSearch}
               className="flex w-full flex-col gap-2 sm:flex-row sm:items-center"

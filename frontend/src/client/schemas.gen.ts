@@ -55,6 +55,19 @@ export const Body_login_login_access_tokenSchema = {
     title: 'Body_login-login_access_token'
 } as const;
 
+export const Body_resources_upload_resource_imageSchema = {
+    properties: {
+        file: {
+            type: 'string',
+            format: 'binary',
+            title: 'File'
+        }
+    },
+    type: 'object',
+    required: ['file'],
+    title: 'Body_resources-upload_resource_image'
+} as const;
+
 export const Body_users_upload_avatarSchema = {
     properties: {
         file: {
@@ -682,6 +695,18 @@ export const ResourceCreateSchema = {
                 }
             ],
             title: 'Category Id'
+        },
+        image_external_url: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 2048
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Image External Url'
         }
     },
     type: 'object',
@@ -790,6 +815,17 @@ export const ResourceDetailPublicSchema = {
             type: 'integer',
             title: 'Likes Count',
             default: 0
+        },
+        image_url: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Image Url'
         },
         favorites_count: {
             type: 'integer',
@@ -960,6 +996,22 @@ export const ResourcePublicSchema = {
             type: 'string',
             format: 'date-time',
             title: 'Updated At'
+        },
+        likes_count: {
+            type: 'integer',
+            title: 'Likes Count',
+            default: 0
+        },
+        image_url: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Image Url'
         }
     },
     type: 'object',
@@ -1220,6 +1272,18 @@ export const ResourceUpdateSchema = {
                 }
             ],
             title: 'Is Published'
+        },
+        image_external_url: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 2048
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Image External Url'
         }
     },
     type: 'object',

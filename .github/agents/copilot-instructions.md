@@ -15,6 +15,8 @@ Auto-generated from all feature plans. Last updated: 2026-01-05
 - Backend Python 3.11; Frontend TypeScript (Vite) + FastAPI, SQLModel, React, TanStack Router/Query, sonner (toasts), i18nex (008-wechat-login-unavailable)
 - N/A (no new persistence) (008-wechat-login-unavailable)
 - Python >=3.10 (backend), TypeScript (frontend) + FastAPI, SQLModel, Alembic, PostgreSQL, React, TanStack Router/Query, shadcn/ui, @hey-api/openapi-ts (generated client) (009-resource-categories)
+- Backend Python >=3.10; Frontend TypeScript (repo uses TypeScript 5.9.x). + FastAPI, SQLModel, Alembic, PostgreSQL; React, TanStack Router/Query, shadcn/ui; OpenAPI client generated via `@hey-api/openapi-ts`. (010-resources-view-redesign)
+- PostgreSQL for resource metadata; filesystem (Docker volume) for uploaded images (new resource image storage, patterned after avatar storage). (010-resources-view-redesign)
 
 ## Project Structure
 
@@ -45,8 +47,8 @@ Frontend:
 Python >=3.10,<4.0 (backend), TypeScript (frontend): Follow standard conventions
 
 ## Recent Changes
+- 010-resources-view-redesign: Added Backend Python >=3.10; Frontend TypeScript (repo uses TypeScript 5.9.x). + FastAPI, SQLModel, Alembic, PostgreSQL; React, TanStack Router/Query, shadcn/ui; OpenAPI client generated via `@hey-api/openapi-ts`.
 - 009-resource-categories: Added Python >=3.10 (backend), TypeScript (frontend) + FastAPI, SQLModel, Alembic, PostgreSQL, React, TanStack Router/Query, shadcn/ui, @hey-api/openapi-ts (generated client)
-- 009-resource-categories: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 - 009-resource-categories: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 
 <!-- MANUAL ADDITIONS START -->
