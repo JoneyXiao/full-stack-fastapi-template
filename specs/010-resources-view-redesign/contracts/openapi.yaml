@@ -1,0 +1,269 @@
+openapi: 3.0.3
+info:
+  title: Resources View Redesign (Feature Contract)
+  version: 0.1.0
+  description: |
+    Contract additions for feature 010-resources-view-redesign.
+
+    Note: This is a feature-level contract intended to guide implementation.
+    The repo's canonical OpenAPI remains the running backend at /api/v1/openapi.json.
+
+servers:
+  - url: /api/v1
+
+tags:
+  - name: resources
+  - name: resource-images
+  - name: admin
+
+paths:
+  /resources:
+    get:
+      tags: [resources]
+      summary: List resources
+      description: |
+        Public callers receive published resources. Admins may filter by is_published.
+
+        This feature extends list items with likes_count and image_url.
+      parameters:
+        - in: query
+          name: q
+          schema: { type: string }
+        - in: query
+          name: category_id
+          schema: { type: string, format: uuid }
+        - in: query
+          name: is_published
+          schema: { type: boolean }
+        - in: query
+          name: skip
+          schema: { type: integer, minimum: 0, default: 0 }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourcesPublic'
+
+    post:
+      tags: [admin]
+      summary: Create a resource (admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceCreate'
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourcePublic'
+
+  /resources/{id}:
+    get:
+      tags: [resources]
+      summary: Get resource by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDetailPublic'
+
+    put:
+      tags: [admin]
+      summary: Update resource (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourcePublic'
+
+  /resources/{id}/image-upload:
+    post:
+      tags: [admin]
+      summary: Upload or replace a resource image (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Updated resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourcePublic'
+
+  /resources/{id}/image:
+    delete:
+      tags: [admin]
+      summary: Remove a resource image (admin)
+      description: Clears both uploaded image and external image URL.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Updated resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourcePublic'
+
+  /resource-images/{resource_id}/{version}.{ext}:
+    get:
+      tags: [resource-images]
+      summary: Get resource image
+      description: |
+        Serves an uploaded resource image with immutable caching. External image URLs are not served by this endpoint.
+      parameters:
+        - in: path
+          name: resource_id
+          required: true
+          schema: { type: string, format: uuid }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 0 }
+        - in: path
+          name: ext
+          required: true
+          schema:
+            type: string
+            pattern: '^(webp|jpg)$'
+      responses:
+        '200':
+          description: Image file
+          content:
+            image/webp: {}
+            image/jpeg: {}
+        '404':
+          description: Not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Message:
+      type: object
+      properties:
+        message: { type: string }
+
+    ResourceCreate:
+      type: object
+      required: [title, destination_url]
+      properties:
+        title: { type: string }
+        description: { type: string, nullable: true }
+        destination_url: { type: string }
+        category_id: { type: string, format: uuid, nullable: true }
+        image_external_url:
+          type: string
+          nullable: true
+          description: Optional external image URL (mutually exclusive with uploaded image)
+
+    ResourceUpdate:
+      type: object
+      properties:
+        title: { type: string, nullable: true }
+        description: { type: string, nullable: true }
+        destination_url: { type: string, nullable: true }
+        category_id: { type: string, format: uuid, nullable: true }
+        is_published: { type: boolean, nullable: true }
+        image_external_url:
+          type: string
+          nullable: true
+          description: Optional external image URL (mutually exclusive with uploaded image)
+
+    ResourcePublic:
+      type: object
+      required: [id, title, destination_url, is_published, created_at, updated_at, likes_count]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        description: { type: string, nullable: true }
+        destination_url: { type: string }
+        category_id: { type: string, format: uuid, nullable: true }
+        category_name: { type: string, nullable: true }
+        is_published: { type: boolean }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        likes_count:
+          type: integer
+          minimum: 0
+          description: Likes count returned on list responses for Grid/List display.
+        image_url:
+          type: string
+          nullable: true
+          description: Computed image URL (external URL or versioned uploaded-image URL).
+
+    ResourceDetailPublic:
+      allOf:
+        - $ref: '#/components/schemas/ResourcePublic'
+        - type: object
+          properties:
+            favorites_count: { type: integer, minimum: 0 }
+            liked_by_me: { type: boolean }
+            favorited_by_me: { type: boolean }
+
+    ResourcesPublic:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourcePublic'
+        count: { type: integer }

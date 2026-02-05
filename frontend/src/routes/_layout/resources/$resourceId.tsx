@@ -51,7 +51,7 @@ import useAuth from "@/hooks/useAuth"
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard"
 import useCustomToast from "@/hooks/useCustomToast"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
-import { DEFAULT_AVATAR, resolveApiUrl } from "@/utils"
+import { DEFAULT_AVATAR, resolveApiUrl, safeHostname } from "@/utils"
 
 function getResourceQueryOptions(resourceId: string) {
   return {
@@ -70,14 +70,6 @@ function getCommentsQueryOptions(resourceId: string) {
 export const Route = createFileRoute("/_layout/resources/$resourceId")({
   component: ResourceDetailPage,
 })
-
-function safeHostname(url: string): string | undefined {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "")
-  } catch {
-    return undefined
-  }
-}
 
 function initialsFromText(text: string): string {
   const cleaned = (text || "").trim()

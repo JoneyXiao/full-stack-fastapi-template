@@ -105,7 +105,7 @@ class Settings(BaseSettings):
         return bool(self.OPENAI_API_KEY)
 
     # Avatar storage settings
-    AVATAR_STORAGE_PATH: str = "/app/data/avatars"
+    AVATAR_STORAGE_PATH: str = "/app/data/uploads/avatars"
     AVATAR_MAX_SIZE_BYTES: int = 5 * 1024 * 1024  # 5MB
     AVATAR_MAX_DIMENSION: int = 4096  # max input dimension
     AVATAR_OUTPUT_SIZE: int = 512  # output dimension after processing
@@ -117,6 +117,18 @@ class Settings(BaseSettings):
     ]
     AVATAR_RATE_LIMIT_MAX_ATTEMPTS: int = 10
     AVATAR_RATE_LIMIT_WINDOW_HOURS: int = 1
+
+    # Resource image storage settings (patterned after avatar settings)
+    RESOURCE_IMAGE_STORAGE_PATH: str = "/app/data/uploads/resource-images"
+    RESOURCE_IMAGE_MAX_SIZE_BYTES: int = 5 * 1024 * 1024  # 5MB
+    RESOURCE_IMAGE_MAX_DIMENSION: int = 4096  # max input dimension
+    RESOURCE_IMAGE_OUTPUT_SIZE: int = 800  # output dimension after processing
+    RESOURCE_IMAGE_SUPPORTED_CONTENT_TYPES: list[str] = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+    ]
 
     # WeChat Login (Open Platform "Website Application")
     WECHAT_LOGIN_ENABLED: bool = False

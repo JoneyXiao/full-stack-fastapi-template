@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { AvatarsGetAvatarData, AvatarsGetAvatarResponse, CategoriesListCategoriesData, CategoriesListCategoriesResponse, CategoriesCreateCategoryData, CategoriesCreateCategoryResponse, CategoriesListCategoriesAdminData, CategoriesListCategoriesAdminResponse, CategoriesUpdateCategoryData, CategoriesUpdateCategoryResponse, CategoriesDeleteCategoryData, CategoriesDeleteCategoryResponse, ChatTranscriptsListMyTranscriptsData, ChatTranscriptsListMyTranscriptsResponse, ChatTranscriptsSaveTranscriptData, ChatTranscriptsSaveTranscriptResponse, ChatTranscriptsGetMyTranscriptData, ChatTranscriptsGetMyTranscriptResponse, ChatTranscriptsDeleteMyTranscriptData, ChatTranscriptsDeleteMyTranscriptResponse, CommentsUpdateCommentData, CommentsUpdateCommentResponse, CommentsDeleteCommentData, CommentsDeleteCommentResponse, CommentsUpdateSubmissionCommentData, CommentsUpdateSubmissionCommentResponse, CommentsDeleteSubmissionCommentData, CommentsDeleteSubmissionCommentResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LandingChatRecommendResourcesData, LandingChatRecommendResourcesResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, ResourcesListResourcesData, ResourcesListResourcesResponse, ResourcesCreateResourceData, ResourcesCreateResourceResponse, ResourcesGetResourceData, ResourcesGetResourceResponse, ResourcesUpdateResourceData, ResourcesUpdateResourceResponse, ResourcesDeleteResourceData, ResourcesDeleteResourceResponse, ResourcesLikeResourceData, ResourcesLikeResourceResponse, ResourcesUnlikeResourceData, ResourcesUnlikeResourceResponse, ResourcesFavoriteResourceData, ResourcesFavoriteResourceResponse, ResourcesUnfavoriteResourceData, ResourcesUnfavoriteResourceResponse, ResourcesListMyFavoritesData, ResourcesListMyFavoritesResponse, ResourcesListResourceCommentsData, ResourcesListResourceCommentsResponse, ResourcesCreateResourceCommentData, ResourcesCreateResourceCommentResponse, SubmissionsListMySubmissionsData, SubmissionsListMySubmissionsResponse, SubmissionsCreateSubmissionData, SubmissionsCreateSubmissionResponse, SubmissionsListPendingSubmissionsData, SubmissionsListPendingSubmissionsResponse, SubmissionsGetSubmissionData, SubmissionsGetSubmissionResponse, SubmissionsUpdateSubmissionData, SubmissionsUpdateSubmissionResponse, SubmissionsDeleteSubmissionData, SubmissionsDeleteSubmissionResponse, SubmissionsApproveSubmissionData, SubmissionsApproveSubmissionResponse, SubmissionsRejectSubmissionData, SubmissionsRejectSubmissionResponse, SubmissionsListSubmissionCommentsData, SubmissionsListSubmissionCommentsResponse, SubmissionsCreateSubmissionCommentData, SubmissionsCreateSubmissionCommentResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersUploadAvatarData, UsersUploadAvatarResponse, UsersDeleteAvatarResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse, WechatLoginWechatLoginStartData, WechatLoginWechatLoginStartResponse, WechatLoginWechatLoginCompleteData, WechatLoginWechatLoginCompleteResponse, WechatLoginWechatLinkStatusResponse, WechatLoginWechatLinkData, WechatLoginWechatLinkResponse, WechatLoginWechatUnlinkResponse } from './types.gen';
+import type { AvatarsGetAvatarData, AvatarsGetAvatarResponse, CategoriesListCategoriesData, CategoriesListCategoriesResponse, CategoriesCreateCategoryData, CategoriesCreateCategoryResponse, CategoriesListCategoriesAdminData, CategoriesListCategoriesAdminResponse, CategoriesUpdateCategoryData, CategoriesUpdateCategoryResponse, CategoriesDeleteCategoryData, CategoriesDeleteCategoryResponse, ChatTranscriptsListMyTranscriptsData, ChatTranscriptsListMyTranscriptsResponse, ChatTranscriptsSaveTranscriptData, ChatTranscriptsSaveTranscriptResponse, ChatTranscriptsGetMyTranscriptData, ChatTranscriptsGetMyTranscriptResponse, ChatTranscriptsDeleteMyTranscriptData, ChatTranscriptsDeleteMyTranscriptResponse, CommentsUpdateCommentData, CommentsUpdateCommentResponse, CommentsDeleteCommentData, CommentsDeleteCommentResponse, CommentsUpdateSubmissionCommentData, CommentsUpdateSubmissionCommentResponse, CommentsDeleteSubmissionCommentData, CommentsDeleteSubmissionCommentResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LandingChatRecommendResourcesData, LandingChatRecommendResourcesResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, ResourceImagesServeResourceImageData, ResourceImagesServeResourceImageResponse, ResourcesListResourcesData, ResourcesListResourcesResponse, ResourcesCreateResourceData, ResourcesCreateResourceResponse, ResourcesGetResourceData, ResourcesGetResourceResponse, ResourcesUpdateResourceData, ResourcesUpdateResourceResponse, ResourcesDeleteResourceData, ResourcesDeleteResourceResponse, ResourcesUploadResourceImageData, ResourcesUploadResourceImageResponse, ResourcesClearResourceImageData, ResourcesClearResourceImageResponse, ResourcesLikeResourceData, ResourcesLikeResourceResponse, ResourcesUnlikeResourceData, ResourcesUnlikeResourceResponse, ResourcesFavoriteResourceData, ResourcesFavoriteResourceResponse, ResourcesUnfavoriteResourceData, ResourcesUnfavoriteResourceResponse, ResourcesListMyFavoritesData, ResourcesListMyFavoritesResponse, ResourcesListResourceCommentsData, ResourcesListResourceCommentsResponse, ResourcesCreateResourceCommentData, ResourcesCreateResourceCommentResponse, SubmissionsListMySubmissionsData, SubmissionsListMySubmissionsResponse, SubmissionsCreateSubmissionData, SubmissionsCreateSubmissionResponse, SubmissionsListPendingSubmissionsData, SubmissionsListPendingSubmissionsResponse, SubmissionsGetSubmissionData, SubmissionsGetSubmissionResponse, SubmissionsUpdateSubmissionData, SubmissionsUpdateSubmissionResponse, SubmissionsDeleteSubmissionData, SubmissionsDeleteSubmissionResponse, SubmissionsApproveSubmissionData, SubmissionsApproveSubmissionResponse, SubmissionsRejectSubmissionData, SubmissionsRejectSubmissionResponse, SubmissionsListSubmissionCommentsData, SubmissionsListSubmissionCommentsResponse, SubmissionsCreateSubmissionCommentData, SubmissionsCreateSubmissionCommentResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersUploadAvatarData, UsersUploadAvatarResponse, UsersDeleteAvatarResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse, WechatLoginWechatLoginStartData, WechatLoginWechatLoginStartResponse, WechatLoginWechatLoginCompleteData, WechatLoginWechatLoginCompleteResponse, WechatLoginWechatLinkStatusResponse, WechatLoginWechatLinkData, WechatLoginWechatLinkResponse, WechatLoginWechatUnlinkResponse } from './types.gen';
 
 export class AvatarsService {
     /**
@@ -587,13 +587,53 @@ export class PrivateService {
     }
 }
 
+export class ResourceImagesService {
+    /**
+     * Serve Resource Image
+     * Serve a resource image file.
+     *
+     * The URL pattern includes the version number for cache-busting.
+     * The version in the URL is informational only (used for immutability);
+     * we serve whatever file exists for the resource.
+     *
+     * Args:
+     * resource_id: The resource's UUID
+     * version: Image version (for cache-busting, not validated)
+     * ext: File extension (webp or jpg)
+     *
+     * Returns:
+     * The image file with appropriate content-type and caching headers
+     *
+     * Raises:
+     * HTTPException 404: If the image file doesn't exist
+     * @param data The data for the request.
+     * @param data.resourceId
+     * @param data.version
+     * @param data.ext
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static serveResourceImage(data: ResourceImagesServeResourceImageData): CancelablePromise<ResourceImagesServeResourceImageResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/resource-images/{resource_id}/{version}.{ext}',
+            path: {
+                resource_id: data.resourceId,
+                version: data.version,
+                ext: data.ext
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
 export class ResourcesService {
     /**
      * List Resources
-     * List published resources. Admins can filter by is_published; others always see published.
-     *
-     * Filtering by category:
-     * - `category_id`: Filter by category id
+     * List resources with category names and likes counts (uses JOINs to avoid N+1).
+     * Non-admins see only published resources.
      * @param data The data for the request.
      * @param data.skip
      * @param data.limit
@@ -623,6 +663,7 @@ export class ResourcesService {
     /**
      * Create Resource
      * Create a resource (admin only).
+     * Optionally accepts image_external_url (http/https only).
      * @param data The data for the request.
      * @param data.requestBody
      * @returns ResourcePublic Successful Response
@@ -643,6 +684,7 @@ export class ResourcesService {
     /**
      * Get Resource
      * Get resource by ID with reaction counts and per-user state.
+     * Includes image_url (external or uploaded).
      * @param data The data for the request.
      * @param data.id
      * @returns ResourceDetailPublic Successful Response
@@ -664,6 +706,7 @@ export class ResourcesService {
     /**
      * Update Resource
      * Update a resource (admin only).
+     * Setting image_external_url enforces mutual exclusivity (clears uploaded image metadata).
      * @param data The data for the request.
      * @param data.id
      * @param data.requestBody
@@ -697,6 +740,56 @@ export class ResourcesService {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/api/v1/resources/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Upload Resource Image
+     * Upload an image for a resource (admin only).
+     *
+     * Enforces mutual exclusivity: uploading clears any image_external_url.
+     * Validates and processes the image (resize, format conversion).
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.formData
+     * @returns ResourcePublic Successful Response
+     * @throws ApiError
+     */
+    public static uploadResourceImage(data: ResourcesUploadResourceImageData): CancelablePromise<ResourcesUploadResourceImageResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/resources/{id}/image-upload',
+            path: {
+                id: data.id
+            },
+            formData: data.formData,
+            mediaType: 'multipart/form-data',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Clear Resource Image
+     * Clear the image for a resource (admin only).
+     *
+     * Removes both uploaded image and external URL, returning resource to no-image state.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns ResourcePublic Successful Response
+     * @throws ApiError
+     */
+    public static clearResourceImage(data: ResourcesClearResourceImageData): CancelablePromise<ResourcesClearResourceImageResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/resources/{id}/image',
             path: {
                 id: data.id
             },

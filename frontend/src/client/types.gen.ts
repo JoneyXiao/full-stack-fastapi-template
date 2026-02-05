@@ -9,6 +9,10 @@ export type Body_login_login_access_token = {
     client_secret?: (string | null);
 };
 
+export type Body_resources_upload_resource_image = {
+    file: (Blob | File);
+};
+
 export type Body_users_upload_avatar = {
     file: (Blob | File);
 };
@@ -170,6 +174,7 @@ export type ResourceCreate = {
     description?: (string | null);
     destination_url: string;
     category_id?: (string | null);
+    image_external_url?: (string | null);
 };
 
 export type ResourceDetailPublic = {
@@ -186,6 +191,7 @@ export type ResourceDetailPublic = {
     created_at: string;
     updated_at: string;
     likes_count?: number;
+    image_url?: (string | null);
     favorites_count?: number;
     liked_by_me?: boolean;
     favorited_by_me?: boolean;
@@ -215,6 +221,8 @@ export type ResourcePublic = {
     published_by_avatar_url?: (string | null);
     created_at: string;
     updated_at: string;
+    likes_count?: number;
+    image_url?: (string | null);
 };
 
 export type ResourcesPublic = {
@@ -260,6 +268,7 @@ export type ResourceUpdate = {
     destination_url?: (string | null);
     category_id?: (string | null);
     is_published?: (boolean | null);
+    image_external_url?: (string | null);
 };
 
 export type SubmissionCommentPublic = {
@@ -554,6 +563,14 @@ export type PrivateCreateUserData = {
 
 export type PrivateCreateUserResponse = (UserPublic);
 
+export type ResourceImagesServeResourceImageData = {
+    ext: string;
+    resourceId: string;
+    version: number;
+};
+
+export type ResourceImagesServeResourceImageResponse = (unknown);
+
 export type ResourcesListResourcesData = {
     categoryId?: (string | null);
     isPublished?: (boolean | null);
@@ -588,6 +605,19 @@ export type ResourcesDeleteResourceData = {
 };
 
 export type ResourcesDeleteResourceResponse = (Message);
+
+export type ResourcesUploadResourceImageData = {
+    formData: Body_resources_upload_resource_image;
+    id: string;
+};
+
+export type ResourcesUploadResourceImageResponse = (ResourcePublic);
+
+export type ResourcesClearResourceImageData = {
+    id: string;
+};
+
+export type ResourcesClearResourceImageResponse = (ResourcePublic);
 
 export type ResourcesLikeResourceData = {
     id: string;

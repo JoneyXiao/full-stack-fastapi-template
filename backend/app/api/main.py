@@ -9,6 +9,7 @@ from app.api.routes import (
     landing_chat,
     login,
     private,
+    resource_images,
     resources,
     submissions,
     users,
@@ -30,6 +31,9 @@ api_router.include_router(comments.router)
 api_router.include_router(landing_chat.router)
 api_router.include_router(chat_transcripts.router)
 api_router.include_router(avatars.router, prefix="/avatars", tags=["avatars"])
+api_router.include_router(
+    resource_images.router, prefix="/resource-images", tags=["resource-images"]
+)
 
 
 if settings.ENVIRONMENT == "local":

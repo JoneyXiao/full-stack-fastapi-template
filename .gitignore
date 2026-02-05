@@ -14,4 +14,4 @@ __pycache__/
 *.pyc
 
 # data folders
-backend/data/avatars/
+backend/data/
