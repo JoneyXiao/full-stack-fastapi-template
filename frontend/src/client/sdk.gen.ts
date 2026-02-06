@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { AvatarsGetAvatarData, AvatarsGetAvatarResponse, CategoriesListCategoriesData, CategoriesListCategoriesResponse, CategoriesCreateCategoryData, CategoriesCreateCategoryResponse, CategoriesListCategoriesAdminData, CategoriesListCategoriesAdminResponse, CategoriesUpdateCategoryData, CategoriesUpdateCategoryResponse, CategoriesDeleteCategoryData, CategoriesDeleteCategoryResponse, ChatTranscriptsListMyTranscriptsData, ChatTranscriptsListMyTranscriptsResponse, ChatTranscriptsSaveTranscriptData, ChatTranscriptsSaveTranscriptResponse, ChatTranscriptsGetMyTranscriptData, ChatTranscriptsGetMyTranscriptResponse, ChatTranscriptsDeleteMyTranscriptData, ChatTranscriptsDeleteMyTranscriptResponse, CommentsUpdateCommentData, CommentsUpdateCommentResponse, CommentsDeleteCommentData, CommentsDeleteCommentResponse, CommentsUpdateSubmissionCommentData, CommentsUpdateSubmissionCommentResponse, CommentsDeleteSubmissionCommentData, CommentsDeleteSubmissionCommentResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LandingChatRecommendResourcesData, LandingChatRecommendResourcesResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, ResourceImagesServeResourceImageData, ResourceImagesServeResourceImageResponse, ResourcesListResourcesData, ResourcesListResourcesResponse, ResourcesCreateResourceData, ResourcesCreateResourceResponse, ResourcesGetResourceData, ResourcesGetResourceResponse, ResourcesUpdateResourceData, ResourcesUpdateResourceResponse, ResourcesDeleteResourceData, ResourcesDeleteResourceResponse, ResourcesUploadResourceImageData, ResourcesUploadResourceImageResponse, ResourcesClearResourceImageData, ResourcesClearResourceImageResponse, ResourcesLikeResourceData, ResourcesLikeResourceResponse, ResourcesUnlikeResourceData, ResourcesUnlikeResourceResponse, ResourcesFavoriteResourceData, ResourcesFavoriteResourceResponse, ResourcesUnfavoriteResourceData, ResourcesUnfavoriteResourceResponse, ResourcesListMyFavoritesData, ResourcesListMyFavoritesResponse, ResourcesListResourceCommentsData, ResourcesListResourceCommentsResponse, ResourcesCreateResourceCommentData, ResourcesCreateResourceCommentResponse, SubmissionsListMySubmissionsData, SubmissionsListMySubmissionsResponse, SubmissionsCreateSubmissionData, SubmissionsCreateSubmissionResponse, SubmissionsListPendingSubmissionsData, SubmissionsListPendingSubmissionsResponse, SubmissionsGetSubmissionData, SubmissionsGetSubmissionResponse, SubmissionsUpdateSubmissionData, SubmissionsUpdateSubmissionResponse, SubmissionsDeleteSubmissionData, SubmissionsDeleteSubmissionResponse, SubmissionsApproveSubmissionData, SubmissionsApproveSubmissionResponse, SubmissionsRejectSubmissionData, SubmissionsRejectSubmissionResponse, SubmissionsListSubmissionCommentsData, SubmissionsListSubmissionCommentsResponse, SubmissionsCreateSubmissionCommentData, SubmissionsCreateSubmissionCommentResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersUploadAvatarData, UsersUploadAvatarResponse, UsersDeleteAvatarResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse, WechatLoginWechatLoginStartData, WechatLoginWechatLoginStartResponse, WechatLoginWechatLoginCompleteData, WechatLoginWechatLoginCompleteResponse, WechatLoginWechatLinkStatusResponse, WechatLoginWechatLinkData, WechatLoginWechatLinkResponse, WechatLoginWechatUnlinkResponse } from './types.gen';
+import type { AvatarsGetAvatarData, AvatarsGetAvatarResponse, CategoriesListCategoriesData, CategoriesListCategoriesResponse, CategoriesCreateCategoryData, CategoriesCreateCategoryResponse, CategoriesListCategoriesAdminData, CategoriesListCategoriesAdminResponse, CategoriesUpdateCategoryData, CategoriesUpdateCategoryResponse, CategoriesDeleteCategoryData, CategoriesDeleteCategoryResponse, ChatTranscriptsListMyTranscriptsData, ChatTranscriptsListMyTranscriptsResponse, ChatTranscriptsSaveTranscriptData, ChatTranscriptsSaveTranscriptResponse, ChatTranscriptsGetMyTranscriptData, ChatTranscriptsGetMyTranscriptResponse, ChatTranscriptsDeleteMyTranscriptData, ChatTranscriptsDeleteMyTranscriptResponse, CommentsUpdateCommentData, CommentsUpdateCommentResponse, CommentsDeleteCommentData, CommentsDeleteCommentResponse, CommentsUpdateSubmissionCommentData, CommentsUpdateSubmissionCommentResponse, CommentsDeleteSubmissionCommentData, CommentsDeleteSubmissionCommentResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LandingChatRecommendResourcesData, LandingChatRecommendResourcesResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, ResourceImagesServeResourceImageData, ResourceImagesServeResourceImageResponse, ResourcesListResourcesData, ResourcesListResourcesResponse, ResourcesCreateResourceData, ResourcesCreateResourceResponse, ResourcesGetResourceData, ResourcesGetResourceResponse, ResourcesUpdateResourceData, ResourcesUpdateResourceResponse, ResourcesDeleteResourceData, ResourcesDeleteResourceResponse, ResourcesUploadResourceImageData, ResourcesUploadResourceImageResponse, ResourcesClearResourceImageData, ResourcesClearResourceImageResponse, ResourcesLikeResourceData, ResourcesLikeResourceResponse, ResourcesUnlikeResourceData, ResourcesUnlikeResourceResponse, ResourcesFavoriteResourceData, ResourcesFavoriteResourceResponse, ResourcesUnfavoriteResourceData, ResourcesUnfavoriteResourceResponse, ResourcesListMyFavoritesData, ResourcesListMyFavoritesResponse, ResourcesListResourceCommentsData, ResourcesListResourceCommentsResponse, ResourcesCreateResourceCommentData, ResourcesCreateResourceCommentResponse, SubmissionImagesGetSubmissionImageData, SubmissionImagesGetSubmissionImageResponse, SubmissionsListMySubmissionsData, SubmissionsListMySubmissionsResponse, SubmissionsCreateSubmissionData, SubmissionsCreateSubmissionResponse, SubmissionsListPendingSubmissionsData, SubmissionsListPendingSubmissionsResponse, SubmissionsGetSubmissionData, SubmissionsGetSubmissionResponse, SubmissionsUpdateSubmissionData, SubmissionsUpdateSubmissionResponse, SubmissionsDeleteSubmissionData, SubmissionsDeleteSubmissionResponse, SubmissionsUploadSubmissionImageData, SubmissionsUploadSubmissionImageResponse, SubmissionsClearSubmissionImageData, SubmissionsClearSubmissionImageResponse, SubmissionsApproveSubmissionData, SubmissionsApproveSubmissionResponse, SubmissionsRejectSubmissionData, SubmissionsRejectSubmissionResponse, SubmissionsListSubmissionCommentsData, SubmissionsListSubmissionCommentsResponse, SubmissionsCreateSubmissionCommentData, SubmissionsCreateSubmissionCommentResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersUploadAvatarData, UsersUploadAvatarResponse, UsersDeleteAvatarResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse, WechatLoginWechatLoginStartData, WechatLoginWechatLoginStartResponse, WechatLoginWechatLoginCompleteData, WechatLoginWechatLoginCompleteResponse, WechatLoginWechatLinkStatusResponse, WechatLoginWechatLinkData, WechatLoginWechatLinkResponse, WechatLoginWechatUnlinkResponse } from './types.gen';
 
 export class AvatarsService {
     /**
@@ -958,6 +958,36 @@ export class ResourcesService {
     }
 }
 
+export class SubmissionImagesService {
+    /**
+     * Get Submission Image
+     * Serve a submission cover image by submission ID.
+     *
+     * The `v` query parameter is used for cache-busting when images are updated.
+     * Returns 404 if no image is found for the submission.
+     * @param data The data for the request.
+     * @param data.submissionId
+     * @param data.v Image version for cache busting
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getSubmissionImage(data: SubmissionImagesGetSubmissionImageData): CancelablePromise<SubmissionImagesGetSubmissionImageResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/submission-images/{submission_id}',
+            path: {
+                submission_id: data.submissionId
+            },
+            query: {
+                v: data.v
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
 export class SubmissionsService {
     /**
      * List My Submissions
@@ -1006,7 +1036,7 @@ export class SubmissionsService {
     
     /**
      * List Pending Submissions
-     * List submissions (auth required, all authenticated users can view pending).
+     * List all submissions (admin only).
      * Admins can filter by status.
      * @param data The data for the request.
      * @param data.skip
@@ -1092,6 +1122,53 @@ export class SubmissionsService {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/api/v1/submissions/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Upload Submission Image
+     * Upload or replace the cover image for a pending submission.
+     * Only the owner can upload images, and only if submission is pending.
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.formData
+     * @returns ResourceSubmissionPublic Successful Response
+     * @throws ApiError
+     */
+    public static uploadSubmissionImage(data: SubmissionsUploadSubmissionImageData): CancelablePromise<SubmissionsUploadSubmissionImageResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/submissions/{id}/image',
+            path: {
+                id: data.id
+            },
+            formData: data.formData,
+            mediaType: 'multipart/form-data',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Clear Submission Image
+     * Clear the cover image (uploaded or external) from a pending submission.
+     * Only the owner can clear images, and only if submission is pending.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns ResourceSubmissionPublic Successful Response
+     * @throws ApiError
+     */
+    public static clearSubmissionImage(data: SubmissionsClearSubmissionImageData): CancelablePromise<SubmissionsClearSubmissionImageResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/submissions/{id}/image',
             path: {
                 id: data.id
             },

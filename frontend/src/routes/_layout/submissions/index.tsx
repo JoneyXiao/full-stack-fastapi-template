@@ -1,28 +1,23 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { CheckCircle, Clock, Plus, Search, XCircle } from "lucide-react"
-import { Suspense } from "react"
+import { LayoutGrid, List as ListIcon, Plus, Search } from "lucide-react"
+import { Suspense, useState } from "react"
 import { useTranslation } from "react-i18next"
 
 import { SubmissionsService } from "@/client"
-import { Badge } from "@/components/ui/badge"
+import { SubmissionGridCard, SubmissionsTable } from "@/components/Submissions"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
 
-function getPendingSubmissionsQueryOptions() {
+type ViewMode = "grid" | "list"
+const VIEW_STORAGE_KEY = "submissions:viewMode"
+
+function getMySubmissionsQueryOptions() {
   return {
-    queryFn: () =>
-      SubmissionsService.listPendingSubmissions({ skip: 0, limit: 50 }),
-    queryKey: ["submissions", "pending"],
+    queryFn: () => SubmissionsService.listMySubmissions({ skip: 0, limit: 50 }),
+    queryKey: ["my-submissions"],
   }
 }
 
@@ -30,41 +25,40 @@ export const Route = createFileRoute("/_layout/submissions/")({
   component: SubmissionsPage,
 })
 
-function StatusBadge({ status }: { status: string }) {
+function ViewModeToggle({
+  value,
+  onChange,
+}: {
+  value: ViewMode
+  onChange: (value: ViewMode) => void
+}) {
   const { t } = useTranslation()
-
-  switch (status) {
-    case "pending":
-      return (
-        <Badge variant="outline" className="text-yellow-600 border-yellow-600">
-          <Clock className="h-3 w-3 mr-1" />
-          {t("submissions.status.pending")}
-        </Badge>
-      )
-    case "approved":
-      return (
-        <Badge variant="outline" className="text-green-600 border-green-600">
-          <CheckCircle className="h-3 w-3 mr-1" />
-          {t("submissions.status.approved")}
-        </Badge>
-      )
-    case "rejected":
-      return (
-        <Badge variant="outline" className="text-red-600 border-red-600">
-          <XCircle className="h-3 w-3 mr-1" />
-          {t("submissions.status.rejected")}
-        </Badge>
-      )
-    default:
-      return <Badge variant="outline">{status}</Badge>
-  }
+  return (
+    <ToggleGroup
+      type="single"
+      variant="outline"
+      size="sm"
+      value={value}
+      onValueChange={(v: string) => {
+        if (v) onChange(v as ViewMode)
+      }}
+      aria-label={t("resources.list.view")}
+    >
+      <ToggleGroupItem value="grid" aria-label={t("resources.list.viewGrid")}>
+        <LayoutGrid className="h-4 w-4" />
+        <span className="sr-only">{t("resources.list.viewGrid")}</span>
+      </ToggleGroupItem>
+      <ToggleGroupItem value="list" aria-label={t("resources.list.viewList")}>
+        <ListIcon className="h-4 w-4" />
+        <span className="sr-only">{t("resources.list.viewList")}</span>
+      </ToggleGroupItem>
+    </ToggleGroup>
+  )
 }
 
-function SubmissionsListContent() {
+function SubmissionsListContent({ viewMode }: { viewMode: ViewMode }) {
   const { t } = useTranslation()
-  const { data: submissions } = useSuspenseQuery(
-    getPendingSubmissionsQueryOptions(),
-  )
+  const { data: submissions } = useSuspenseQuery(getMySubmissionsQueryOptions())
 
   if (submissions.data.length === 0) {
     return (
@@ -89,57 +83,40 @@ function SubmissionsListContent() {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {submissions.data.map((submission) => (
-        <Card key={submission.id} className="flex flex-col">
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <CardTitle className="text-lg line-clamp-2">
-                <Link
-                  to="/submissions/$submissionId"
-                  params={{ submissionId: submission.id }}
-                  className="hover:underline"
-                >
-                  {submission.title}
-                </Link>
-              </CardTitle>
-              <StatusBadge status={submission.status} />
-            </div>
-            <CardDescription className="line-clamp-3">
-              {submission.description}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex-grow">
-            <Badge variant="secondary">{submission.category_name ?? "-"}</Badge>
-          </CardContent>
-          <CardFooter className="text-sm text-muted-foreground">
-            {t("submissions.submitted", {
-              date: new Date(submission.created_at).toLocaleDateString(),
-            })}
-          </CardFooter>
-        </Card>
-      ))}
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground pl-2">
+        {t("common.found", { count: submissions.count })}
+      </p>
+
+      {viewMode === "list" ? (
+        <SubmissionsTable submissions={submissions.data} />
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {submissions.data.map((submission) => (
+            <SubmissionGridCard key={submission.id} submission={submission} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
 
 function SubmissionsListSkeleton() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {[...Array(6)].map((_, i) => (
-        <Card key={i} className="flex flex-col">
-          <CardHeader>
-            <Skeleton className="h-6 w-3/4" />
-            <Skeleton className="h-4 w-full mt-2" />
-            <Skeleton className="h-4 w-2/3 mt-1" />
-          </CardHeader>
-          <CardContent className="flex-grow">
-            <Skeleton className="h-5 w-16" />
-          </CardContent>
-          <CardFooter>
-            <Skeleton className="h-4 w-32" />
-          </CardFooter>
-        </Card>
+        <div key={i} className="rounded-2xl border bg-card overflow-hidden">
+          <Skeleton className="aspect-[16/10] w-full" />
+          <div className="p-4 space-y-2">
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+            <div className="flex gap-2 pt-2">
+              <Skeleton className="h-5 w-16" />
+              <Skeleton className="h-5 w-20" />
+            </div>
+          </div>
+        </div>
       ))}
     </div>
   )
@@ -149,27 +126,42 @@ function SubmissionsPage() {
   const { t } = useTranslation()
   useDocumentTitle("submissions.pageTitle")
 
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    const stored = localStorage.getItem(VIEW_STORAGE_KEY)
+    return stored === "list" || stored === "grid" ? stored : "grid"
+  })
+
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode)
+    localStorage.setItem(VIEW_STORAGE_KEY, mode)
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            {t("submissions.title")}
+            {t("submissions.mySubmissionsTitle", {
+              defaultValue: "My Submissions",
+            })}
           </h1>
           <p className="text-muted-foreground">
             {t("submissions.description")}
           </p>
         </div>
-        <Link to="/submissions/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            {t("submissions.submitResource")}
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <ViewModeToggle value={viewMode} onChange={handleViewModeChange} />
+          <Link to="/submissions/new">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              {t("submissions.submitResource")}
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <Suspense fallback={<SubmissionsListSkeleton />}>
-        <SubmissionsListContent />
+        <SubmissionsListContent viewMode={viewMode} />
       </Suspense>
     </div>
   )

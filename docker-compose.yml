@@ -76,6 +76,7 @@ services:
       - SENTRY_DSN=${SENTRY_DSN}
       - AVATAR_STORAGE_PATH=${AVATAR_STORAGE_PATH:-/app/data/uploads/avatars}
       - RESOURCE_IMAGE_STORAGE_PATH=${RESOURCE_IMAGE_STORAGE_PATH:-/app/data/uploads/resource-images}
+      - SUBMISSION_IMAGE_STORAGE_PATH=${SUBMISSION_IMAGE_STORAGE_PATH:-/app/data/uploads/submission-images}
     volumes:
       - app-uploads-data:/app/data/uploads
 
@@ -113,6 +114,7 @@ services:
       - SENTRY_DSN=${SENTRY_DSN}
       - AVATAR_STORAGE_PATH=${AVATAR_STORAGE_PATH:-/app/data/uploads/avatars}
       - RESOURCE_IMAGE_STORAGE_PATH=${RESOURCE_IMAGE_STORAGE_PATH:-/app/data/uploads/resource-images}
+      - SUBMISSION_IMAGE_STORAGE_PATH=${SUBMISSION_IMAGE_STORAGE_PATH:-/app/data/uploads/submission-images}
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/utils/health-check/"]

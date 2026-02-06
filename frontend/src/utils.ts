@@ -82,3 +82,55 @@ export function getResourceIcon(
   const host = destinationUrl ? safeHostname(destinationUrl) : undefined
   return host === "github.com" ? PiGithubLogoDuotone : GiFox
 }
+
+// ---------------------------------------------------------------------------
+// Cover Image Validation Helpers (T021)
+// ---------------------------------------------------------------------------
+
+/** Maximum file size for cover images (5MB) */
+export const COVER_IMAGE_MAX_SIZE = 5 * 1024 * 1024
+
+/** Supported image MIME types */
+export const COVER_IMAGE_SUPPORTED_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+]
+
+/**
+ * Validates a cover image file before upload.
+ * Returns an error message if invalid, or null if valid.
+ */
+export function validateCoverImageFile(file: File): string | null {
+  if (!COVER_IMAGE_SUPPORTED_TYPES.includes(file.type)) {
+    return `Unsupported file type. Allowed: JPEG, PNG, GIF, WebP`
+  }
+  if (file.size > COVER_IMAGE_MAX_SIZE) {
+    return `File too large. Maximum size: 5MB`
+  }
+  return null
+}
+
+/**
+ * Validates an external image URL.
+ * Returns an error message if invalid, or null if valid.
+ */
+export function validateExternalImageUrl(url: string): string | null {
+  if (!url.trim()) return null // Empty is valid (no image)
+
+  try {
+    const parsed = new URL(url)
+    // Must be http or https
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return "URL must use http:// or https://"
+    }
+    // Must have a host
+    if (!parsed.hostname) {
+      return "URL must have a valid hostname"
+    }
+    return null
+  } catch {
+    return "Invalid URL format"
+  }
+}

@@ -17,6 +17,9 @@ Auto-generated from all feature plans. Last updated: 2026-01-05
 - Python >=3.10 (backend), TypeScript (frontend) + FastAPI, SQLModel, Alembic, PostgreSQL, React, TanStack Router/Query, shadcn/ui, @hey-api/openapi-ts (generated client) (009-resource-categories)
 - Backend Python >=3.10; Frontend TypeScript (repo uses TypeScript 5.9.x). + FastAPI, SQLModel, Alembic, PostgreSQL; React, TanStack Router/Query, shadcn/ui; OpenAPI client generated via `@hey-api/openapi-ts`. (010-resources-view-redesign)
 - PostgreSQL for resource metadata; filesystem (Docker volume) for uploaded images (new resource image storage, patterned after avatar storage). (010-resources-view-redesign)
+- Python (>=3.10,<4.0) backend; TypeScript (Node 24) frontend (011-resource-cover-image)
+- PostgreSQL for metadata + filesystem for processed images under `/app/data/uploads/**` (011-resource-cover-image)
+- PostgreSQL for metadata + filesystem for processed images under `/app/data/uploads/**` (011-resource-cover-image)
 
 ## Project Structure
 
@@ -47,9 +50,9 @@ Frontend:
 Python >=3.10,<4.0 (backend), TypeScript (frontend): Follow standard conventions
 
 ## Recent Changes
+- 011-resource-cover-image: Added Python (>=3.10,<4.0) backend; TypeScript (Node 24) frontend
+- 011-resource-cover-image: Added Python (>=3.10,<4.0) backend; TypeScript (Node 24) frontend
 - 010-resources-view-redesign: Added Backend Python >=3.10; Frontend TypeScript (repo uses TypeScript 5.9.x). + FastAPI, SQLModel, Alembic, PostgreSQL; React, TanStack Router/Query, shadcn/ui; OpenAPI client generated via `@hey-api/openapi-ts`.
-- 009-resource-categories: Added Python >=3.10 (backend), TypeScript (frontend) + FastAPI, SQLModel, Alembic, PostgreSQL, React, TanStack Router/Query, shadcn/ui, @hey-api/openapi-ts (generated client)
-- 009-resource-categories: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

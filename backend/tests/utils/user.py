@@ -7,6 +7,33 @@ from app.models import User, UserCreate, UserUpdate
 from tests.utils.utils import random_email, random_lower_string
 
 
+def get_test_user(db: Session) -> User:
+    """Get or create the test user (EMAIL_TEST_USER) for testing.
+
+    This is the user that normal_user_token_headers authenticates as.
+    """
+    user = crud.get_user_by_email(session=db, email=settings.EMAIL_TEST_USER)
+    if not user:
+        password = random_lower_string()
+        user_in = UserCreate(email=settings.EMAIL_TEST_USER, password=password)
+        user = crud.create_user(session=db, user_create=user_in)
+    return user
+
+
+def get_first_superuser(db: Session) -> User:
+    """Get the first superuser (FIRST_SUPERUSER) for testing.
+
+    This is the user that superuser_token_headers authenticates as.
+    The superuser should already exist from init_db.
+    """
+    user = crud.get_user_by_email(session=db, email=settings.FIRST_SUPERUSER)
+    if not user:
+        raise RuntimeError(
+            "First superuser not found. Ensure init_db has run before tests."
+        )
+    return user
+
+
 def user_authentication_headers(
     *, client: TestClient, email: str, password: str
 ) -> dict[str, str]:

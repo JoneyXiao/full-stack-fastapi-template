@@ -437,6 +437,7 @@ class ResourceSubmissionCreate(SQLModel):
     description: str | None = Field(default=None, max_length=10000)
     destination_url: str = Field(max_length=2048)
     category_id: uuid.UUID | None = Field(default=None)
+    image_external_url: str | None = Field(default=None, max_length=2048)
 
 
 # Properties to receive on submission update
@@ -445,6 +446,7 @@ class ResourceSubmissionUpdate(SQLModel):
     description: str | None = Field(default=None, max_length=10000)
     destination_url: str | None = Field(default=None, max_length=2048)
     category_id: uuid.UUID | None = Field(default=None)
+    image_external_url: str | None = Field(default=None, max_length=2048)
 
 
 # Database model for ResourceSubmission
@@ -465,6 +467,15 @@ class ResourceSubmission(ResourceSubmissionBase, table=True):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
+    # Submission image fields (mutually exclusive: external URL OR uploaded image)
+    # External image URL (stored directly, backend does not proxy/fetch)
+    image_external_url: str | None = Field(default=None, max_length=2048)
+    # Uploaded image metadata (bytes stored on filesystem, not in DB)
+    image_key: str | None = Field(default=None, max_length=255)
+    image_version: int = Field(default=0)
+    image_content_type: str | None = Field(default=None, max_length=50)
+    image_updated_at: datetime | None = Field(default=None)
+
     # Relationships
     submitter: User | None = Relationship()
     category: Optional["Category"] = Relationship(back_populates="submissions")
@@ -482,6 +493,7 @@ class ResourceSubmissionPublic(SQLModel):
     submitter_id: uuid.UUID
     created_at: datetime
     updated_at: datetime
+    image_url: str | None = None  # Computed: external URL or versioned uploaded-image URL
 
 
 class ResourceSubmissionsPublic(SQLModel):

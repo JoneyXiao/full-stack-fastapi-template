@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next"
 
 import { SubmissionsService } from "@/client"
 import { MarkdownEditor } from "@/components/markdown"
+import { SubmissionCoverImageField } from "@/components/Submissions"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -48,7 +49,11 @@ function NewSubmissionPage() {
     description: "",
     destination_url: "",
     category_id: "",
+    image_external_url: "",
   })
+
+  // Store selected file for upload after submission creation
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null)
 
   const createMutation = useMutation({
     mutationFn: () =>
@@ -58,9 +63,23 @@ function NewSubmissionPage() {
           description: formData.description || null,
           destination_url: formData.destination_url,
           category_id: formData.category_id,
+          image_external_url: formData.image_external_url || null,
         },
       }),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      // If a file was selected, upload it now
+      if (pendingImageFile) {
+        try {
+          await SubmissionsService.uploadSubmissionImage({
+            id: data.id,
+            formData: { file: pendingImageFile },
+          })
+        } catch (err) {
+          // Image upload failed but submission was created - show warning
+          console.error("Failed to upload cover image:", err)
+          showErrorToast(t("submissions.new.coverImage.uploadFailed"))
+        }
+      }
       showSuccessToast(t("submissions.new.createSuccessPending"))
       navigate({
         to: "/submissions/$submissionId" as const,
@@ -195,6 +214,16 @@ function NewSubmissionPage() {
                 </p>
               )}
             </div>
+
+            {/* Cover Image Field - supports file selection and external URL */}
+            <SubmissionCoverImageField
+              externalUrl={formData.image_external_url}
+              onExternalUrlChange={(url) => {
+                setFormData({ ...formData, image_external_url: url })
+                if (url) setPendingImageFile(null)
+              }}
+              onFileSelect={setPendingImageFile}
+            />
 
             <Button
               type="submit"
