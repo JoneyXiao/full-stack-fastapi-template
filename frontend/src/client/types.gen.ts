@@ -13,6 +13,10 @@ export type Body_resources_upload_resource_image = {
     file: (Blob | File);
 };
 
+export type Body_submissions_upload_submission_image = {
+    file: (Blob | File);
+};
+
 export type Body_users_upload_avatar = {
     file: (Blob | File);
 };
@@ -235,6 +239,7 @@ export type ResourceSubmissionCreate = {
     description?: (string | null);
     destination_url: string;
     category_id?: (string | null);
+    image_external_url?: (string | null);
 };
 
 export type ResourceSubmissionPublic = {
@@ -248,6 +253,7 @@ export type ResourceSubmissionPublic = {
     submitter_id: string;
     created_at: string;
     updated_at: string;
+    image_url?: (string | null);
 };
 
 export type ResourceSubmissionsPublic = {
@@ -260,6 +266,7 @@ export type ResourceSubmissionUpdate = {
     description?: (string | null);
     destination_url?: (string | null);
     category_id?: (string | null);
+    image_external_url?: (string | null);
 };
 
 export type ResourceUpdate = {
@@ -665,6 +672,16 @@ export type ResourcesCreateResourceCommentData = {
 
 export type ResourcesCreateResourceCommentResponse = (CommentPublic);
 
+export type SubmissionImagesGetSubmissionImageData = {
+    submissionId: string;
+    /**
+     * Image version for cache busting
+     */
+    v?: number;
+};
+
+export type SubmissionImagesGetSubmissionImageResponse = (unknown);
+
 export type SubmissionsListMySubmissionsData = {
     limit?: number;
     skip?: number;
@@ -704,6 +721,19 @@ export type SubmissionsDeleteSubmissionData = {
 };
 
 export type SubmissionsDeleteSubmissionResponse = (Message);
+
+export type SubmissionsUploadSubmissionImageData = {
+    formData: Body_submissions_upload_submission_image;
+    id: string;
+};
+
+export type SubmissionsUploadSubmissionImageResponse = (ResourceSubmissionPublic);
+
+export type SubmissionsClearSubmissionImageData = {
+    id: string;
+};
+
+export type SubmissionsClearSubmissionImageResponse = (ResourceSubmissionPublic);
 
 export type SubmissionsApproveSubmissionData = {
     id: string;

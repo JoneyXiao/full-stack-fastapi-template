@@ -601,3 +601,135 @@ def delete_resource_image_file(image_key: str) -> None:
     except Exception:
         # Best-effort deletion
         pass
+
+
+# ---------------------------------------------------------------------------
+# Submission Image Processing Utilities (reuses resource image logic)
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class ProcessedSubmissionImage:
+    """Result of submission image processing."""
+
+    data: bytes
+    content_type: str  # "image/webp" or "image/jpeg"
+    extension: str  # "webp" or "jpg"
+
+
+class SubmissionImageValidationError(Exception):
+    """Raised when submission image validation fails."""
+
+    pass
+
+
+def validate_and_process_submission_image(
+    file_data: bytes,
+    content_type: str,
+    *,
+    max_size_bytes: int | None = None,
+    max_dimension: int | None = None,
+    output_size: int | None = None,
+) -> ProcessedSubmissionImage:
+    """
+    Validate and process a submission cover image.
+
+    Uses the same logic as resource image processing.
+    """
+    max_size = max_size_bytes or settings.SUBMISSION_IMAGE_MAX_SIZE_BYTES
+    max_dim = max_dimension or settings.SUBMISSION_IMAGE_MAX_DIMENSION
+    out_size = output_size or settings.SUBMISSION_IMAGE_OUTPUT_SIZE
+
+    # Check file size
+    if len(file_data) > max_size:
+        raise SubmissionImageValidationError(
+            f"File size exceeds maximum of {max_size // (1024 * 1024)}MB"
+        )
+
+    # Check content type
+    if content_type not in settings.SUBMISSION_IMAGE_SUPPORTED_CONTENT_TYPES:
+        raise SubmissionImageValidationError(
+            f"Unsupported image type: {content_type}. "
+            f"Supported types: {', '.join(settings.SUBMISSION_IMAGE_SUPPORTED_CONTENT_TYPES)}"
+        )
+
+    # Try to open and validate image
+    img: Image.Image
+    try:
+        img = Image.open(io.BytesIO(file_data))
+        img.verify()
+        img = Image.open(io.BytesIO(file_data))
+    except Exception as e:
+        raise SubmissionImageValidationError(f"Invalid or corrupted image file: {e}")
+
+    # Check dimensions
+    width, height = img.size
+    if width > max_dim or height > max_dim:
+        raise SubmissionImageValidationError(
+            f"Image dimensions exceed maximum of {max_dim}x{max_dim} pixels"
+        )
+
+    # Minimum size check (at least 32x32)
+    if width < 32 or height < 32:
+        raise SubmissionImageValidationError("Image must be at least 32x32 pixels")
+
+    # Downscale to fit within output size (maintain aspect ratio)
+    if img.width > out_size or img.height > out_size:
+        img.thumbnail((out_size, out_size), Image.Resampling.LANCZOS)
+
+    # Flatten transparency to white background
+    img = _flatten_transparency(img)
+
+    # Encode as WebP, fallback to JPEG if needed
+    output_data, output_content_type, output_ext = _encode_resource_image(img)
+
+    return ProcessedSubmissionImage(
+        data=output_data,
+        content_type=output_content_type,
+        extension=output_ext,
+    )
+
+
+def save_submission_image_file(
+    submission_id: uuid_module.UUID,
+    image_data: bytes,
+    extension: str,
+) -> str:
+    """
+    Save submission image file to storage and return the image_key.
+
+    The key is: {submission_id}.{extension}
+    """
+    storage_path = Path(settings.SUBMISSION_IMAGE_STORAGE_PATH)
+    storage_path.mkdir(parents=True, exist_ok=True)
+
+    image_key = f"{submission_id}.{extension}"
+    file_path = storage_path / image_key
+
+    # Atomic write using temp file
+    temp_path = file_path.with_suffix(".tmp")
+    try:
+        temp_path.write_bytes(image_data)
+        temp_path.rename(file_path)
+    except Exception:
+        if temp_path.exists():
+            temp_path.unlink()
+        raise
+
+    return image_key
+
+
+def delete_submission_image_file(image_key: str) -> None:
+    """
+    Delete submission image file from storage (best-effort, no error on missing).
+    """
+    if not image_key:
+        return
+
+    file_path = Path(settings.SUBMISSION_IMAGE_STORAGE_PATH) / image_key
+    try:
+        if file_path.exists():
+            file_path.unlink()
+    except Exception:
+        # Best-effort deletion
+        pass

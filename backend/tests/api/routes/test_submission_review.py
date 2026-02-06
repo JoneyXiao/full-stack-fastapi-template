@@ -164,3 +164,99 @@ def test_admin_can_filter_submissions_by_status(
     assert response.status_code == 200
     for s in response.json()["data"]:
         assert s["status"] == "approved"
+
+
+# ---------------------------------------------------------------------------
+# Approval Image Carry-Over Tests (T031)
+# ---------------------------------------------------------------------------
+
+
+def test_approve_submission_carries_over_external_image_url(
+    client: TestClient, superuser_token_headers: dict[str, str], db: Session
+) -> None:
+    """Test that approving a submission with external image URL carries it to the resource."""
+    from tests.utils.user import get_first_superuser
+
+    superuser = get_first_superuser(db)
+    submission = create_random_submission(db, submitter=superuser, status="pending")
+
+    # Set external URL via update
+    update_response = client.put(
+        f"{settings.API_V1_STR}/submissions/{submission.id}",
+        headers=superuser_token_headers,
+        json={"image_external_url": "https://example.com/test-image.jpg"},
+    )
+    assert update_response.status_code == 200
+
+    # Approve the submission
+    approve_response = client.post(
+        f"{settings.API_V1_STR}/submissions/{submission.id}/approve",
+        headers=superuser_token_headers,
+    )
+    assert approve_response.status_code == 200
+
+    # Find the created resource
+    resources_response = client.get(
+        f"{settings.API_V1_STR}/resources/",
+        params={"q": submission.title},
+    )
+    resources = resources_response.json()["data"]
+    matching = [r for r in resources if r["destination_url"] == submission.destination_url]
+    assert len(matching) == 1
+
+    # Verify the image URL was carried over
+    assert matching[0]["image_url"] == "https://example.com/test-image.jpg"
+
+
+def test_approve_submission_carries_over_uploaded_image(
+    client: TestClient, superuser_token_headers: dict[str, str], db: Session
+) -> None:
+    """Test that approving a submission with uploaded image carries it to the resource."""
+    import io
+
+    from PIL import Image
+    from tests.utils.user import get_first_superuser
+
+    superuser = get_first_superuser(db)
+    submission = create_random_submission(db, submitter=superuser, status="pending")
+
+    # Upload an image
+    img = Image.new("RGB", (64, 64), color="blue")
+    img_buffer = io.BytesIO()
+    img.save(img_buffer, format="PNG")
+    img_buffer.seek(0)
+
+    upload_response = client.post(
+        f"{settings.API_V1_STR}/submissions/{submission.id}/image",
+        headers=superuser_token_headers,
+        files={"file": ("test.png", img_buffer, "image/png")},
+    )
+    assert upload_response.status_code == 200
+    submission_image_url = upload_response.json()["image_url"]
+    assert "/submission-images/" in submission_image_url
+
+    # Approve the submission
+    approve_response = client.post(
+        f"{settings.API_V1_STR}/submissions/{submission.id}/approve",
+        headers=superuser_token_headers,
+    )
+    assert approve_response.status_code == 200
+
+    # Find the created resource
+    resources_response = client.get(
+        f"{settings.API_V1_STR}/resources/",
+        params={"q": submission.title},
+    )
+    resources = resources_response.json()["data"]
+    matching = [r for r in resources if r["destination_url"] == submission.destination_url]
+    assert len(matching) == 1
+
+    # Verify the resource has an internal image URL (resource-images, not submission-images)
+    resource_image_url = matching[0]["image_url"]
+    assert resource_image_url is not None
+    assert "/resource-images/" in resource_image_url
+
+    # Verify the image is actually servable
+    serve_response = client.get(resource_image_url)
+    assert serve_response.status_code == 200
+    assert serve_response.headers["content-type"] in ("image/webp", "image/jpeg")

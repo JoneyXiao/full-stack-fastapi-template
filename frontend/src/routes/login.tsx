@@ -8,6 +8,7 @@ import { X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
+import { GiFox } from "react-icons/gi"
 import { SiWechat } from "react-icons/si"
 import { z } from "zod"
 
@@ -145,8 +146,18 @@ function Login() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-6"
         >
-          <div className="flex flex-col items-center gap-2 text-center">
-            <h1 className="text-2xl font-bold">{t("auth.welcomeBack")}</h1>
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 lg:hidden">
+              <GiFox className="size-7 text-primary" aria-hidden="true" />
+            </div>
+            <div className="space-y-1.5">
+              <h1 className="text-2xl font-bold tracking-tight">
+                {t("auth.welcomeBack")}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                {t("auth.loginDescription")}
+              </p>
+            </div>
           </div>
 
           <div className="grid gap-4">

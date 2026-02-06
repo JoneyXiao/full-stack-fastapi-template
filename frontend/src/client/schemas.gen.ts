@@ -68,6 +68,19 @@ export const Body_resources_upload_resource_imageSchema = {
     title: 'Body_resources-upload_resource_image'
 } as const;
 
+export const Body_submissions_upload_submission_imageSchema = {
+    properties: {
+        file: {
+            type: 'string',
+            format: 'binary',
+            title: 'File'
+        }
+    },
+    type: 'object',
+    required: ['file'],
+    title: 'Body_submissions-upload_submission_image'
+} as const;
+
 export const Body_users_upload_avatarSchema = {
     properties: {
         file: {
@@ -1055,6 +1068,18 @@ export const ResourceSubmissionCreateSchema = {
                 }
             ],
             title: 'Category Id'
+        },
+        image_external_url: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 2048
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Image External Url'
         }
     },
     type: 'object',
@@ -1129,6 +1154,17 @@ export const ResourceSubmissionPublicSchema = {
             type: 'string',
             format: 'date-time',
             title: 'Updated At'
+        },
+        image_url: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Image Url'
         }
     },
     type: 'object',
@@ -1186,6 +1222,18 @@ export const ResourceSubmissionUpdateSchema = {
                 }
             ],
             title: 'Category Id'
+        },
+        image_external_url: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 2048
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Image External Url'
         }
     },
     type: 'object',

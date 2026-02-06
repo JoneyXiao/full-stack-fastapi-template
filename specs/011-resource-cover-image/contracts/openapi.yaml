@@ -1,0 +1,280 @@
+openapi: 3.0.3
+info:
+  title: Resource Submission Cover Images (Feature Contract)
+  version: 0.1.0
+  description: |
+    Contract additions for feature 011-resource-cover-image.
+
+    Note: This is a feature-level contract intended to guide implementation.
+    The repo's canonical OpenAPI remains the running backend at /api/v1/openapi.json.
+
+servers:
+  - url: /api/v1
+
+tags:
+  - name: submissions
+  - name: submission-images
+  - name: admin
+
+paths:
+  /submissions/mine:
+    get:
+      tags: [submissions]
+      summary: List my submissions
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: skip
+          schema: { type: integer, minimum: 0, default: 0 }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceSubmissionsPublic'
+
+  /submissions:
+    post:
+      tags: [submissions]
+      summary: Create a submission
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceSubmissionCreate'
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceSubmissionPublic'
+        '409':
+          description: URL conflict
+
+    get:
+      tags: [admin]
+      summary: List submissions (admin)
+      description: |
+        Admin-only listing. This replaces the previous behavior where any authenticated user could browse pending submissions.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+        - in: query
+          name: skip
+          schema: { type: integer, minimum: 0, default: 0 }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceSubmissionsPublic'
+        '403':
+          description: Not enough permissions
+
+  /submissions/{id}:
+    get:
+      tags: [submissions]
+      summary: Get submission by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceSubmissionPublic'
+
+    put:
+      tags: [submissions]
+      summary: Update a pending submission
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceSubmissionUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceSubmissionPublic'
+
+  /submissions/{id}/image-upload:
+    post:
+      tags: [submissions]
+      summary: Upload or replace a submission cover image
+      description: |
+        Enforces mutual exclusivity: uploading clears any image_external_url.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceSubmissionPublic'
+
+  /submissions/{id}/image:
+    delete:
+      tags: [submissions]
+      summary: Remove a submission cover image
+      description: Clears both uploaded image and external image URL.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceSubmissionPublic'
+
+  /submission-images/{submission_id}/{version}.{ext}:
+    get:
+      tags: [submission-images]
+      summary: Get submission cover image
+      description: |
+        Serves an uploaded submission image with immutable caching.
+        External image URLs are not served by this endpoint.
+      parameters:
+        - in: path
+          name: submission_id
+          required: true
+          schema: { type: string, format: uuid }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 0 }
+        - in: path
+          name: ext
+          required: true
+          schema:
+            type: string
+            pattern: '^(webp|jpg)$'
+      responses:
+        '200':
+          description: Image file
+          content:
+            image/webp: {}
+            image/jpeg: {}
+        '404':
+          description: Not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ResourceSubmissionCreate:
+      type: object
+      required: [title, destination_url, category_id]
+      properties:
+        title: { type: string }
+        description: { type: string, nullable: true }
+        destination_url: { type: string }
+        category_id: { type: string, format: uuid }
+        image_external_url:
+          type: string
+          nullable: true
+          description: Optional external image URL (mutually exclusive with uploaded image)
+
+    ResourceSubmissionUpdate:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string, nullable: true }
+        destination_url: { type: string }
+        category_id: { type: string, format: uuid }
+        image_external_url:
+          type: string
+          nullable: true
+          description: Optional external image URL (mutually exclusive with uploaded image)
+
+    ResourceSubmissionPublic:
+      type: object
+      required: [id, title, destination_url, status, submitter_id, created_at, updated_at]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        description: { type: string, nullable: true }
+        destination_url: { type: string }
+        category_id: { type: string, format: uuid, nullable: true }
+        category_name: { type: string, nullable: true }
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        submitter_id: { type: string, format: uuid }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        image_url:
+          type: string
+          nullable: true
+          description: Computed cover image URL (external URL or versioned submission-images URL)
+
+    ResourceSubmissionsPublic:
+      type: object
+      required: [data, count]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceSubmissionPublic'
+        count: { type: integer }
