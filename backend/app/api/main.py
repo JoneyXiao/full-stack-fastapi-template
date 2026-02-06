@@ -11,6 +11,7 @@ from app.api.routes import (
     private,
     resource_images,
     resources,
+    submission_images,
     submissions,
     users,
     utils,
@@ -33,6 +34,9 @@ api_router.include_router(chat_transcripts.router)
 api_router.include_router(avatars.router, prefix="/avatars", tags=["avatars"])
 api_router.include_router(
     resource_images.router, prefix="/resource-images", tags=["resource-images"]
+)
+api_router.include_router(
+    submission_images.router, prefix="/submission-images", tags=["submission-images"]
 )
 
 

@@ -130,6 +130,18 @@ class Settings(BaseSettings):
         "image/webp",
     ]
 
+    # Submission image storage settings (same constraints as resource images)
+    SUBMISSION_IMAGE_STORAGE_PATH: str = "/app/data/uploads/submission-images"
+    SUBMISSION_IMAGE_MAX_SIZE_BYTES: int = 5 * 1024 * 1024  # 5MB
+    SUBMISSION_IMAGE_MAX_DIMENSION: int = 4096  # max input dimension
+    SUBMISSION_IMAGE_OUTPUT_SIZE: int = 800  # output dimension after processing
+    SUBMISSION_IMAGE_SUPPORTED_CONTENT_TYPES: list[str] = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+    ]
+
     # WeChat Login (Open Platform "Website Application")
     WECHAT_LOGIN_ENABLED: bool = False
     WECHAT_APP_ID: str | None = None
