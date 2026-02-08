@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router"
+import { motion, useReducedMotion } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -27,6 +28,7 @@ export function ResourceGridCard({ resource }: ResourceGridCardProps) {
   const { t } = useTranslation()
   const [imageError, setImageError] = useState(false)
   const [imageFit, setImageFit] = useState<"cover" | "contain">("cover")
+  const prefersReducedMotion = useReducedMotion()
 
   function handleImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     const { naturalWidth, naturalHeight } = e.currentTarget
@@ -56,16 +58,31 @@ export function ResourceGridCard({ resource }: ResourceGridCardProps) {
         className="relative block aspect-[16/10] w-full overflow-hidden bg-muted"
       >
         {hasImage ? (
-          <img
+          <motion.img
             src={imageUrl}
             alt={resource.title}
             onLoad={handleImageLoad}
             className={cn(
               "h-full w-full",
-              imageFit === "contain"
-                ? "object-contain p-6"
-                : "object-cover transition-transform duration-300 ease-out group-hover:scale-105",
+              imageFit === "contain" ? "object-contain p-6" : "object-cover",
             )}
+            whileHover={
+              prefersReducedMotion
+                ? {}
+                : imageFit === "contain"
+                  ? { scale: 1.04, filter: "brightness(1.08)" }
+                  : {
+                      scale: 1.08,
+                      filter: "brightness(1.1)",
+                      rotate: 0.5,
+                    }
+            }
+            transition={{
+              type: "spring",
+              stiffness: 200,
+              damping: 20,
+              mass: 0.8,
+            }}
             onError={() => setImageError(true)}
             decoding="async"
             loading="lazy"
