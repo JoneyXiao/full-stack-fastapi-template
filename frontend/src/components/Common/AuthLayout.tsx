@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next"
 import { GiFox } from "react-icons/gi"
 
 import { Appearance } from "@/components/Common/Appearance"
-import { Logo } from "@/components/Common/Logo"
 import { LocaleSwitcher } from "@/components/Nav/LocaleSwitcher"
 import { Footer } from "./Footer"
 
@@ -90,9 +89,6 @@ export function AuthLayout({ children }: AuthLayoutProps): ReactElement {
       <div className="flex flex-col gap-4 p-6 md:p-10">
         {/* Top bar: mobile logo + controls */}
         <div className="flex items-center justify-between">
-          <div className="lg:hidden">
-            <Logo variant="full" className="text-xl" />
-          </div>
           <div className="ml-auto flex items-center gap-2">
             <LocaleSwitcher />
             <Appearance />

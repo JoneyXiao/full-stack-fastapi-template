@@ -8,6 +8,8 @@
  * - Encodes as WebP (with JPEG fallback)
  */
 
+import { COVER_IMAGE_MAX_SIZE, COVER_IMAGE_SUPPORTED_TYPES } from "@/utils"
+
 const AVATAR_OUTPUT_SIZE = 512
 
 interface ProcessedAvatar {
@@ -105,17 +107,13 @@ function canvasToBlob(
  * @returns Error message or null if valid
  */
 export function validateAvatarFile(file: File): string | null {
-  const MAX_SIZE_MB = 5
-  const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024
-
-  const SUPPORTED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"]
-
-  if (!SUPPORTED_TYPES.includes(file.type)) {
+  if (!COVER_IMAGE_SUPPORTED_TYPES.includes(file.type)) {
     return `Unsupported file type. Please use JPEG, PNG, GIF, or WebP.`
   }
 
-  if (file.size > MAX_SIZE_BYTES) {
-    return `File is too large. Maximum size is ${MAX_SIZE_MB}MB.`
+  if (file.size > COVER_IMAGE_MAX_SIZE) {
+    const maxSizeMb = COVER_IMAGE_MAX_SIZE / (1024 * 1024)
+    return `File is too large. Maximum size is ${maxSizeMb}MB.`
   }
 
   return null
