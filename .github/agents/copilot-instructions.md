@@ -20,6 +20,7 @@ Auto-generated from all feature plans. Last updated: 2026-01-05
 - Python (>=3.10,<4.0) backend; TypeScript (Node 24) frontend (011-resource-cover-image)
 - PostgreSQL for metadata + filesystem for processed images under `/app/data/uploads/**` (011-resource-cover-image)
 - PostgreSQL for metadata + filesystem for processed images under `/app/data/uploads/**` (011-resource-cover-image)
+- TypeScript (frontend) + Python 3.x (backend, unchanged) + React 19, Vite 7, TanStack Router/Query, Tailwind, shadcn/ui (012-unsupported-browser)
 
 ## Project Structure
 
@@ -50,9 +51,9 @@ Frontend:
 Python >=3.10,<4.0 (backend), TypeScript (frontend): Follow standard conventions
 
 ## Recent Changes
+- 012-unsupported-browser: Added TypeScript (frontend) + Python 3.x (backend, unchanged) + React 19, Vite 7, TanStack Router/Query, Tailwind, shadcn/ui
 - 011-resource-cover-image: Added Python (>=3.10,<4.0) backend; TypeScript (Node 24) frontend
 - 011-resource-cover-image: Added Python (>=3.10,<4.0) backend; TypeScript (Node 24) frontend
-- 010-resources-view-redesign: Added Backend Python >=3.10; Frontend TypeScript (repo uses TypeScript 5.9.x). + FastAPI, SQLModel, Alembic, PostgreSQL; React, TanStack Router/Query, shadcn/ui; OpenAPI client generated via `@hey-api/openapi-ts`.
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

@@ -443,6 +443,7 @@ def test_upload_submission_image_rejects_too_small(
     import io
 
     from PIL import Image
+
     from tests.utils.user import get_test_user
 
     user = get_test_user(db)
@@ -470,6 +471,7 @@ def test_upload_submission_image_rejects_too_large_dimensions(
     import io
 
     from PIL import Image
+
     from tests.utils.user import get_test_user
 
     user = get_test_user(db)
@@ -497,6 +499,7 @@ def test_clear_submission_image(
     import io
 
     from PIL import Image
+
     from tests.utils.user import get_test_user
 
     user = get_test_user(db)
@@ -553,6 +556,7 @@ def test_update_submission_external_url_clears_uploaded_image(
     import io
 
     from PIL import Image
+
     from tests.utils.user import get_test_user
 
     user = get_test_user(db)
@@ -590,6 +594,7 @@ def test_upload_image_clears_external_url(
     import io
 
     from PIL import Image
+
     from tests.utils.user import get_test_user
 
     user = get_test_user(db)

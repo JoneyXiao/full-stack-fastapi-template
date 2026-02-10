@@ -201,7 +201,9 @@ def test_approve_submission_carries_over_external_image_url(
         params={"q": submission.title},
     )
     resources = resources_response.json()["data"]
-    matching = [r for r in resources if r["destination_url"] == submission.destination_url]
+    matching = [
+        r for r in resources if r["destination_url"] == submission.destination_url
+    ]
     assert len(matching) == 1
 
     # Verify the image URL was carried over
@@ -215,6 +217,7 @@ def test_approve_submission_carries_over_uploaded_image(
     import io
 
     from PIL import Image
+
     from tests.utils.user import get_first_superuser
 
     superuser = get_first_superuser(db)
@@ -248,7 +251,9 @@ def test_approve_submission_carries_over_uploaded_image(
         params={"q": submission.title},
     )
     resources = resources_response.json()["data"]
-    matching = [r for r in resources if r["destination_url"] == submission.destination_url]
+    matching = [
+        r for r in resources if r["destination_url"] == submission.destination_url
+    ]
     assert len(matching) == 1
 
     # Verify the resource has an internal image URL (resource-images, not submission-images)
