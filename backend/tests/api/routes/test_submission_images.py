@@ -7,7 +7,7 @@ from sqlmodel import Session
 
 from app.core.config import settings
 from tests.utils.submission import create_random_submission
-from tests.utils.user import create_random_user, get_test_user
+from tests.utils.user import get_test_user
 
 
 def test_serve_submission_image_not_found(client: TestClient) -> None:

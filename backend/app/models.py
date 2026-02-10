@@ -493,7 +493,9 @@ class ResourceSubmissionPublic(SQLModel):
     submitter_id: uuid.UUID
     created_at: datetime
     updated_at: datetime
-    image_url: str | None = None  # Computed: external URL or versioned uploaded-image URL
+    image_url: str | None = (
+        None  # Computed: external URL or versioned uploaded-image URL
+    )
 
 
 class ResourceSubmissionsPublic(SQLModel):

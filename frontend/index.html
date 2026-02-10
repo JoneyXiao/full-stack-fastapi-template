@@ -10,9 +10,278 @@
       rel="stylesheet"
       href="https://fonts.bunny.net/css?family=noto-sans-sc:300,400,500,700|poppins:300,400,500,600,700&display=swap"
     />
+    <script>
+      // NOTE: UA parsing duplicated in src/lib/unsupportedBrowser.ts for module use.
+      // Keep thresholds in sync when updating: Chrome 107, Edge 107, Firefox 104, Safari 16
+      ;(() => {
+        var ua = ""
+        var name = null
+        var version = null
+        var v = null
+        var mins = { Chrome: 107, Edge: 107, Firefox: 104, Safari: 16 }
+
+        function major(re) {
+          var m = ua.match(re)
+          return m ? parseInt(m[1], 10) : null
+        }
+
+        try {
+          ua = (navigator?.userAgent) || ""
+
+          v = major(/Edg\/(\d+)/)
+          if (v) {
+            name = "Edge"
+            version = v
+          } else {
+            v = major(/Firefox\/(\d+)/)
+            if (v) {
+              name = "Firefox"
+              version = v
+            } else if (
+              ua.indexOf("Safari") !== -1 &&
+              ua.indexOf("Chrome") === -1 &&
+              ua.indexOf("Chromium") === -1
+            ) {
+              v = major(/Version\/(\d+)/)
+              if (v) {
+                name = "Safari"
+                version = v
+              }
+            } else {
+              v = major(/Chrome\/(\d+)/)
+              if (v) {
+                name = "Chrome"
+                version = v
+              }
+            }
+          }
+
+          if (
+            name &&
+            version !== null &&
+            mins[name] !== undefined &&
+            version >= mins[name]
+          ) {
+            document.documentElement.setAttribute(
+              "data-browser-supported",
+              "true"
+            )
+          }
+        } catch (_e) {
+          // If anything goes wrong, fall back to the HTML-first notice.
+        }
+      })()
+    </script>
+    <style>
+      /* Reset default body margin so the notice spans edge-to-edge.
+         Tailwind's preflight handles this once the app loads. */
+      body { margin: 0; }
+
+      /* ── Unsupported-browser notice ──────────────────────────── */
+      #unsupported-browser-notice {
+        --ub-bg: #fafaf9;
+        --ub-card: #ffffff;
+        --ub-text: #1c1917;
+        --ub-text-soft: #57534e;
+        --ub-muted: #78716c;
+        --ub-primary: #d97706;
+        --ub-primary-bg: #fffbeb;
+        --ub-border: #e7e5e4;
+        --ub-surface: #f5f5f4;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 1.5rem;
+        background: var(--ub-bg);
+        font-family: "Poppins", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+        color: var(--ub-text);
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        #unsupported-browser-notice {
+          --ub-bg: #1c1917;
+          --ub-card: #292524;
+          --ub-text: #fafaf9;
+          --ub-text-soft: #d6d3d1;
+          --ub-muted: #a8a29e;
+          --ub-primary: #f59e0b;
+          --ub-primary-bg: rgba(245, 158, 11, 0.12);
+          --ub-border: #44403c;
+          --ub-surface: #1c1917;
+        }
+      }
+
+      #unsupported-browser-notice *,
+      #unsupported-browser-notice *::before,
+      #unsupported-browser-notice *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      #unsupported-browser-notice .ub-card {
+        max-width: 460px;
+        width: 100%;
+        background: var(--ub-card);
+        border: 1px solid var(--ub-border);
+        border-radius: 1rem;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.05),
+          0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      #unsupported-browser-notice .ub-icon-ring {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--ub-primary-bg);
+        color: var(--ub-primary);
+        margin-bottom: 1.25rem;
+      }
+
+      #unsupported-browser-notice h1 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.5;
+        color: var(--ub-text);
+        margin-bottom: 0.25rem;
+      }
+
+      #unsupported-browser-notice .ub-subtitle {
+        font-size: 0.9375rem;
+        font-weight: 500;
+        color: var(--ub-muted);
+        margin-bottom: 1rem;
+      }
+
+      #unsupported-browser-notice .ub-desc {
+        font-size: 0.8125rem;
+        line-height: 1.7;
+        color: var(--ub-text-soft);
+        margin-bottom: 0.125rem;
+      }
+
+      #unsupported-browser-notice .ub-desc-zh {
+        font-size: 0.8125rem;
+        line-height: 1.7;
+        color: var(--ub-muted);
+        margin-bottom: 1.5rem;
+      }
+
+      #unsupported-browser-notice .ub-divider {
+        border: none;
+        height: 1px;
+        background: var(--ub-border);
+        margin-bottom: 1.25rem;
+      }
+
+      #unsupported-browser-notice .ub-label {
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--ub-muted);
+        margin-bottom: 0.75rem;
+      }
+
+      #unsupported-browser-notice .ub-browsers {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+      }
+
+      #unsupported-browser-notice .ub-browser-item {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        padding: 0.625rem 0.875rem;
+        background: var(--ub-surface);
+        border: 1px solid var(--ub-border);
+        border-radius: 0.625rem;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--ub-text);
+      }
+
+      #unsupported-browser-notice .ub-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      @media (max-width: 480px) {
+        #unsupported-browser-notice .ub-card {
+          padding: 2rem 1.25rem;
+          border-radius: 0.75rem;
+        }
+        #unsupported-browser-notice .ub-browsers {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Hide app root by default until bootstrap determines support */
+      #root {
+        display: none;
+      }
+
+      /* If browser is supported, hide notice before first paint */
+      html[data-browser-supported="true"] #unsupported-browser-notice {
+        display: none;
+      }
+      html[data-browser-supported="true"] #root {
+        display: block;
+      }
+    </style>
   </head>
   <body>
+    <!-- Unsupported browser notice – visible by default, hidden when supported -->
+    <div id="unsupported-browser-notice">
+      <div class="ub-card">
+        <div class="ub-icon-ring">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/>
+            <path d="M12 9v4"/>
+            <path d="M12 17h.01"/>
+          </svg>
+        </div>
+        <h1>Your browser is too old to support this site.</h1>
+        <p class="ub-subtitle">你的浏览器版本过旧，无法支持本网站。</p>
+        <p class="ub-desc">Please upgrade to one of the supported versions below.</p>
+        <p class="ub-desc-zh">请升级到下方支持的版本。</p>
+        <hr class="ub-divider" />
+        <p class="ub-label">Minimum Supported Versions</p>
+        <div class="ub-browsers">
+          <div class="ub-browser-item">
+            <span class="ub-dot" style="background-color:#ff7139"></span>
+            Chrome ≥ 107
+          </div>
+          <div class="ub-browser-item">
+            <span class="ub-dot" style="background-color:#ff7139"></span>
+            Edge ≥ 107
+          </div>
+          <div class="ub-browser-item">
+            <span class="ub-dot" style="background-color:#ff7139"></span>
+            Firefox ≥ 104
+          </div>
+          <div class="ub-browser-item">
+            <span class="ub-dot" style="background-color:#ff7139"></span>
+            Safari ≥ 16
+          </div>
+        </div>
+      </div>
+    </div>
     <div id="root"></div>
-    <script type="module" src="./src/main.tsx"></script>
+    <script type="module" src="./src/bootstrap.ts"></script>
   </body>
 </html>
