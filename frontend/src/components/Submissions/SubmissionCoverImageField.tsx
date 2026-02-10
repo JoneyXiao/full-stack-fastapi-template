@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
+import { COVER_IMAGE_MAX_SIZE, COVER_IMAGE_SUPPORTED_TYPES } from "@/utils"
 
 interface SubmissionCoverImageFieldProps {
   /** The submission ID (required for upload/clear after creation) */
@@ -30,9 +31,6 @@ interface SubmissionCoverImageFieldProps {
   /** Class name for the container */
   className?: string
 }
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
-const SUPPORTED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"]
 
 export function SubmissionCoverImageField({
   submissionId,
@@ -100,11 +98,11 @@ export function SubmissionCoverImageField({
       if (!file) return
 
       // Client-side validation
-      if (!SUPPORTED_TYPES.includes(file.type)) {
+      if (!COVER_IMAGE_SUPPORTED_TYPES.includes(file.type)) {
         setError(t("submissions.new.coverImage.unsupportedType"))
         return
       }
-      if (file.size > MAX_FILE_SIZE) {
+      if (file.size > COVER_IMAGE_MAX_SIZE) {
         setError(t("submissions.new.coverImage.fileTooLarge"))
         return
       }
@@ -218,7 +216,7 @@ export function SubmissionCoverImageField({
           <label>
             <input
               type="file"
-              accept={SUPPORTED_TYPES.join(",")}
+              accept={COVER_IMAGE_SUPPORTED_TYPES.join(",")}
               onChange={handleFileSelect}
               disabled={isBusy || disabled}
               className="sr-only"
