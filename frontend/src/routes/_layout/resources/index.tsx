@@ -311,8 +311,7 @@ function ResourcesListContent({
 function SkeletonHeader(): ReactElement {
   return (
     <div className="flex flex-col gap-2 pl-2 sm:flex-row sm:items-center sm:justify-between">
-      <Skeleton className="h-4 w-44" />
-      <Skeleton className="hidden h-4 w-56 sm:block" />
+      <Skeleton className="h-4 w-72 max-w-full" />
     </div>
   )
 }
@@ -394,24 +393,27 @@ function ResourcesListSkeleton({
       <SkeletonHeader />
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: GRID_SKELETON_CARDS }, (_, i) => (
-          <Card
-            key={i}
-            className="relative flex flex-col overflow-hidden rounded-2xl border bg-card"
-          >
+          <Card key={i} className="relative flex flex-col overflow-hidden rounded-2xl border bg-card">
             {/* Image skeleton */}
             <div className="aspect-[16/10] w-full overflow-hidden bg-muted">
               <Skeleton className="h-full w-full rounded-none" />
             </div>
+            <div className="absolute left-3 top-3">
+              <Skeleton className="h-6 w-14 rounded-full" />
+            </div>
             {/* Content skeleton */}
             <div className="flex flex-col gap-3 p-4">
-              <div className="space-y-2">
-                <Skeleton className="h-5 w-3/4" />
+              <div className="flex-1 space-y-1.5">
+                <Skeleton className="h-5 w-4/5" />
                 <Skeleton className="h-3 w-full" />
                 <Skeleton className="h-3 w-11/12" />
                 <Skeleton className="h-3 w-2/3" />
               </div>
               <div className="flex items-center justify-between pt-1">
-                <Skeleton className="h-6 w-24 rounded-full" />
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                  <Skeleton className="h-3 w-20" />
+                </div>
                 <Skeleton className="h-6 w-16 rounded-full" />
               </div>
             </div>
@@ -475,7 +477,7 @@ function ResourcesPage() {
 
   return (
     <div className="flex flex-col gap-6 -mx-6 px-3 sm:mx-0 sm:px-0">
-      <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-background to-background p-6 md:p-8">
+      <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-primary/10 via-background to-background p-6 md:p-8">
         <div className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl" />
         <div className="pointer-events-none absolute -left-24 -bottom-24 size-72 rounded-full bg-primary/5 blur-3xl" />
         <div className="relative">

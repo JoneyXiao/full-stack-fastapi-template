@@ -6,7 +6,7 @@ import {
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { type ReactElement, Suspense, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { LiaComments } from "react-icons/lia"
+import { GoCommentDiscussion } from "react-icons/go"
 import { PiArrowLeft, PiPaperPlaneTiltBold } from "react-icons/pi"
 import {
   TbBookmark,
@@ -128,6 +128,7 @@ function CommentItem({
     body: string
     author_id: string
     author_display?: string | null
+    author_avatar_url?: string | null
     created_at: string
     updated_at: string
   }
@@ -138,13 +139,16 @@ function CommentItem({
   const created = formatDateTime(comment.created_at)
   const edited = isEdited(comment.created_at, comment.updated_at)
   const authorDisplay = comment.author_display || t("common.user")
+  const avatarSrc = resolveApiUrl(comment.author_avatar_url) ?? DEFAULT_AVATAR
+  const initials = initialsFromText(authorDisplay)
 
   return (
-    <div id={`comment-${comment.id}`} className="group relative flex gap-3">
-      <div className="pt-0.5">
+    <div id={`comment-${comment.id}`} className="group relative sm:flex sm:gap-3">
+      <div className="hidden pt-0.5 sm:block">
         <Avatar className="size-8">
+          <AvatarImage src={avatarSrc} alt={authorDisplay} />
           <AvatarFallback className="text-[11px] font-semibold">
-            {initialsFromText(authorDisplay)}
+            {initials}
           </AvatarFallback>
         </Avatar>
       </div>
@@ -152,6 +156,12 @@ function CommentItem({
       <div className="min-w-0 flex-1 overflow-hidden rounded-lg border bg-card">
         <div className="flex items-center justify-between gap-2 border-b bg-muted/40 px-3 py-2">
           <div className="min-w-0 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+            <Avatar className="size-6 sm:hidden">
+              <AvatarImage src={avatarSrc} alt={authorDisplay} />
+              <AvatarFallback className="text-[10px] font-semibold">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
             <span className="font-medium text-foreground">{authorDisplay}</span>
 
             <span className="hidden sm:inline text-muted-foreground/70">•</span>
@@ -381,22 +391,17 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
           {t("resources.detail.backToResources")}
         </Link>
 
-        <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-background to-background p-4 md:p-6">
+        <div className="relative overflow-hidden rounded-2xl border-1 border-border/60 bg-gradient-to-br from-primary/10 via-background to-background p-4 md:p-6">
           <div className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl" />
           <div className="pointer-events-none absolute -left-24 -bottom-24 size-72 rounded-full bg-primary/5 blur-3xl" />
 
           <div className="relative">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
-                <div className="flex items-center gap-3">
-                  <h1 className="text-2xl font-bold tracking-tight">
-                    {resource.title}
-                  </h1>
-                  <Badge variant="secondary">
-                    {resource.category_name ?? "-"}
-                  </Badge>
-                </div>
-                <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                <h1 className="text-2xl font-bold tracking-tight">
+                  {resource.title}
+                </h1>
+                <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground lg:hidden">
                   <div className="flex items-center gap-2 text-foreground">
                     <Avatar className="size-8">
                       <AvatarImage
@@ -412,21 +417,22 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                         )}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="sr-only">
-                      {t("resources.detail.publishedBy")}
+                    <span>
+                      {resource.published_by_display ?? t("common.user")}
                     </span>
                   </div>
                   <span>
                     {t("resources.detail.added")}:{" "}
                     {new Date(resource.created_at).toLocaleDateString()}
                   </span>
-                  <span className="hidden sm:inline">•</span>
-                  <span>
-                    {t("resources.detail.updated")}:{" "}
-                    {new Date(resource.updated_at).toLocaleDateString()}
-                  </span>
                 </div>
                 <div className="mt-2 flex items-center gap-2 lg:hidden">
+                  <Badge
+                    variant="secondary"
+                    className="h-5 max-w-[9rem] px-1.5 text-[10px] truncate"
+                  >
+                    {resource.category_name ?? "-"}
+                  </Badge>
                   <a
                     href={resource.destination_url}
                     target="_blank"
@@ -450,45 +456,44 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                   >
                     <TbShare className="h-5 w-5" />
                   </Button>
-                  {user && (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="cursor-pointer justify-start hover:bg-transparent gap-1"
-                        onClick={() => favoriteMutation.mutate()}
-                        disabled={favoriteMutation.isPending}
-                        title={t(
-                          favorited
-                            ? "resources.detail.unfavorite"
-                            : "resources.detail.favorite",
-                        )}
-                      >
-                        <FavoriteIcon
-                          className={`h-5 w-5 ${favorited ? "text-primary" : ""}`}
-                        />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="cursor-pointer justify-start hover:bg-transparent gap-1"
-                        onClick={() => likeMutation.mutate()}
-                        disabled={likeMutation.isPending}
-                        title={t(
-                          liked
-                            ? "resources.detail.unlike"
-                            : "resources.detail.like",
-                        )}
-                      >
-                        <LikeIcon
-                          className={`h-5 w-5 ${liked ? "text-primary" : ""}`}
-                        />
-                        <span className="text-xs">
-                          {formatStarCount(resource.likes_count)}
-                        </span>
-                      </Button>
-                    </>
-                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="cursor-pointer justify-start hover:bg-transparent gap-1"
+                    onClick={() => favoriteMutation.mutate()}
+                    disabled={favoriteMutation.isPending || !user}
+                    title={t(
+                      favorited
+                        ? "resources.detail.unfavorite"
+                        : "resources.detail.favorite",
+                    )}
+                  >
+                    <FavoriteIcon
+                      className={`h-5 w-5 ${favorited ? "text-primary" : ""}`}
+                    />
+                    <span className="text-xs">
+                      {formatStarCount(resource.favorites_count)}
+                    </span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="cursor-pointer justify-start hover:bg-transparent gap-1"
+                    onClick={() => likeMutation.mutate()}
+                    disabled={likeMutation.isPending || !user}
+                    title={t(
+                      liked
+                        ? "resources.detail.unlike"
+                        : "resources.detail.like",
+                    )}
+                  >
+                    <LikeIcon
+                      className={`h-5 w-5 ${liked ? "text-primary" : ""}`}
+                    />
+                    <span className="text-xs">
+                      {formatStarCount(resource.likes_count)}
+                    </span>
+                  </Button>
                 </div>
               </div>
 
@@ -559,7 +564,7 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
       <div className="grid w-full min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         <div className="min-w-0 space-y-6">
           {(resource.description || isAdmin) && (
-            <Card>
+            <Card className="border border-border/60 bg-card/90 shadow-none">
               {isAdmin && (
                 <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
                   <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-2">
@@ -623,20 +628,17 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
             </Card>
           )}
 
-          <Card>
+          <Card className="border border-border/60 bg-card/90 shadow-none gap-2">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <LiaComments className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 font-semibold text-sm">
+                <GoCommentDiscussion className="h-5 w-5" />
                 {t("resources.detail.comments", { count: comments.count })}
               </CardTitle>
-              <CardDescription>
-                {t("resources.detail.commentsDescription")}
-              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 px-3 pb-0 pt-0 sm:px-6">
               {user ? (
-                <div className="flex gap-3">
-                  <div className="pt-0.5">
+                <div className="sm:flex sm:gap-3">
+                  <div className="hidden pt-0.5 sm:block">
                     <Avatar className="size-8">
                       <AvatarImage
                         src={resolveApiUrl(user.avatar_url) ?? DEFAULT_AVATAR}
@@ -653,6 +655,22 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                     onSubmit={handleSubmitComment}
                     className="flex-1 space-y-2"
                   >
+                    <div className="mb-1 flex items-center gap-2 sm:hidden">
+                      <Avatar className="size-6">
+                        <AvatarImage
+                          src={resolveApiUrl(user.avatar_url) ?? DEFAULT_AVATAR}
+                          alt={user.full_name ?? user.email ?? t("common.user")}
+                        />
+                        <AvatarFallback className="text-[10px] font-semibold">
+                          {initialsFromText(
+                            user.full_name ?? user.email ?? user.id,
+                          )}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="truncate text-xs text-muted-foreground">
+                        {user.full_name ?? user.email ?? t("common.user")}
+                      </span>
+                    </div>
                     <Textarea
                       placeholder={t("resources.detail.commentPlaceholder")}
                       value={newComment}
@@ -708,14 +726,11 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
           </Card>
         </div>
 
-        <Card className="min-w-0 hidden lg:block lg:sticky lg:top-33 rounded-2xl border border-border/60 bg-card/90 shadow-sm">
+        <Card className="min-w-0 hidden lg:block lg:sticky lg:top-33 rounded-2xl border border-border/60 bg-card/90 shadow-none">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-base font-semibold">
               {t("resources.detail.about")}
             </CardTitle>
-            <CardDescription className="text-sm text-muted-foreground">
-              {t("resources.detail.aboutHint")}
-            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5 text-sm">
             <div className="flex items-center justify-between gap-3 rounded-lg border border-border/40 bg-muted/40 px-3 py-2">
@@ -749,8 +764,24 @@ function ResourceDetailContent({ resourceId }: { resourceId: string }) {
                 <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   {t("resources.detail.publishedBy")}
                 </span>
-                <span className="font-medium text-right break-words text-foreground">
-                  {resource.published_by_display ?? t("common.notAvailable")}
+                <span className="flex items-center gap-2 font-medium text-right break-words text-foreground">
+                  <Avatar className="size-6">
+                    <AvatarImage
+                      src={
+                        resolveApiUrl(resource.published_by_avatar_url) ??
+                        DEFAULT_AVATAR
+                      }
+                      alt={resource.published_by_display ?? t("common.user")}
+                    />
+                    <AvatarFallback className="text-[8px] font-semibold">
+                      {initialsFromText(
+                        resource.published_by_display ?? t("common.user"),
+                      )}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span>
+                    {resource.published_by_display ?? t("common.notAvailable")}
+                  </span>
                 </span>
               </div>
               <div className="flex items-center justify-between gap-3">
@@ -818,7 +849,7 @@ function ResourceDetailSkeleton(): ReactElement {
     <div className="flex flex-col gap-6 -mx-6 px-3 sm:mx-0 sm:px-0">
       <div className="flex flex-col gap-4">
         <Skeleton className="h-4 w-32" />
-        <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-background to-background p-4 md:p-6">
+        <div className="relative overflow-hidden rounded-2xl border-1 border-border/60 bg-gradient-to-br from-primary/10 via-background to-background p-4 md:p-6">
           <div className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl" />
           <div className="pointer-events-none absolute -left-24 -bottom-24 size-72 rounded-full bg-primary/5 blur-3xl" />
           <div className="relative flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -856,7 +887,7 @@ function ResourceDetailSkeleton(): ReactElement {
       </div>
       <div className="grid w-full min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         <div className="min-w-0 space-y-6">
-          <Card>
+          <Card className="border border-border/60 bg-card/90 shadow-none">
             <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0 lg:p-8 lg:pt-0">
               <div className="space-y-3">
                 <Skeleton className="h-5 w-40" />
@@ -868,7 +899,7 @@ function ResourceDetailSkeleton(): ReactElement {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border border-border/60 bg-card/90 shadow-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Skeleton className="h-5 w-36" />
@@ -893,7 +924,7 @@ function ResourceDetailSkeleton(): ReactElement {
           </Card>
         </div>
 
-        <Card className="min-w-0 hidden lg:block lg:sticky lg:top-33 rounded-2xl border border-border/60 bg-card/90 shadow-sm">
+        <Card className="min-w-0 hidden lg:block lg:sticky lg:top-33 rounded-2xl border border-border/60 bg-card/90 shadow-none">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-base font-semibold">
               <Skeleton className="h-5 w-24" />
